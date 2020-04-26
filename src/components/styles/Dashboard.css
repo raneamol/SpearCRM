@@ -1,0 +1,77 @@
+.grid-container {
+  display: grid;
+	grid-template-rows: 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+	gap: 50px 50px;
+}
+
+.grid-container > * {
+  height: 90%;
+	width: 90%;
+}
+
+.pieChartContainer{
+	padding-top:70px;
+}
+
+.upcoming-tasks-widget {
+	border: 1px solid black;
+	border-radius:5px;
+	height: 100%;
+	width: 95%;
+}
+
+.tasks-widget-title {
+	text-align: center;
+	font-weight: 800;
+	font-size: 32px;
+}
+
+.tasks-scroller-container {
+	overflow:auto;
+	height:350px;
+	margin-right:0;
+}
+
+/* ------------- */
+
+.task-date {
+	font-style:italic;
+	float: right;
+	font-size: 18px;
+	margin-right: 5px;
+}
+
+.task-body {
+	border-bottom: 1px solid black;
+	list-style: none;
+}
+
+.task-title{
+	font-family:'Times New Roman';
+	font-size:24px;
+	cursor: pointer;
+
+}
+
+li {
+	margin-bottom: 5px;
+}
+
+.line-chart-container {
+	width:95%;
+}
+
+.tasks-list{
+	list-style-type: none;
+	padding-left: 0;
+}
+
+.new-task-button{
+	float:right;
+	padding-right: 10px;
+}
+
+input.largerCheckbox { 
+	transform : scale(1.25); 
+} 

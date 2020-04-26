@@ -1,0 +1,39 @@
+.table-container {
+  max-width: 60%;
+  float: left;
+}
+
+nav {
+  height: 50px;
+}
+
+nav ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background-color: #333;
+  height: inherit;
+}
+
+nav ul li {
+  float: left;
+  height: inherit;
+  /* border-right:1px solid #bbb; */
+}
+
+nav ul li:last-child {
+  border-right: none;
+}
+
+nav ul li a {
+  display: block;
+  color: white;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+nav ul li a:hover:not(.active) {
+  background-color: #111;
+}
