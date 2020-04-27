@@ -12,13 +12,30 @@ export default class AccountProfileHeader extends React.Component {
     return null;
   }
 
+  archiveTransactedOrders = async () => {
+    const usr_id = this.props.usr_id_json;
+    const response = await fetch("/main/complete_orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(usr_id)
+    });
+    
+    if (response.ok) {
+      console.log("response worked!");
+      console.log(response);
+      this.props.updateAccountProfile();
+    }
+  }
+
   render() {
-    let n = 1;
+    let n = this.props.furthestStage;
     return(
       <>
-        <span className="profile-name"> John Brown </span>
+        <span className="profile-name"> {this.props.name} </span>
         <span className="stage-indicator">
-          <span className="stage1" style={ n>=2 ? {backgroundColor:"green"} : n===1 ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }>
+          <span className="stage1" style={ (n>=2 && n!= 4) ? {backgroundColor:"green"} : n===1 ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }>
             <span className="stage-name"> Negotiating </span>
           </span>  
 
@@ -32,7 +49,7 @@ export default class AccountProfileHeader extends React.Component {
 
           <span style={{ verticalAlign: "middle" }}>
             <Tooltip title="Successful transaction">
-              <CheckCircleIcon />
+              <CheckCircleIcon  onClick={this.archiveTransactedOrders}/>
             </Tooltip> 
           </span>
         </span> 

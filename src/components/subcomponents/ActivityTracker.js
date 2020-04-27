@@ -3,6 +3,7 @@ import '../styles/ActivityTracker.css'
 import ManualLogger from './ManualLogger.js'
 import PrettyList from './PrettyList.js'
 import NextSteps from './NextSteps'
+import NewOrderDialogBox from './NewOrderDialogBox'
 
 export default function ActivityTracker() {
   const [activityType, setActivityType] = useState("future"); //past or future
@@ -73,6 +74,8 @@ export default function ActivityTracker() {
   return(
     <div className="activity-tracker-container">
       <h2 style={{ textAlign: "center"}}> Activity Tracker</h2>
+      
+      <NewOrderDialogBox cid='A_12'/> 
       <EmailAutomator />
       <ManualLogger 
         draftType={activityType} 

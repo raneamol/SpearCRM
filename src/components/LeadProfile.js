@@ -1,6 +1,7 @@
 import React from 'react';
 import './styles/AccountProfile.css'; //styling of both AccountProfile and LeadProfile pages is the same
-import FieldsContainer from "./subcomponents/FieldsContainer";
+import FieldsContainer1 from "./subcomponents/FieldsContainer1";
+import FieldsContainer2 from "./subcomponents/FieldsContainer2";
 import ActivityTracker from "./subcomponents/ActivityTracker";
 import LeadProfileHeader from "./subcomponents/LeadProfileHeader";
 
@@ -30,8 +31,8 @@ export default class LeadProfile extends React.Component {
         <div className='profile-header-container'>
           <LeadProfileHeader onClick={this.onDivClick} leadStatus={this.state.status}/>
         </div>
-        <FieldsContainer fields={sample_data} container="Generic"/> 
-        <FieldsContainer fields={sample_data} container="Specific"/>
+        <FieldsContainer1 fields={sample_data}/> 
+        <FieldsContainer2 fields={sample_data}/>
         <ActivityTracker />
       </div>     
     );

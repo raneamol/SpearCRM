@@ -190,6 +190,20 @@ export default class Accounts extends React.Component {
   componentDidMount() {
     fetch("/main/show_accounts").then(response =>
       response.json().then(data => {
+        data.forEach( (entry) => {
+          entry["_id"] = entry["_id"]["$oid"];
+        });
+        this.setState({ fetchedData: data });
+      })
+    );
+  }
+
+  updateAccountsAPICall = () => {
+    fetch("/main/show_accounts").then(response =>
+      response.json().then(data => {
+        data.forEach( (entry) => {
+          entry["_id"] = entry["_id"]["$oid"];
+        });
         this.setState({ fetchedData: data });
       })
     );
@@ -275,7 +289,7 @@ export default class Accounts extends React.Component {
         title: 'Profile Page',
         dataIndex: '_id', //used to be 'key'
         key: '_id',
-        render: (text,key) => <Link to={{pathname: "/accountprofile", state: {uid: key.key} }}> Profile </Link>
+        render: (text,key) => <Link to={{pathname: "/accountprofile", state: {cid: key._id} }}> Profile </Link>
       },
       {
         title: 'Company',
@@ -346,7 +360,7 @@ export default class Accounts extends React.Component {
         title={() => 'Accounts'}
         onChange={onChange}
       />
-      <div className="add-profile-button"> <NewProfileDialogBox /> </div>
+      <div className="add-profile-button"> <NewProfileDialogBox updateAccounts={this.updateAccountsAPICall}/> </div>
     </>
     ); 
   }
