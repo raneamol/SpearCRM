@@ -18,18 +18,18 @@ export default class NewTaskDialogBox extends React.Component{
     city: "",
     company: "",
     country: "",
-    demat_accno: "",
+    demat_accno: 0,
     dob: new Date().toJSON(),
     education: "",
     email: "",
     job_type: "",
-    last_contact: null,
+    last_contact: new Date().toJSON(),
     latest_order_stage: 0,
     name: "",
     state: "",
     phone_number: "",
     marital_status: "",
-    trading_accno: "",
+    trading_accno: 0,
     contact_comm_type : "Email",
   }
 
@@ -44,7 +44,7 @@ export default class NewTaskDialogBox extends React.Component{
   }
 
   handleChangeInDate = (event) => {
-    this.setState({ date: event });
+    this.setState({ dob: event });
   }
 
   handleClickOpen = () => {
@@ -57,6 +57,8 @@ export default class NewTaskDialogBox extends React.Component{
 
   postNewProfile = async () => {
     const newProfile = this.state;
+    delete newProfile["open"];
+    console.log(newProfile);
     const response = await fetch("/main/create_account", {
       method: "POST",
       headers: {
@@ -68,6 +70,7 @@ export default class NewTaskDialogBox extends React.Component{
     if (response.ok) {
       console.log("response worked!");
       console.log(response);
+      this.setState({ open:false });
     }
   }
 
@@ -133,7 +136,7 @@ export default class NewTaskDialogBox extends React.Component{
             <TextField
               autoFocus
               margin="dense"
-              id="locnState"
+              id="state"
               label="State"
               type="text"
               variant="outlined"
@@ -259,7 +262,6 @@ function MaterialUIPickers(props) {
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
-          disableFuture
         />
     </MuiPickersUtilsProvider>
   );

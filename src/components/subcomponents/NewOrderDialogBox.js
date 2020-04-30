@@ -16,26 +16,59 @@ import {
 } from '@material-ui/pickers';
 
 
-export default function NewTaskDialogBox(props) {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClickOpen = () => {
-    setOpen(true);
+export default class NewTaskDialogBox extends React.Component{
+  state = {
+    open: false,
+    company: "",
+    trans_type: "",
+    no_of_shares: 0,
+    cost_of_share: 0,
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  handleClickOpen = () => {
+    this.setState({ open:true });
   };
 
-  if ( props.cid.startsWith("A") ){
+  handleClose = () => {
+    this.setState({ open:false });
+  };
+
+  handleChange = (event) => {
+    this.setState({
+      [event.target.id] : event.target.value
+    });
+  }
+
+  postNewOrder = async () => {
+    const newOrder = this.state;
+    newOrder.stage = 0;
+    newOrder.account_id = this.props.account_id;
+    delete newOrder["open"];
+    console.log(newOrder);
+    const response = await fetch("/main/create_order", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newOrder)
+    });
+    
+    if (response.ok) {
+      console.log("response worked!");
+      console.log(response);
+      this.setState({ open:false });
+    }
+  }
+  
+  render() {
     return (
       <div>
-        <Button variant="outlined" color="primary" onClick={handleClickOpen}>
+        <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
           + Add New Order
         </Button>
         <Dialog
-          open={open}
-          onClose={handleClose}
+          open={this.state.open}
+          onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
           <DialogTitle id="form-dialog-title">Add New Order</DialogTitle>
@@ -56,6 +89,17 @@ export default function NewTaskDialogBox(props) {
               label="Company"
               type="text"
               fullWidth
+              onChange={this.handleChange}
+            />
+
+            <TextField
+              autoFocus
+              margin="dense"
+              id="trans_type"
+              label="Transaction type (buy/sell)"
+              type="text"
+              fullWidth
+              onChange={this.handleChange}
             />
 
             <TextField
@@ -65,6 +109,7 @@ export default function NewTaskDialogBox(props) {
               label="No. of shares"
               type="number"
               fullWidth
+              onChange={this.handleChange}
             />
 
             <TextField
@@ -74,14 +119,15 @@ export default function NewTaskDialogBox(props) {
               label="Cost of one share"
               type="number"
               fullWidth
+              onChange={this.handleChange}
             />
 
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={this.handleClose} color="primary">
               Cancel
             </Button>
-            <Button onClick={handleClose} color="primary">
+            <Button onClick={this.postNewOrder} color="primary">
               Add
             </Button>
           </DialogActions>
@@ -89,8 +135,4 @@ export default function NewTaskDialogBox(props) {
       </div>
     );
   }
-  else {
-    return null;
-  }
-
 }

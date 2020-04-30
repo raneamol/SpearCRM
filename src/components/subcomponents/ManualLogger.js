@@ -83,10 +83,12 @@ export default class ManualLogger extends React.Component {
             KeyboardButtonProps={{
               'aria-label': 'change date',
             }}
+            disablePast = {this.props.draftType=="future"}
+            disableFuture = {this.props.draftType=="past"}
           />
         </MuiPickersUtilsProvider>
         
-        <div> <Button variant="contained" color="primary" disableElevation> Add Activity </Button> </div>
+        <div> <Button variant="contained" color="primary" onClick={this.props.postNewActivity} disableElevation> Add Activity </Button> </div>
       </div>
     );
   }

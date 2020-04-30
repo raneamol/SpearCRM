@@ -100,6 +100,7 @@ export default class AccountProfile extends React.Component {
 
     return(
       <div className="profile-page-grid-container">
+        {console.log(this.state.accountData)}
         <div className='profile-header-container'>
           <AccountProfileHeader 
             name = {this.state.accountData.name} 
@@ -110,7 +111,7 @@ export default class AccountProfile extends React.Component {
         </div>
         <FieldsContainer1 fields={this.state.accountData} handleChange={this.handleChange} onSubmit={this.postFields}/>
         <FieldsContainer2 fields={this.state.accountData} handleChange={this.handleChange} onSubmit={this.postFields}/>
-        <ActivityTracker updateAccountProfile={this.updateAccountProfileAPICall}/>
+        <ActivityTracker orders={this.state.accountData.orders} account_id={this.state.accountData._id} updateAccountProfile={this.updateAccountProfileAPICall}/>
       </div>     
     );
   }

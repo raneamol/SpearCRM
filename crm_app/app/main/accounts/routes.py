@@ -37,7 +37,7 @@ def display_account(usr_id):
 	account = accounts.find_one({"_id" : ObjectId(usr_id)})
 	
 	orders = mongo.db.Orders
-	account_orders = orders.find({'account_id': account["_id"]})
+	account_orders = orders.find({'account_id': usr_id})
 	#dumps converts cursor to string json
 	account_orders = dumps(account_orders)
 	#loading string json to dictionary json
@@ -132,13 +132,13 @@ def create_account():
 	country = req_data["country"]
 	demat_accno = req_data["demat_accno"]
 	dob = req_data["dob"]
-	dob = datetime.datetime.strptime(dob, '%Y-%m-%d %H:%M:%S.%fZ')
+	dob = datetime.datetime.strptime(dob, '%Y-%m-%dT%H:%M:%S.%fZ')
 	#dob = new Date(dob)
 	education = req_data["education"]
 	email = req_data["email"]
 	job_type = req_data["job_type"]
 	last_contact = req_data["last_contact"]
-	last_contact = datetime.datetime.strptime(last_contact, '%Y-%m-%d %H:%M:%S.%fZ')
+	last_contact = datetime.datetime.strptime(last_contact, '%Y-%m-%dT%H:%M:%S.%fZ')
 	latest_order_stage = req_data["latest_order_stage"]
 	marital_status = req_data["marital_status"]
 	name = req_data["name"]
@@ -301,4 +301,4 @@ def change_activity_type():
 
 '''op for show user activities
 {"_id": {"$oid": "5ea6130a9c1a7ee74956c18b"}, "title": "Finalize Mike's order", "body": "Company-ABC and number of
-shares-200", "date": {"$date": 1589817600000}, "activity_type": "todos", "user_id": "5ea58fbc63e50fc607cf6a10"}'''
+shares-200", "date": {"$date": 1589817600000}, "activity_type": "todos", "user_id": "5ea58fbc63e50fc607cf6a10", "elapsed": 0 }'''

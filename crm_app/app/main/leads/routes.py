@@ -132,7 +132,8 @@ def lead_to_accounts():
 	req_data = request.get_json()
 
 	#get JSON variables
-	usr_id = req_data["usr_id"]
+	usr_id = req_data["_id"]
+	usr_id = ObjectId(usr_id)
 	contact_comm_type = req_data["contact_comm_type"]
 	demat_accno = req_data["demat_accno"]
 	trading_accno = req_data["trading_accno"]
@@ -154,8 +155,11 @@ def lead_to_accounts():
 	"trading_accno":trading_accno,
 	"latest_order_stage":latest_order_stage
 }}])
-	a = dict(a)
-	accounts.insert_one(a)
+	a = list(a)
+	b = a[0]
+	b.pop("_id", None)
+	b.pop("lead_source", None)  
+	accounts.insert_one(b)
 	leads.delete_one({"_id" : usr_id})
 	return "Lead converted to account"
 

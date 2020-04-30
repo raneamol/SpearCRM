@@ -5,7 +5,7 @@ import PrettyList from './PrettyList.js'
 import NextSteps from './NextSteps'
 import NewOrderDialogBox from './NewOrderDialogBox'
 
-export default function ActivityTracker() {
+export default function ActivityTracker(props) {
   const [activityType, setActivityType] = useState("future"); //past or future
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
@@ -28,6 +28,30 @@ export default function ActivityTracker() {
   const handleChangeInDate = (event) => {
     setActivityDate(event);
   };
+
+  const postNewActivity = async () => {
+    const newActivity = {
+      "user_id": props.account_id,
+      "title": activityTitle,
+      "body": activityBody,
+      "date": activityDate,
+      "activity_type": activityType,
+    };
+    console.log(newActivity);
+    const response = await fetch("/main/create_activity", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(newActivity)
+    });
+    
+    if (response.ok) {
+      console.log("response worked!");
+      console.log(response);
+      props.updateAccountProfile();
+    }
+  }
   // onToggle = event => {
   //   this.setState({
   //     activityType: event.target.id
@@ -74,8 +98,8 @@ export default function ActivityTracker() {
   return(
     <div className="activity-tracker-container">
       <h2 style={{ textAlign: "center"}}> Activity Tracker</h2>
-      
-      <NewOrderDialogBox cid='A_12'/> 
+      {console.log(props.orders)}
+      <NewOrderDialogBox account_id={props.account_id}/> 
       <EmailAutomator />
       <ManualLogger 
         draftType={activityType} 
@@ -86,6 +110,7 @@ export default function ActivityTracker() {
         handleChangeInBody={handleChangeInBody}
         handleChangeInTitle={handleChangeInTitle}
         handleChangeInDate={handleChangeInDate}
+        postNewActivity = {postNewActivity}
       />
       <NextSteps />
       <PastActivity />
@@ -105,8 +130,8 @@ function PastActivity() {
 class EmailAutomator extends React.Component {
   render() {
     let emailTo = "testing@gmail.com";
-    let emailSubject = "Testing whether email automation could work well";
-    let emailBody = "It seems that email automation could work well. I can't guarantee it, but this solution is great."
+    let emailSubject = "Stock prospects";
+    let emailBody = "MSFT stocks are being retailed at an all time low. Do call back if you're interested."
     let emailHref = ("https://mail.google.com/mail?view=cm&fs=1" +
       (emailTo ? ("&to=" + encodeURIComponent(emailTo)) : "") +
       (emailSubject ? ("&su=" + encodeURIComponent(emailSubject)) : "") +
