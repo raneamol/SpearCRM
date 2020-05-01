@@ -58,7 +58,6 @@ export default class NewTaskDialogBox extends React.Component{
   postNewProfile = async () => {
     const newProfile = this.state;
     delete newProfile["open"];
-    console.log(newProfile);
     const response = await fetch("/main/create_account", {
       method: "POST",
       headers: {
@@ -71,6 +70,7 @@ export default class NewTaskDialogBox extends React.Component{
       console.log("response worked!");
       console.log(response);
       this.setState({ open:false });
+      this.props.updateAccounts();
     }
   }
 
@@ -97,19 +97,6 @@ export default class NewTaskDialogBox extends React.Component{
               fullWidth
               onChange={this.handleChange}
             />
-
-            {/* <div className='age-inputs'>
-              <TextField
-                autoFocus
-                margin="dense"
-                id="age"
-                label="Age"
-                type="number"
-                variant="outlined"
-              />
-              <span> &nbsp; &nbsp; </span>
-              <MaterialUIPickers />
-            </div> */}
 
             <TextField
               autoFocus
