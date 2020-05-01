@@ -4,28 +4,23 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { Tooltip } from '@material-ui/core';
 
 export default class AccountProfileHeader extends React.Component {
-  onTickClick() {
-    //if (n==3)
-    //turn all 3 into green background
-    //wait for 2-3 seconds
-    //set n==0 in the backend, turning the background for all 3 into white
-    return null;
-  }
-
   archiveTransactedOrders = async () => {
-    const usr_id = this.props.usr_id_json;
-    const response = await fetch("/main/complete_orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(usr_id)
-    });
-    
-    if (response.ok) {
-      console.log("response worked!");
-      console.log(response);
-      this.props.updateAccountProfile();
+    if (this.props.furthestStage != 3) {return null;}
+    else {
+      const usr_id = this.props.usr_id_json;
+      const response = await fetch("/main/complete_orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(usr_id)
+      });
+      
+      if (response.ok) {
+        console.log("response worked!");
+        console.log(response);
+        this.props.updateAccountProfile();
+      }
     }
   }
 
@@ -49,7 +44,7 @@ export default class AccountProfileHeader extends React.Component {
 
           <span style={{ verticalAlign: "middle" }}>
             <Tooltip title="Successful transaction">
-              <CheckCircleIcon  onClick={this.archiveTransactedOrders}/>
+              <CheckCircleIcon onClick={this.archiveTransactedOrders}/>
             </Tooltip> 
           </span>
         </span> 
