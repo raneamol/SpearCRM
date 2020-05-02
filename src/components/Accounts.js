@@ -40,9 +40,6 @@ export default class Accounts extends React.Component {
   componentDidMount() {
     fetch("/main/show_accounts").then(response =>
       response.json().then(data => {
-        data.forEach( (entry) => {
-          entry["_id"] = entry["_id"]["$oid"];
-        });
         this.setState({ fetchedData: data });
       })
     );
@@ -51,9 +48,6 @@ export default class Accounts extends React.Component {
   updateAccountsAPICall = () => {
     fetch("/main/show_accounts").then(response =>
       response.json().then(data => {
-        data.forEach( (entry) => {
-          entry["_id"] = entry["_id"]["$oid"];
-        });
         this.setState({ fetchedData: data });
       })
     );
@@ -124,7 +118,6 @@ export default class Accounts extends React.Component {
   };
 
   render() {
-    console.log(this.state.fetchedData);
     const columns = [
       {
         title: 'Name',
