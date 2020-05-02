@@ -25,11 +25,10 @@ export default class AccountProfile extends React.Component {
   };
 
   componentDidMount() {
-    const { cid } = this.props.location.state; //named cid temporarily
+    const { cid } = this.props.location.state;
     console.log("CID is " + cid);
     fetch(`/main/display_account/${cid}`).then(response =>
       response.json().then(data => {
-        data["_id"] = data["_id"]["$oid"]; //TODO:verify source
         this.setState({ accountData: data });
         console.log(data);
       })
@@ -39,7 +38,6 @@ export default class AccountProfile extends React.Component {
   updateAccountProfileAPICall = () => {
     fetch(`/main/display_account/${this.state.accountData._id}`).then(response =>
       response.json().then(data => {
-        data["_id"] = data["_id"]["$oid"]; //TODO:verify source
         this.setState({ accountData: data });
       })
     );
@@ -56,7 +54,6 @@ export default class AccountProfile extends React.Component {
 
   postFields = async () => {
     const accountDataObj = this.state.accountData;
-    delete accountDataObj["orders"];
     console.log(accountDataObj);
     const response = await fetch("/main/edit_account", {
       method: "POST",
@@ -82,23 +79,24 @@ export default class AccountProfile extends React.Component {
             name = {this.state.accountData.name} 
             furthestStage = {this.state.accountData.latest_order_stage} 
             updateAccountProfile = {this.updateAccountProfileAPICall}
-            usr_id_json = { {"_id": this.state.accountData._id} }
+            _id = { {"_id": this.state.accountData._id} }
           />
         </div>
-        <FieldsContainer1 fields={this.state.accountData} handleChange={this.handleChange} onSubmit={this.postFields}/>
-        <FieldsContainer2 fields={this.state.accountData} handleChange={this.handleChange} onSubmit={this.postFields}/>
-        <ActivityTracker orders={this.state.accountData.orders} account_id={this.state.accountData._id} updateAccountProfile={this.updateAccountProfileAPICall}/>
+        <FieldsContainer1 
+          fields={this.state.accountData} 
+          handleChange={this.handleChange} 
+          onSubmit={this.postFields}
+        />
+        <FieldsContainer2 
+          fields={this.state.accountData} 
+          handleChange={this.handleChange} 
+          onSubmit={this.postFields}
+        />
+        <ActivityTracker 
+          _id={this.state.accountData._id} 
+          updateAccountProfile={this.updateAccountProfileAPICall}
+        />
       </div>     
     );
   }
-} 
-
-const sample_data = {
-  key: '1',
-  name: 'John Brown',
-  company: '3C Electronics',
-  type: 'Small Business',
-  city: 'New York',
-  phoneNumber: '9090909090',
-  email: 'johnbrown@gmail.com',
-};
+}

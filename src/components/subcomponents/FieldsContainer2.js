@@ -5,6 +5,10 @@ import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 
 export default class FieldsContainer2 extends React.Component {
+  componentDidMount() {
+    console.log(this.props.fields);
+  }
+
   render() {
     return(
       <div>
@@ -31,15 +35,11 @@ export default class FieldsContainer2 extends React.Component {
             </ListItem>
             <Divider />
             <ListItem>
-              <EditableField name="phone_number" this fieldName="Phone Number" fieldData={this.props.fields.phone_number} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField name="phone_number" fieldName="Phone Number" fieldData={this.props.fields.phone_number} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
             </ListItem>
             <Divider />
           </List>
       </div>
     );
   }  
-
-  componentDidMount() {
-    console.log(this.props.fields);
-  }
 }
