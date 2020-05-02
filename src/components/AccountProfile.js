@@ -74,30 +74,6 @@ export default class AccountProfile extends React.Component {
   }
 
   render(){
-
-
-    // let fields_set = {
-    //   _id: this.state.accountData._id, 
-    //   contact_comm_type: this.state.accountData.contact_comm_type,
-    //   name: this.state.accountData.name,
-    //   dob: this.state.accountData.name, //needs sorting out on Amol's side
-    //   company: this.state.accountData.company,
-    //   education: this.state.accountData.education,
-    //   city: this.state.accountData.city,
-    //   state: this.state.accountData.state,
-    //   country: this.state.accountData.country,
-    //   last_contact: this.state.accountData.last_contact,
-    //   trading_accno: this.state.accountData.trading_accno,
-    //   demat_accno: this.state.accountData.demat_accno,
-    //   job_type: this.state.accountData.job_type,
-    //   marital_status: this.state.accountData.marital_status,
-    //   email: this.state.accountData.email,
-    //   phone_number: this.state.accountData.phone_number,
-    //   latest_order_stage: this.state.accountData.latest_order_stage,
-    // };
-    //alternative to fields_set is NOT this.state.accountData because orders, activity is not reqd. in FieldContainer
-
-
     return(
       <div className="profile-page-grid-container">
         {console.log(this.state.accountData)}
@@ -106,7 +82,7 @@ export default class AccountProfile extends React.Component {
             name = {this.state.accountData.name} 
             furthestStage = {this.state.accountData.latest_order_stage} 
             updateAccountProfile = {this.updateAccountProfileAPICall}
-            _id_json = { {"_id": this.state.accountData._id} }
+            usr_id_json = { {"_id": this.state.accountData._id} }
           />
         </div>
         <FieldsContainer1 fields={this.state.accountData} handleChange={this.handleChange} onSubmit={this.postFields}/>

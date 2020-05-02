@@ -13,156 +13,6 @@ import {
 import './styles/Accounts.css'
 import NewProfileDialogBox from './subcomponents/NewProfileDialogBox'
 
-export const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    company: '3C Electronics',
-    type: 'Small Business',
-    city: 'New York',
-    phoneNumber: '9090909090',
-    email: 'johnbrown@gmail.com',
-  },
-  {
-    key: '2',
-    name: 'Jane Brown',
-    company: 'GE Electronics',
-    type: 'Small Business',
-    city: 'New York',
-    phoneNumber: '9090909090',
-    email: 'johnbrown@gmail.com',
-  },
-  {
-    key: '3',
-    name: 'Jacob Chang',
-    company: '3C Electronics',
-    type: 'Small Business',
-    city: 'Atlanta',
-    phoneNumber: '8989897690',
-    email: 'johnbrown@gmail.com',
-  },
-  {
-    key: '4',
-    name: 'Mufutau',
-    company: 'Microsoft',
-    type: 'Small Business',
-    city: 'Mulhouse',
-    phoneNumber: "05514847692",
-    email: 'purus@vulputateposuerevulputate.ca',
-  },
-  {
-    key: '5',
-    name: 'Edward',
-    company: 'Lavasoft',
-    type: 'Individual',
-    city: 'Bucaramanga',
-    phoneNumber: "01419184513",
-    email: 'purus@vulputateposuerevulputate.ca',
-  },
-  {
-    key: '6',
-    name: 'Kirestin',
-    company: 'Chami',
-    type: 'Individual',
-    city: 'Loughborough',
-    phoneNumber: "0107648840",
-    email: 'ipsum.primis.in@nuncac.ca',
-  },
-  {
-    key: '7',
-    name: 'Jena',
-    company: 'Yahoo',
-    type: 'Individual',
-    city: 'Nampa',
-    phoneNumber: "02522615459",
-    email: 'at.fringilla@parturientmontesnascetur.ca',
-  },
-  {
-    key: '8',
-    name: 'Penelope',
-    company: 'Google',
-    type: 'Individual',
-    city: 'Lonzee',
-    phoneNumber: "010498810",
-    email: 'felis.eget@Maurisquis.com',
-  },
-  {
-    key: '9',
-    name: 'Ima',
-    company: 'Chami',
-    type: 'Enterprise',
-    city: 'Abaetetuba',
-    phoneNumber: "05672046522",
-    email: 'Nam.tempor@molestie.co.uk',
-  },
-  {
-    key: '10',
-    name: 'Joelle',
-    company: 'Altavista',
-    type: 'Enterprise',
-    city: 'Tomsk',
-    phoneNumber: "0117571720",
-    email: 'consectetuer@tinciduntaliquamarcu.org'
-  },
-  {
-    key: '11',
-    name: 'Cole',
-    company: 'Sibelius',
-    type: 'Enterprise',
-    city: 'Los Angeles',
-    phoneNumber: "07624959303",
-    email: 'convallis@In.ca',
-  },
-  {
-    key: '12',
-    name: 'Cyrus',
-    company: 'Lavasoft',
-    type: 'Enterprise',
-    city: 'Delhi',
-    phoneNumber: "05510801111",
-    email: 'tellus@sodalesMauris.com',
-  },
-  {
-    key: '13',
-    name:"Thaddeus",
-		company: "Lavasoft",
-    type: 'Mid-market',
-    city:"Kędzierzyn-Koźle",
-		email:"Donec.feugiat.metus@Aliquamfringillacursus.ca",
-		phoneNumber: "07649975638",
-  },
-  {
-    key: '14',
-    name:"Blythe",
-		company: "Yahoo",
-    type: 'Mid-market',
-		city:"Wechelderzande",
-		email:"turpis.vitae@magna.org",
-		phoneNumber: "08788483517",
-  },
-  {
-    key: '15',
-    name:"Salim",
-	  company: "Chami",
-    type: 'Mid-market',
-		city: "West Jakarta",
-		email:"metus.facilisis.lorem@Sedeget.net",
-		phoneNumber:"0800730152",
-  },
-  {
-    key: '16',
-    name:"Ishmael",
-		company: "Apple Systems",
-    type: 'Mid-market',
-		city:"Porto Cesareo",
-		email:"eu.turpis@ipsumprimis.edu",
-		phoneNumber:"05598364190",
-  },
-  
-]; 
-
-// rowSelection object indicates the need for row selection
-
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
@@ -190,9 +40,6 @@ export default class Accounts extends React.Component {
   componentDidMount() {
     fetch("/main/show_accounts").then(response =>
       response.json().then(data => {
-        data.forEach( (entry) => {
-          entry["_id"] = entry["_id"]["$oid"];
-        });
         this.setState({ fetchedData: data });
       })
     );
@@ -201,9 +48,6 @@ export default class Accounts extends React.Component {
   updateAccountsAPICall = () => {
     fetch("/main/show_accounts").then(response =>
       response.json().then(data => {
-        data.forEach( (entry) => {
-          entry["_id"] = entry["_id"]["$oid"];
-        });
         this.setState({ fetchedData: data });
       })
     );
@@ -274,7 +118,6 @@ export default class Accounts extends React.Component {
   };
 
   render() {
-    console.log(this.state.fetchedData);
     const columns = [
       {
         title: 'Name',
@@ -287,7 +130,7 @@ export default class Accounts extends React.Component {
       },
       {
         title: 'Profile Page',
-        dataIndex: '_id', //used to be 'key'
+        dataIndex: '_id',
         key: '_id',
         render: (text,key) => <Link to={{pathname: "/accountprofile", state: {cid: key._id} }}> Profile </Link>
       },
