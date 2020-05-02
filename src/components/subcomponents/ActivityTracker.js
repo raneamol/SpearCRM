@@ -10,6 +10,17 @@ export default function ActivityTracker(props) {
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date().toJSON().slice(0,10));
+  const [activitiesList, setActivitiesList] = useState("");
+
+//   [{"_id": "5eaade1967f5adbdd24460a7", "title": "Finalize Amol's order", "body": "eh", "date": “2020-02-04T15:08:56.000Z”, "activity_type": "future", "user_id": "5ea58fbc63e50fc607cf6a10", "elapsed": 0}, 
+//   {"_id": "5eaade2467f5adbdd24460a8", "title": "Finalize Amol's order", "body": "eh", "date": “2020-02-04T15:08:56.000Z”, "activity_type": "past", "user_id": "5ea58fbc63e50fc607cf6a10", "elapsed": 0}]
+
+  useEffect( () => {
+    fetch(`/main/display_account_orders/${props._id}`).then(response => {
+      return null;
+    });
+  }, []);
+
 
   const handleActivityType = (event, newActivityType) => {
     if (newActivityType !== null) {
@@ -52,49 +63,7 @@ export default function ActivityTracker(props) {
       props.updateAccountProfile();
     }
   }
-  // onToggle = event => {
-  //   this.setState({
-  //     activityType: event.target.id
-  //   }); 
-  // }
 
-  // handleToggle = (event, newActivityType) => {
-  //   if (newActivityType !== null) {
-  //     this.setState{( ActivityType:newActivityType )};
-  //   }
-  // };
-
-  // handleDateChange = event => {
-  //   this.setState({
-  //     draftDate: event.target.value
-  //   });
-  // }
-
-  // handleChange = event => {
-  //   this.setState({
-  //     draftBody: event.target.value
-  //   });
-  // }
-
-  // onSubmit = () => {
-  //   //check draftDate and type match
-  //   const activity = this.state;
-  //   const response = fetch('/add_activity', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': "application/json"
-  //     },
-  //     body: JSON.stringify()
-  //   });
-  //   if (response.ok) {
-  //     console.log("Response to add_activity worked");
-  //   }
-  // }
-
-  // componentDidUpdate() {
-  //   console.log(this.state);
-  // }
-  
   return(
     <div className="activity-tracker-container">
       <h2 style={{ textAlign: "center"}}> Activity Tracker</h2>

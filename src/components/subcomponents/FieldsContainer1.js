@@ -5,6 +5,10 @@ import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 
 export default class FieldsContainer1 extends React.Component { 
+  componentDidMount() {
+    console.log(this.props.fields);
+  }
+
   render() {
     console.log(this.props);
     return(
@@ -12,7 +16,7 @@ export default class FieldsContainer1 extends React.Component {
          <h2 style={{ textAlign: "center"}}> Fields 1</h2>
           <List>
             <ListItem>
-              <EditableField name="name" fieldName="Name" fieldData={this.props.fields.name} onChange={this.props.handleChange.bind("this")} onSubmit={this.props.onSubmit}/>
+              <EditableField name="name" fieldName="Name" fieldData={this.props.fields.name} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
             </ListItem>
             <Divider />
             <ListItem>
@@ -32,19 +36,11 @@ export default class FieldsContainer1 extends React.Component {
             </ListItem>
             <Divider />
             <ListItem>
-              <EditableField name="country" this fieldName="Country" fieldData={this.props.fields.country} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField name="country" fieldName="Country" fieldData={this.props.fields.country} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
              </ListItem>
             <Divider />
           </List>
       </div> 
     );
   }  
-
-  componentDidMount() {
-    console.log(this.props.fields);
-  }
-
-  componentDidUpdate() {
-    console.log(this.state);
-  }
-} 
+}
