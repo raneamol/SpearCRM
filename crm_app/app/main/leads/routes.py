@@ -1,10 +1,9 @@
 from flask import jsonify, request
 
-from bson.json_util import dumps
+import json
 
 from bson.objectid import ObjectId
 
-import json
 
 import datetime
 
@@ -12,24 +11,31 @@ from ...extensions import mongo
 
 from app.main.leads import leads
 
+def myconverter(o):
+	if isinstance(o, datetime.datetime):
+		return o.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+	elif isinstance(o, ObjectId):
+		return str(o)
+	else:
+		raise TypeError(o)
+
 @leads.route('/show_leads')
 def show_leads():
 	leads = mongo.db.Leads
 	leads_view = leads.find({}, {"_id" : 1, "name" : 1, "job_type" : 1, "company" : 1, "city" : 1, "email" : 1, "phone_number" : 1})
 	#dumps converts cursor to string json
-
-	leads_view = dumps(leads_view)
+	leads_view = list(leads_view)
+	leads_view = json.dumps(leads_view, default =myconverter)
 	return leads_view
 
 
 @leads.route('/display_lead/<usr_id>')
 def display_lead(usr_id):
 	leads = mongo.db.Leads
-	lead = leads.find_one({"_id" : ObjectId(usr_id)})
+	lead = leads.find({"_id" : ObjectId(usr_id)})
 	
-
-	lead = dumps(lead)
-	lead= json.loads(lead)
+	lead = list(lead)
+	lead = json.dumps(lead,default = myconverter)
 	
 	return lead
 
@@ -45,7 +51,7 @@ def edit_lead():
 	company = req_data["company"]
 	country = req_data["country"]
 	dob = req_data["dob"]
-	dob = datetime.datetime.strptime(dob, '%Y-%m-%d %H:%M:%S.%fZ')
+	dob = datetime.datetime.strptime(dob, '%Y-%m-%dT%H:%M:%S.%fZ')
 	#dob = new Date(dob)
 	education = req_data["education"]
 	email = req_data["email"]
@@ -91,7 +97,7 @@ def create_lead():
 	company = req_data["company"]
 	country = req_data["country"]
 	dob = req_data["dob"]
-	dob = datetime.datetime.strptime(dob, '%Y-%m-%d %H:%M:%S.%fZ')
+	dob = datetime.datetime.strptime(dob, '%Y-%m-%dT%H:%M:%S.%fZ')
 	#dob = new Date(dob)
 	education = req_data["education"]
 	email = req_data["email"]
@@ -138,6 +144,8 @@ def lead_to_accounts():
 	demat_accno = req_data["demat_accno"]
 	trading_accno = req_data["trading_accno"]
 	latest_order_stage = req_data["latest_order_stage"]
+	last_contact = req_data["last_contact"]
+	last_contact = datetime.datetime.strptime(last_contact, '%Y-%m-%dT%H:%M:%S.%fZ')
 
 	leads = mongo.db.Leads
 	accounts = mongo.db.Accounts
@@ -146,19 +154,22 @@ def lead_to_accounts():
 	"contact_comm_type" : contact_comm_type,
 	"demat_accno": demat_accno,
 	"trading_accno":trading_accno,
-	"latest_order_stage":latest_order_stage
+	"latest_order_stage":latest_order_stage,
+	"last_contact":last_contact
 }
 
 	a = leads.aggregate([{"$match":{"_id":usr_id}}, {"$addFields" :{
 	"contact_comm_type" : contact_comm_type,
 	"demat_accno": demat_accno,
 	"trading_accno":trading_accno,
-	"latest_order_stage":latest_order_stage
+	"latest_order_stage":latest_order_stage,
+	"last_contact":last_contact
 }}])
 	a = list(a)
 	b = a[0]
 	b.pop("_id", None)
-	b.pop("lead_source", None)  
+	b.pop("lead_source", None)
+	b.pop("status", None)
 	accounts.insert_one(b)
 	leads.delete_one({"_id" : usr_id})
 	return "Lead converted to account"

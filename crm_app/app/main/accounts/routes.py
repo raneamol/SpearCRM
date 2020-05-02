@@ -1,8 +1,5 @@
 from flask import jsonify, request, Response
 
-from bson.json_util import dumps,loads, CANONICAL_JSON_OPTIONS
-
-
 from bson.objectid import ObjectId
 
 import json
@@ -13,40 +10,34 @@ from ...extensions import mongo
 
 from app.main.accounts import accounts
 
-def my_handler(x):
-	if isinstance(x,datetime.datetime):
-		return x.isoformat()
-	elif isinstance(x, ObjectId):
-		return str(x)
+
+
+def myconverter(o):
+	if isinstance(o, datetime.datetime):
+		return o.strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+	elif isinstance(o, ObjectId):
+		return str(o)
 	else:
-		raise TypeError(x)
-		
+		raise TypeError(o)
 
 @accounts.route('/show_accounts')
 def show_accounts():
 	accounts = mongo.db.Accounts
 	accounts_view = accounts.find({}, {"_id" : 1, "name" : 1, "job_type" : 1, "company" : 1, "city" : 1, "email" : 1, "phone_number" : 1})
+	accounts_view = list(accounts_view)
 	#dumps converts cursor to string json
-	accounts_view = dumps(accounts_view)
+	accounts_view = json.dumps(accounts_view, default = myconverter)
 	return accounts_view
 
+#date changed
 @accounts.route('/display_account/<usr_id>')
 #5ea58fbc63e50fc607cf6a10
 def display_account(usr_id):
 	accounts = mongo.db.Accounts
-	account = accounts.find_one({"_id" : ObjectId(usr_id)})
-	
+	account = accounts.find({"_id" : ObjectId(usr_id)})
+	account = list(account)
 	orders = mongo.db.Orders
-	account_orders = orders.find({'account_id': usr_id})
-	#dumps converts cursor to string json
-	account_orders = dumps(account_orders)
-	#loading string json to dictionary json
-	account_orders = json.loads(account_orders)
-
-	account = dumps(account)
-	account = json.loads(account)
-
-	account["orders"] =account_orders
+	account = json.dumps(account, default=myconverter)
 
 	return account
 
@@ -198,7 +189,16 @@ def create_order():
 
 	return "Order Created"
 
+#myconverter used
+@accounts.route('/display_account_orders/<usr_id>')
+def display_user_orders(usr_id):
+	orders = mongo.db.Orders
 
+	account_orders = orders.find({'account_id': usr_id})
+	account_orders = list(account_orders)
+	account_orders = json.dumps(account_orders, default=myconverter)
+
+	return account_orders
 
 @accounts.route('/order_stage_change',methods = ["POST"])
 def order_stage_change():
@@ -221,16 +221,21 @@ def order_stage_change():
 
 	return "Order has been changed to stage {}".format(stage)
 
-
+#myconverter used
 @accounts.route('/show_all_orders')
 def show_all_orders():
 	orders = mongo.db.Orders
 	all_orders = orders.find()
-	all_orders = dumps(all_orders)
+	all_orders = list(all_orders)
+	all_orders = json.dumps(all_orders, default =myconverter)
 
 	return all_orders
 
-
+@accounts.route("/delete_order/<order_id>")
+def delete_order(order_id):
+	orders = mongo.db.Orders
+	orders.delete_one({"_id" : ObjectId(order_id)})
+	return "Order Deleted"
 
 @accounts.route('/create_activity',methods = ["POST"])
 def create_activity():
@@ -249,30 +254,50 @@ def create_activity():
     "body" : body,
     "date" : date,
     "activity_type" : activity_type,
-	"user_id": user_id
+	"user_id": user_id,
+	#new
+	"elapsed": 0
 }
 
 	activities.insert(values)
 
 	return "Values inserted"
-	
+
+#used myconverter
 @accounts.route('/show_user_activities/<usr_id>')
 def show_user_activities(usr_id):
 	
 	activities = mongo.db.Activities
-	account_activities = activities.find_one({'user_id': usr_id})
 	#dumps converts cursor to string json
-	account_activities = dumps(account_activities)
 	#loading string json to dictionary json
 	#account_activities = json.loads(account_activities)
+
+	#new
+	print(datetime.datetime.now())
+	activities.update_many({"activity_type": "future", "date": { "$lte" : datetime.datetime.now()}},{ "$set": { "elapsed": 1 ,"activity_type": "past"}})
+	#new end
+
+	account_activities = activities.find({'user_id': usr_id})
+	account_activities = list(account_activities)
+	account_activities = json.dumps(account_activities, default=myconverter)
+
 	return account_activities
 
 
+
+
+#used myconverter
 @accounts.route('/show_all_activities')
 def show_all_activities():
 	activities = mongo.db.Activities
+
+	activities.update_many({"activity_type": "future", "date": { "$lte" : datetime.datetime.now()}},{ "$set": { "elapsed": 1 ,"activity_type": "past"}})
+
 	all_activities = activities.find()
-	all_activities = dumps(all_activities)
+	
+	all_activities = list(all_activities)
+	print(all_activities)
+	all_activities = json.dumps(all_activities, default=myconverter)
 
 	return all_activities
 
