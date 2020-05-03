@@ -8,17 +8,6 @@ import AccountProfileHeader from "./subcomponents/AccountProfileHeader";
 import {cloneDeep} from 'lodash';
 const _ = require('lodash');
 
-
-//possible TODO: remove account data, make API response the state 
-// OR aD = this.state.accountData & use aD.name, aD.company etc.
-
-//1. SCRAPPED Remove account data nesting, take entire API response as state
-//2. DONE Create a grouped change handler for all the states (like fieldContainer cha)
-//3. DONE Pass down data  to fieldsContainer and EditableFields
-//4. Pass down change handler to fieldsContainer and EditableFields
-//5. onSubmit (i.e. when tick is clicked), send post of AccountProfile state. If rsponse ok, reload the page
-
-
 export default class AccountProfile extends React.Component {
   state = {
     accountData: {},

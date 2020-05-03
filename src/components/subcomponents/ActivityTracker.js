@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import '../styles/ActivityTracker.css'
 import ManualLogger from './ManualLogger.js'
-import PrettyList from './PrettyList.js'
 import NextSteps from './NextSteps'
 import PastActivity from './PastActivity'
 import NewOrderDialogBox from './NewOrderDialogBox'

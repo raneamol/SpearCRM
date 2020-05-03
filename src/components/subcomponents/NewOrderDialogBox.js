@@ -5,16 +5,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Autocomplete from "@material-ui/lab/Autocomplete";
-import {data} from "../Accounts"
-
-import 'date-fns';
-import DateFnsUtils from '@date-io/date-fns';
-import {
-  MuiPickersUtilsProvider,
-  KeyboardDatePicker,
-} from '@material-ui/pickers';
-
 
 export default class NewTaskDialogBox extends React.Component{
   state = {
