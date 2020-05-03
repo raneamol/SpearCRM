@@ -28,27 +28,27 @@ export default class Pipeline extends React.Component {
     const board = {
       lanes: [
         {
+          id: 0,
+          title: 'Archived order',
+          label: '',
+          cards: []
+        },
+        {
           id: 1,
           title: 'Negotiating order',
-          label: '1',
+          label: '',
           cards: []
         },
         {
           id: 2,
           title: 'Finalized order',
-          label: '2',
+          label: '',
           cards: []
         },
         {
           id: 3,
           title: 'Transacted order',
-          label: '3',
-          cards: []
-        },
-        {
-          id: 0,
-          title: 'Archived order',
-          label: '4',
+          label: '',
           cards: []
         }
       ]
@@ -56,14 +56,15 @@ export default class Pipeline extends React.Component {
 
     // formatting attributes to make a suitable input for Board component
     orders.forEach( (entry) => {
-      entry.id = entry["_id"]["$oid"];
+      entry.id = entry["_id"];
       entry.stage = entry["stage"];
-      entry.title = entry["account_name"];
-      if (entry.trans_type = "sell") {
-        entry.description = `Sell: ${entry["company"]}`;
+      entry.title = entry["company"];
+      //TODO: Add account name
+      if (entry.trans_type = "Sell") {
+        entry.description = `Sell account's stocks`;
       }
       else {
-        entry.description = `Buy: ${entry["company"]}`;
+        entry.description = `Buy stocks for account`;
       }
       entry.label = `${entry.no_of_shares} X $${entry.cost_of_share}`;
     });
@@ -78,7 +79,7 @@ export default class Pipeline extends React.Component {
 
   updateCardStage = async (fromLaneId, toLaneId, cardId, index) => {
     const newCardStage = {
-      "order_id" : cardId,
+      "_id" : cardId,
       "stage" : toLaneId
     };
 
@@ -103,7 +104,7 @@ export default class Pipeline extends React.Component {
     console.log(cardId);
     fetch(`main/delete_order/${cardId}`).then(response =>
       response.json().then(data => {
-        if (data==="order deleted"){
+        if (data==="Order Deleted"){
           this.updatePipelineAPICall();
         }
       })

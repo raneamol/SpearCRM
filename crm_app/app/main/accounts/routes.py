@@ -37,7 +37,7 @@ def display_account(usr_id):
 	account = accounts.find({"_id" : ObjectId(usr_id)})
 	account = list(account)
 	orders = mongo.db.Orders
-	account = json.dumps(account, default=myconverter)
+	account = json.dumps(account[0], default=myconverter)
 
 	return account
 
@@ -107,6 +107,18 @@ def complete_orders():
 	account_orders = orders.find({'account_id': usr_id})
 	
 	orders.update_many({"stage" : 3, 'account_id' : usr_id},{"$set": {"stage" : 0}})
+
+
+
+
+	accounts = mongo.db.Accounts
+
+	max_stage_order = orders.find({"account_id":usr_id}).sort("stage",-1).limit(1)
+
+
+	accounts.update({"_id": ObjectId(usr_id)}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
+
+	
 
 	return "All transacted orders have been archived"
 

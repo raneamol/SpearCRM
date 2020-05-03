@@ -75,6 +75,7 @@ export default class ManualLogger extends React.Component {
         <MuiPickersUtilsProvider utils={DateFnsUtils}>
           <KeyboardDatePicker
             variant="inline"
+            //'%Y-%m-%dT%H:%M:%S.%fZ'
             format="MM/dd/yyyy"
             id="date-picker-inline"
             label="Birth date"

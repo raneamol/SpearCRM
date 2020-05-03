@@ -16,10 +16,17 @@ export default function ActivityTracker(props) {
 //   {"_id": "5eaade2467f5adbdd24460a8", "title": "Finalize Amol's order", "body": "eh", "date": “2020-02-04T15:08:56.000Z”, "activity_type": "past", "user_id": "5ea58fbc63e50fc607cf6a10", "elapsed": 0}]
 
   useEffect( () => {
-    fetch(`/main/display_account_orders/${props._id}`).then(response => {
-      response.json().then( data => setActivitiesList(data) )
+    fetch(`/main/show_user_activities/${props._id}`).then(response => {
+      response.json().then( data => setActivitiesList(data) );
+      console.log(props);
     });
   }, []);
+
+  const updateActivityTrackerAPICall = () => {
+    fetch(`/main/show_user_activities/${props._id}`).then(response => {
+      response.json().then( data => setActivitiesList(data) );
+    });
+  }
 
   const handleActivityType = (event, newActivityType) => {
     if (newActivityType !== null) {
@@ -41,10 +48,10 @@ export default function ActivityTracker(props) {
 
   const postNewActivity = async () => {
     const newActivity = {
-      "user_id": props.account_id,
+      "user_id": props._id,
       "title": activityTitle,
       "body": activityBody,
-      "date": activityDate,
+      "date": new Date( Date.parse(activityDate) ),
       "activity_type": activityType,
     };
     console.log(newActivity);
@@ -63,12 +70,7 @@ export default function ActivityTracker(props) {
     }
   }
 
-  const updateActivityTrackerAPICall = () => {
-    fetch(`/main/display_account_orders/${props._id}`).then(response => {
-      response.json().then( data => setActivitiesList(data) )
-    });
-  }
-
+  console.log(props);
   return(
     <div className="activity-tracker-container">
       <h2 style={{ textAlign: "center"}}> Activity Tracker</h2>

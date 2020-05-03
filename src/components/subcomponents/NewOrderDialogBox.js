@@ -5,6 +5,9 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
+
 
 export default class NewTaskDialogBox extends React.Component{
   state = {
@@ -31,7 +34,7 @@ export default class NewTaskDialogBox extends React.Component{
 
   postNewOrder = async () => {
     const newOrder = this.state;
-    newOrder.stage = 0;
+    newOrder.stage = 1;
     newOrder.account_id = this.props.account_id;
     delete newOrder["open"];
     console.log(newOrder);
@@ -91,6 +94,19 @@ export default class NewTaskDialogBox extends React.Component{
               fullWidth
               onChange={this.handleChange}
             />
+
+            {/* <Select
+              id="trans_type"
+              value={this.state.trans_type}
+              onChange={this.handleChange}
+              inputProps={{ readOnly: true }}
+            >
+              <MenuItem value="">
+                <em>None</em>
+              </MenuItem>
+              <MenuItem value={"Buy"}>Buy</MenuItem>
+              <MenuItem value={"Sell"}>Sell</MenuItem>
+            </Select> */}
 
             <TextField
               autoFocus
