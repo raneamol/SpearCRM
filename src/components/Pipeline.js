@@ -70,7 +70,7 @@ export default class Pipeline extends React.Component {
 
     // populating board with formatted orders
     orders.forEach( (entry) => {
-      board.lanes[entry.stage-1].cards.push(entry);
+      board.lanes[entry.stage].cards.push(entry);
     });
 
     return board;
