@@ -40,9 +40,9 @@ export default function TopOpportunitiesWidget() {
           <PeopleOutlineIcon />
           <div> &nbsp; Leads</div>
         </ToggleButton>
-        <ToggleButton value="customers" aria-label="centered">
+        <ToggleButton value="accounts" aria-label="centered">
           <PeopleIcon />
-          <div> &nbsp; Customers</div>
+          <div> &nbsp; Accounts</div>
         </ToggleButton>
       </ToggleButtonGroup>
 
@@ -63,7 +63,7 @@ export default function TopOpportunitiesWidget() {
                   />
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete">
-                      <Link to={{ pathname: (alignment === "customers" ? '/accountprofile' : '/leadprofile'), state:{uid:element.id} }}>
+                      <Link to={{ pathname: (alignment === "accounts" ? '/accountprofile' : '/leadprofile'), state:{uid:element.id} }}>
                           <OpenInNewIcon/>
                       </Link>
                     </IconButton>
@@ -86,7 +86,7 @@ const sample_opps = {
     // {"id":"4", "name":"Shivam","hotness":"Very Likely"},
     // {"id":"5", "name":"Sagar", "hotness":"Very Likely"},
   ],
-  "customers" : [
+  "accounts" : [
     {"id":"6", "name":"Kanksha", "hotness":"Moderate" },
     {"id":"7", "name":"Devang", "hotness":"High" },
     {"id":"8", "name":"Vishal", "hotness":"Moderate" },

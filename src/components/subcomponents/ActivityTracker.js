@@ -6,7 +6,7 @@ import PastActivity from './PastActivity'
 import NewOrderDialogBox from './NewOrderDialogBox'
 
 export default function ActivityTracker(props) {
-  const [activityType, setActivityType] = useState("future"); //past or future
+  const [activityType, setActivityType] = useState("past"); //past or future
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date().toJSON().slice(0,10));
@@ -59,7 +59,7 @@ export default function ActivityTracker(props) {
     if (response.ok) {
       console.log("response worked!");
       console.log(response);
-      props.updateAccountProfile();
+      updateActivityTrackerAPICall();
     }
   }
 
