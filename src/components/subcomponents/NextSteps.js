@@ -1,7 +1,11 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import '../styles/PrettyList.css'
 
 export default function NextSteps(props) {
+  useEffect (() => {
+    console.log(props);
+  })
+
   const transitionActivity = async (activityId) => {
     const activityToTransition = {
       "_id" : activityId,
@@ -32,7 +36,7 @@ export default function NextSteps(props) {
           {props.activitiesList.map( (element, i) => {
             return (
               <li className="blue" key={i}>
-                <input className="largerCheckbox" type="checkbox" onClick={transitionActivity(element._id)}/>
+                <input className="largerCheckbox" type="checkbox" onClick={() => {transitionActivity(element._id)}}/>
                 <div className="where"> {element.title} </div>
                 <div className="when"> {element.date} </div>
                 <p className="description"> {element.body} </p>

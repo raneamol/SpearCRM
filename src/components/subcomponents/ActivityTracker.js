@@ -88,11 +88,11 @@ export default function ActivityTracker(props) {
         postNewActivity = {postNewActivity}
       />
       <NextSteps 
-        activitiesList={activitiesList.filter(activity => activity["activity_type"] == "future")} 
+        activitiesList={activitiesList.filter(activity => activity["activity_type"] === "future")} 
         updateActivityTracker={updateActivityTrackerAPICall}
       />
       <PastActivity
-        activitiesList={activitiesList.filter(activity => activity["activity_type"] == "past")}
+        activitiesList={activitiesList.filter(activity => activity["activity_type"] === "past")}
       />
     </div>
   ); 
