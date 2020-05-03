@@ -9,27 +9,19 @@ export default class Pipeline extends React.Component {
   };
 
   componentDidMount() {
-    //API Call to get orders. Here repr. by sampleAPIData
-    const sampleAPIData = [
-      {"_id": {"$oid": "5ea593ecd98710bdcd066182"}, "account_name": "Jake Paul", "company": "Google", "no_of_shares": 40, "cost_of_share": 20, "stage": 1,
-      "account_id": "5ea58fbc63e50fc607cf6a12", "trans_type": "sell"},
-      {"_id": {"$oid": "5ea593f6d98710bdcd066183"}, 
-      "company": "Google", "no_of_shares": 40, "account_name": "Jeff Paul", "cost_of_share": 20, "stage": 2, "account_id": "5ea58fbc63e50fc607cf6a12",
-      "trans_type": "sell"},
-    ];
-    this.setState({ fetchedOrders: sampleAPIData });
+    fetch("/main/show_all_orders").then(response =>
+      response.json().then(data => {
+        this.setState({ fetchedOrders: data });
+      })
+    );
   }
 
   updatePipelineAPICall() {
-    //API Call to get orders. Here repr. by sampleAPIData
-    const sampleAPIData = [
-      {"_id": {"$oid": "5ea593ecd98710bdcd066182"}, "account_name": "Jake Paul", "company": "Google", "no_of_shares": 40, "cost_of_share": 20, "stage": 1,
-      "account_id": "5ea58fbc63e50fc607cf6a12", "trans_type": "sell"},
-      {"_id": {"$oid": "5ea593f6d98710bdcd066183"}, 
-      "company": "Google", "no_of_shares": 40, "account_name": "Jeff Paul", "cost_of_share": 20, "stage": 2, "account_id": "5ea58fbc63e50fc607cf6a12",
-      "trans_type": "sell"}
-    ];
-    this.setState({ fetchedOrders: sampleAPIData });
+    fetch("/main/show_all_orders").then(response =>
+      response.json().then(data => {
+        this.setState({ fetchedOrders: data });
+      })
+    );
   }
 
   transformOrdersToBoardData = (orders) => {
