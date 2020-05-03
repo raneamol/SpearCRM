@@ -6,21 +6,19 @@ import { Tooltip } from '@material-ui/core';
 export default class AccountProfileHeader extends React.Component {
   archiveTransactedOrders = async () => {
     if (this.props.furthestStage != 3) {return null;}
-    else {
-      const _id = this.props._id;
-      const response = await fetch("/main/complete_orders", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(_id)
-      });
-      
-      if (response.ok) {
-        console.log("response worked!");
-        console.log(response);
-        this.props.updateAccountProfile();
-      }
+    const _id = this.props._id;
+    const response = await fetch("/main/complete_orders", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(_id)
+    });
+    
+    if (response.ok) {
+      console.log("response worked!");
+      console.log(response);
+      this.props.updateAccountProfile();
     }
   }
 

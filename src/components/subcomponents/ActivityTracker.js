@@ -63,6 +63,12 @@ export default function ActivityTracker(props) {
     }
   }
 
+  const updateActivityTrackerAPICall = () => {
+    fetch(`/main/display_account_orders/${props._id}`).then(response => {
+      response.json().then( data => setActivitiesList(data) )
+    });
+  }
+
   return(
     <div className="activity-tracker-container">
       <h2 style={{ textAlign: "center"}}> Activity Tracker</h2>
@@ -79,8 +85,13 @@ export default function ActivityTracker(props) {
         handleChangeInDate={handleChangeInDate}
         postNewActivity = {postNewActivity}
       />
-      <NextSteps activitiesList={activitiesList.filter(activity => activity["activity_type"] == "future")} />
-      <PastActivity activitiesList={activitiesList.filter(activity => activity["activity_type"] == "past")} />
+      <NextSteps 
+        activitiesList={activitiesList.filter(activity => activity["activity_type"] == "future")} 
+        updateActivityTracker={updateActivityTrackerAPICall}
+      />
+      <PastActivity
+        activitiesList={activitiesList.filter(activity => activity["activity_type"] == "past")}
+      />
     </div>
   ); 
 }

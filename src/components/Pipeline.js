@@ -125,6 +125,7 @@ export default class Pipeline extends React.Component {
           data={this.transformOrdersToBoardData(this.state.fetchedOrders)}
           onCardDelete={this.deleteCard}
           onCardMoveAcrossLanes={this.updateCardStage}
+          collapsibleLanes
         />
       </>
     );
