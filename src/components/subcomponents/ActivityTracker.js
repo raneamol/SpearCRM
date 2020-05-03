@@ -1,13 +1,12 @@
 import React, {useEffect, useState} from 'react'
 import '../styles/ActivityTracker.css'
 import ManualLogger from './ManualLogger.js'
-import PrettyList from './PrettyList.js'
 import NextSteps from './NextSteps'
 import PastActivity from './PastActivity'
 import NewOrderDialogBox from './NewOrderDialogBox'
 
 export default function ActivityTracker(props) {
-  const [activityType, setActivityType] = useState("future"); //past or future
+  const [activityType, setActivityType] = useState("past"); //past or future
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date().toJSON().slice(0,10));
@@ -60,8 +59,14 @@ export default function ActivityTracker(props) {
     if (response.ok) {
       console.log("response worked!");
       console.log(response);
-      props.updateAccountProfile();
+      updateActivityTrackerAPICall();
     }
+  }
+
+  const updateActivityTrackerAPICall = () => {
+    fetch(`/main/display_account_orders/${props._id}`).then(response => {
+      response.json().then( data => setActivitiesList(data) )
+    });
   }
 
   return(
@@ -80,19 +85,15 @@ export default function ActivityTracker(props) {
         handleChangeInDate={handleChangeInDate}
         postNewActivity = {postNewActivity}
       />
-      <NextSteps activitiesList={activitiesList.filter(activity => activity["activity_type"] == "future")} />
-      <PastActivity activitiesList={activitiesList.filter(activity => activity["activity_type"] == "past")} />
+      <NextSteps 
+        activitiesList={activitiesList.filter(activity => activity["activity_type"] == "future")} 
+        updateActivityTracker={updateActivityTrackerAPICall}
+      />
+      <PastActivity
+        activitiesList={activitiesList.filter(activity => activity["activity_type"] == "past")}
+      />
     </div>
   ); 
-}
-
-function PastActivity() {
-  return(
-    <>
-      <h2> Past Activity </h2>
-      <PrettyList />
-    </>
-  );
 }
 
 class EmailAutomator extends React.Component {
