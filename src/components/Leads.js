@@ -9,156 +9,10 @@ import {
   Route,
   Link
 } from "react-router-dom";
-import NewProfileDialogBox from './subcomponents/NewProfileDialogBox'
+import NewLeadDialogBox from './subcomponents/NewLeadDialogBox'
 import './styles/Accounts.css' //both Accounts and Leads pages have the same styling
 
-export const data = [
-  {
-    key: '1',
-    name: 'John Brown',
-    company: '3C Electronics',
-    type: 'Small Business',
-    city: 'New York',
-    phoneNumber: '9090909090',
-    email: 'johnbrown@gmail.com',
-  },
-  {
-    key: '2',
-    name: 'Jane Brown',
-    company: 'GE Electronics',
-    type: 'Small Business',
-    city: 'New York',
-    phoneNumber: '9090909090',
-    email: 'johnbrown@gmail.com',
-  },
-  {
-    key: '3',
-    name: 'Jacob Chang',
-    company: '3C Electronics',
-    type: 'Small Business',
-    city: 'Atlanta',
-    phoneNumber: '8989897690',
-    email: 'johnbrown@gmail.com',
-  },
-  {
-    key: '4',
-    name: 'Mufutau',
-    company: 'Microsoft',
-    type: 'Small Business',
-    city: 'Mulhouse',
-    phoneNumber: "05514847692",
-    email: 'purus@vulputateposuerevulputate.ca',
-  },
-  {
-    key: '5',
-    name: 'Edward',
-    company: 'Lavasoft',
-    type: 'Individual',
-    city: 'Bucaramanga',
-    phoneNumber: "01419184513",
-    email: 'purus@vulputateposuerevulputate.ca',
-  },
-  {
-    key: '6',
-    name: 'Kirestin',
-    company: 'Chami',
-    type: 'Individual',
-    city: 'Loughborough',
-    phoneNumber: "0107648840",
-    email: 'ipsum.primis.in@nuncac.ca',
-  },
-  {
-    key: '7',
-    name: 'Jena',
-    company: 'Yahoo',
-    type: 'Individual',
-    city: 'Nampa',
-    phoneNumber: "02522615459",
-    email: 'at.fringilla@parturientmontesnascetur.ca',
-  },
-  {
-    key: '8',
-    name: 'Penelope',
-    company: 'Google',
-    type: 'Individual',
-    city: 'Lonzee',
-    phoneNumber: "010498810",
-    email: 'felis.eget@Maurisquis.com',
-  },
-  {
-    key: '9',
-    name: 'Ima',
-    company: 'Chami',
-    type: 'Enterprise',
-    city: 'Abaetetuba',
-    phoneNumber: "05672046522",
-    email: 'Nam.tempor@molestie.co.uk',
-  },
-  {
-    key: '10',
-    name: 'Joelle',
-    company: 'Altavista',
-    type: 'Enterprise',
-    city: 'Tomsk',
-    phoneNumber: "0117571720",
-    email: 'consectetuer@tinciduntaliquamarcu.org'
-  },
-  {
-    key: '11',
-    name: 'Cole',
-    company: 'Sibelius',
-    type: 'Enterprise',
-    city: 'Los Angeles',
-    phoneNumber: "07624959303",
-    email: 'convallis@In.ca',
-  },
-  {
-    key: '12',
-    name: 'Cyrus',
-    company: 'Lavasoft',
-    type: 'Enterprise',
-    city: 'Delhi',
-    phoneNumber: "05510801111",
-    email: 'tellus@sodalesMauris.com',
-  },
-  {
-    key: '13',
-    name:"Thaddeus",
-		company: "Lavasoft",
-    type: 'Mid-market',
-    city:"Kędzierzyn-Koźle",
-		email:"Donec.feugiat.metus@Aliquamfringillacursus.ca",
-		phoneNumber: "07649975638",
-  },
-  {
-    key: '14',
-    name:"Blythe",
-		company: "Yahoo",
-    type: 'Mid-market',
-		city:"Wechelderzande",
-		email:"turpis.vitae@magna.org",
-		phoneNumber: "08788483517",
-  },
-  {
-    key: '15',
-    name:"Salim",
-	  company: "Chami",
-    type: 'Mid-market',
-		city: "West Jakarta",
-		email:"metus.facilisis.lorem@Sedeget.net",
-		phoneNumber:"0800730152",
-  },
-  {
-    key: '16',
-    name:"Ishmael",
-		company: "Apple Systems",
-    type: 'Mid-market',
-		city:"Porto Cesareo",
-		email:"eu.turpis@ipsumprimis.edu",
-		phoneNumber:"05598364190",
-  },
-  
-]; 
+
 
 // rowSelection object indicates the need for row selection
 
@@ -181,8 +35,24 @@ export default class Leads extends React.Component {
   state = {
     searchText: '',
     searchedColumn: '',
+    fetchedData: [],
   };
 
+  componentDidMount() {
+    fetch("/main/main/show_leads").then(response =>
+      response.json().then(data => {
+        this.setState({ fetchedData: data });
+      })
+    );
+  }
+
+  updateLeadsAPICall = () => {
+    fetch("/main/show_leads").then(response =>
+      response.json().then(data => {
+        this.setState({ fetchedData: data });
+      })
+    );
+  }
 //Searching logic
 
   getColumnSearchProps = dataIndex => ({
@@ -262,9 +132,9 @@ export default class Leads extends React.Component {
       },
       {
         title: 'Profile Page',
-        dataIndex: 'key',
-        key: 'key',
-        render: (text,key) => <Link to={{pathname: "/leadprofile", state: {uid: key.key} }}> Profile </Link>
+        dataIndex: '_id',
+        key: '_id',
+        render: (text,key) => <Link to={{pathname: "/leadprofile", state: {cid: key._id} }}> Profile </Link>
       },
       {
         title: 'Company',
@@ -283,28 +153,28 @@ export default class Leads extends React.Component {
         sortDirections: ['descend'],
       },
       {
-        title: 'Type',
-        dataIndex: 'type',
-        key: 'type',
-        filters: [
-          {
-            text: 'Individual',
-            value: 'Individual',
-          },
-          {
-            text: 'Small Business',
-            value: 'Small Business',
-          },
-          {
-            text: 'Mid-market',
-            value: 'Mid-market',
-          },
-          {
-            text: 'Enterprise',
-            value: 'Enterprise',
-          },
-        ],
-        onFilter: (value, record) => record.name.indexOf(value) === 0,
+        title: 'Job Type',
+        dataIndex: 'job_type',
+        key: 'job_type',
+        // filters: [
+        //   {
+        //     text: 'Individual',
+        //     value: 'Individual',
+        //   },
+        //   {
+        //     text: 'Small Business',
+        //     value: 'Small Business',
+        //   },
+        //   {
+        //     text: 'Mid-market',
+        //     value: 'Mid-market',
+        //   },
+        //   {
+        //     text: 'Enterprise',
+        //     value: 'Enterprise',
+        //   },
+        // ],
+        // onFilter: (value, record) => record.name.indexOf(value) === 0,
       },
       {
         title: 'Email',
@@ -319,8 +189,8 @@ export default class Leads extends React.Component {
       },
       {
         title: 'Phone No.',
-        dataIndex: 'phoneNumber',
-        key: 'phoneNumber',
+        dataIndex: 'phone_number', // used to be phoneNumber
+        key: 'phone_number',
         sorter: (a, b) => a.name.length - b.name.length,
         sortDirections: ['descend'],
       },
@@ -330,12 +200,12 @@ export default class Leads extends React.Component {
       <>
         <Table 
           columns={columns}
-          dataSource={data}
+          dataSource={this.state.fetchedData}
           rowSelection={{type: "checkbox", ...rowSelection,}}
           title={() => 'Leads'}
           onChange={onChange}
         />
-        <div className="add-profile-button"> <NewProfileDialogBox /> </div>
+        <div className="add-profile-button"> <NewLeadDialogBox updateLeads={this.updateLeadsAPICall}/> </div>
       </>
     );
   }
