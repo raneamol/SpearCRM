@@ -150,6 +150,8 @@ def lead_to_accounts():
 	leads = mongo.db.Leads
 	accounts = mongo.db.Accounts
 
+	activities = mongo.db.Activities
+
 	values = {
 	"contact_comm_type" : contact_comm_type,
 	"demat_accno": demat_accno,
@@ -171,18 +173,11 @@ def lead_to_accounts():
 	b.pop("lead_source", None)
 	b.pop("status", None)
 	accounts.insert_one(b)
+	account = accounts.find({}).sort("_id",-1).limit(1)
+	print(str(account[0]["_id"]))
+	activities.update_many({"user_id": str(usr_id)},{"$set": {"user_id": str(account[0]["_id"])} })
 	leads.delete_one({"_id" : usr_id})
 	return "Lead converted to account"
-
-
-
-
-
-
-
-
-
-
 
 
 

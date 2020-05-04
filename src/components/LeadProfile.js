@@ -49,10 +49,7 @@ export default class LeadProfile extends React.Component {
     deepClone.status = event.target.id; //used to be event.target.value
     this.setState({ 
       leadData: deepClone
-    });
-    setTimeout(() => { this.postFields(); }, 1500);
-    // TODO: Replace this timeout with a best practice. 
-    // Problem is that setState is asynchronous, hence postFields reads old value.
+    }, () => {this.postFields()} );
   }
 
   postFields = async () => {
