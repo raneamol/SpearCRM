@@ -73,10 +73,10 @@ export default class LeadProfileHeader extends React.Component {
           <span 
            className="stage1" 
            onClick={this.props.onClick} 
-           id="Open"
+           id="Uncontacted"
            style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"forestgreen"} : {backgroundColor:"blue"} }
           >
-            <span id="Open" className="stage-name"> &nbsp; &nbsp; Open  &nbsp; &nbsp; </span>
+            <span id="Uncontacted" className="stage-name"> Uncontacted </span>
           </span>  
 
           <span 

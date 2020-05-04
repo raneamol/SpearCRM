@@ -39,7 +39,7 @@ export default class Leads extends React.Component {
   };
 
   componentDidMount() {
-    fetch("/main/main/show_leads").then(response =>
+    fetch("/main/show_leads").then(response =>
       response.json().then(data => {
         this.setState({ fetchedData: data });
       })

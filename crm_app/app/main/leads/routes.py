@@ -35,7 +35,7 @@ def display_lead(usr_id):
 	lead = leads.find({"_id" : ObjectId(usr_id)})
 	
 	lead = list(lead)
-	lead = json.dumps(lead,default = myconverter)
+	lead = json.dumps(lead[0],default = myconverter)
 	
 	return lead
 
