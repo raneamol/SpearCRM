@@ -82,8 +82,8 @@ export default class AccountProfile extends React.Component {
           onSubmit={this.postFields}
         />
         <ActivityTracker 
-          updateAccountProfile={this.updateAccountProfileAPICall}
           _id = {this.props.location.state.cid}
+          lead = {0}
         />
       </div>     
     );

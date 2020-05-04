@@ -19,7 +19,7 @@ export default class FieldsContainer2 extends React.Component {
             </ListItem>
             <Divider />
             <ListItem>
-              <EditableField name="trading_accno" fieldName="Trading Account No." fieldData={this.props.fields.trading_accno} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField name="lead_source" fieldName="Lead Source" fieldData={this.props.fields.lead_source} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
             </ListItem>
             <Divider />
             <ListItem>

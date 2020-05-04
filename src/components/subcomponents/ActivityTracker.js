@@ -71,10 +71,17 @@ export default function ActivityTracker(props) {
   }
 
   console.log(props);
+
+  let ordersComponents = null;
+  if (!props.lead) {
+    ordersComponents = <NewOrderDialogBox account_id={props._id}/> ;
+  }
+  //orders components shouldn't render for a lead
+
   return(
     <div className="activity-tracker-container">
       <h2 style={{ textAlign: "center"}}> Activity Tracker</h2>
-      <NewOrderDialogBox account_id={props._id}/> 
+      {ordersComponents}
       <EmailAutomator />
       <ManualLogger 
         draftType={activityType} 

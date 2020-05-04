@@ -15,10 +15,12 @@ export default class LeadProfileHeader extends React.Component {
   state = {
     open: false,
     submitted: false,
+    demat_accno: 0,
+    trading_accno: 0,
   }
 
   handleClickOpen = () => {
-    if (this.props.leadStatus == "contacted") {
+    if (this.props.leadStatus == "Contacted") {
       this.setState({ open:true });
     }
   };
@@ -31,32 +33,59 @@ export default class LeadProfileHeader extends React.Component {
     this.setState({ submitted:false });
   }
 
-  redirectorModalInput = () => {
-    this.setState({ open:false });
-    this.setState({ submitted: true });
+  transitionLeadToAccount = async () => {
+    const fields = {
+      demat_accno: this.state.demat_accno,
+      trading_accno: this.state.trading_accno,
+      _id : this.props._id,
+      contact_comm_type: "Email",
+      latest_order_stage: 0,
+      last_contact: Date.now()
+    }
+    console.log(fields);
+
+    const response = await fetch("/main/lead_to_account", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(fields)
+    });
+
+    if (response.ok) {
+      console.log("response worked!");
+      this.setState({ open:false });
+      this.setState({ submitted: true });
+    }
   };
+
+  handleChange = (event) => {
+    this.setState({
+      [event.target.id] : event.target.value 
+    });
+  }
 
   render() {
     return(
       <>
-        <span className="profile-name"> John Brown </span>
+        <span className="profile-name"> {this.props.name} </span>
         <span className="stage-indicator">
           <span 
            className="stage1" 
            onClick={this.props.onClick} 
-           id="uncontacted"
-           style={ this.props.leadStatus==="contacted" ? {backgroundColor:"forestgreen"} : {backgroundColor:"blue"} }
+           id="Open"
+           style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"forestgreen"} : {backgroundColor:"blue"} }
           >
-            <span id="uncontacted" className="stage-name"> Uncontacted </span>
+            <span id="Open" className="stage-name"> &nbsp; &nbsp; Open  &nbsp; &nbsp; </span>
           </span>  
 
           <span 
            className="stage2" 
            onClick={this.props.onClick} 
-           id="contacted"
-           style={ this.props.leadStatus==="contacted" ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }
+           id="Contacted"
+           style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }
           > 
-            <span id="contacted" className="stage-name"> Contacted </span>
+            <span id="Contacted" className="stage-name"> Contacted </span>
           </span>  
 
           <span style={{ verticalAlign: "middle" }}>
@@ -73,22 +102,34 @@ export default class LeadProfileHeader extends React.Component {
           onClose={this.handleClose}
           aria-labelledby="form-dialog-title"
         >
-          <DialogTitle id="form-dialog-title">Lead converts to Account holder</DialogTitle>
+          <DialogTitle id="form-dialog-title">Convert Lead to Account holder</DialogTitle>
           <DialogContent>
             <TextField
               autoFocus
               margin="dense"
-              id="demat"
+              id="demat_accno"
               label="Demat Account No."
-              type="text"
+              type="number"
               variant="outlined"
+              fullWidth
             />
+
+            <TextField
+              autoFocus
+              margin="dense"
+              id="trading_accno"
+              label="Trading Account No."
+              type="number"
+              variant="outlined"
+              fullWidth
+            />
+            
           </DialogContent>
           <DialogActions>
           <Button onClick={this.handleClose} color="primary">
             Cancel
           </Button>
-          <Button onClick={this.redirectorModalInput} color="primary">
+          <Button onClick={this.transitionLeadToAccount} color="primary">
             {/* TODO: Validate the input somehow */}
             Confirm
           </Button>
@@ -113,8 +154,7 @@ export default class LeadProfileHeader extends React.Component {
                 Return
               </Button>
             </Link>
-            <Link to={{pathname:'./AccountProfile', state:{ uid:this.props.uid }}}>
-              {/* TODO: Correct the logic to redirect with correct account id */}
+            <Link to={{pathname:'./AccountProfile', state:{ cid:this.props._id }}}>
               <Button onClick={this.handleModalClose} color="primary" autoFocus>
                 Proceed
               </Button>
