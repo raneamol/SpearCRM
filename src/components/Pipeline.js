@@ -28,12 +28,6 @@ export default class Pipeline extends React.Component {
     const board = {
       lanes: [
         {
-          id: 0,
-          title: 'Archived order',
-          label: '',
-          cards: []
-        },
-        {
           id: 1,
           title: 'Negotiating order',
           label: '',
@@ -48,6 +42,12 @@ export default class Pipeline extends React.Component {
         {
           id: 3,
           title: 'Transacted order',
+          label: '',
+          cards: []
+        },
+        {
+          id: 0,
+          title: 'Archived order',
           label: '',
           cards: []
         }
@@ -70,8 +70,11 @@ export default class Pipeline extends React.Component {
     });
 
     // populating board with formatted orders
-    orders.forEach( (entry) => {
-      board.lanes[entry.stage].cards.push(entry);
+      //old way below can still be edited, hardcoded in for better performance
+      //board.lanes[entry.stage].cards.push(entry);
+
+    board.lanes.forEach( (Lane) => {
+      Lane.cards = orders.filter(entry => entry.stage === Lane.id);
     });
 
     return board;
