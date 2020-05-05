@@ -51,7 +51,7 @@ export default function Dashboard() {
       <FunnelChart />
 			<UpcomingTasksWidget 
 				updateDashboard = {updateDashboardAPICall}
-				activitiesList = {allActivities}
+				activitiesList = {allActivities.filter( (activity) => activity["activity_type"] === "future" )}
 			/>
     </div>
 	); 
@@ -255,7 +255,7 @@ class UpcomingTasksWidget extends React.Component {
     			<ul className="tasks-list">
 						{
 							//filter activitesList to return only future activities. Then map those activities to the returned block of code.
-							this.props.activitiesList.filter( (activity) =>  activity.activity_type = "future").map( (element,i) => {
+							this.props.activitiesList.map( (element,i) => {
 								return(							
 									<div key={i}>
 										
