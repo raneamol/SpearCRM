@@ -14,7 +14,7 @@ import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import {Link} from 'react-router-dom';
 import '../styles/TopOpportunitiesWidget.css'
 
-export default function TopOpportunitiesWidget() {
+export default function TopOpportunitiesWidget(props) {
   const [alignment, setAlignment] = useState("leads");
   
   const handleAlignment = (event, newAlignment) => {
@@ -48,7 +48,7 @@ export default function TopOpportunitiesWidget() {
 
       <div className="material-ui-list">
         <List dense={true}>
-          {sample_opps[alignment].map( (element,i) => {
+          {props.topLeads.map( (element,i) => {
             return(
               <div key={element.id}>
                 <ListItem>
@@ -57,13 +57,15 @@ export default function TopOpportunitiesWidget() {
                       <div> {i+1} </div>
                     </Avatar>
                   </ListItemAvatar>
+
                   <ListItemText
                     primary={element.name}
-                    secondary={element.hotness}
+                    secondary={element.lead_score}
                   />
+                  
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete">
-                      <Link to={{ pathname: (alignment === "accounts" ? '/accountprofile' : '/leadprofile'), state:{uid:element.id} }}>
+                      <Link to={{ pathname: (alignment === "accounts" ? '/accountprofile' : '/leadprofile'), state:{cid:element._id} }}>
                           <OpenInNewIcon/>
                       </Link>
                     </IconButton>

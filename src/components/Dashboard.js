@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import './styles/Dashboard.css';
 import Chart from 'react-google-charts';
 import CanvasJSReact from './Other/canvasjs.react';
@@ -7,12 +7,52 @@ import NewTaskDialogBox from './subcomponents/NewTaskDialogBox';
 import {Link} from 'react-router-dom';
 
 export default function Dashboard() {
+	const [topLeads, setTopLeads] = useState([]);
+	const [topAccounts, setTopAccounts] = useState([]);
+	const [allActivities, setAllActivities] = useState([]);
+
+	useEffect( () => {
+		fetch("/main/top_leads").then(response =>
+      response.json().then(data => {
+        setTopLeads(data);
+      })
+		);
+		
+		fetch("/main/show_all_activities").then(response =>
+			response.json().then(data => {
+				setAllActivities(data);
+			})
+		);
+	}, []);
+
+	//get top accounts too
+
+	const updateDashboardAPICall = () => {
+		fetch("/main/top_leads").then(response =>
+      response.json().then(data => {
+        setTopLeads(data);
+      })
+		);
+		
+		fetch("/main/show_all_activities").then(response =>
+			response.json().then(data => {
+				setAllActivities(data);
+			})
+		);
+	}
+
 	return(
     <div className="grid-container">
-  		<TopOpportunitiesWidget />
+			<TopOpportunitiesWidget 
+				topLeads = {topLeads} 
+				topAccounts = {topAccounts}
+			/>
 			<LineChart />
       <FunnelChart />
-  	  <UpcomingTasksWidget />
+			<UpcomingTasksWidget 
+				updateDashboard = {updateDashboardAPICall}
+				activitiesList = {allActivities}
+			/>
     </div>
 	); 
 } 
@@ -174,27 +214,63 @@ class FunnelChart extends React.Component {
 }
 
 class UpcomingTasksWidget extends React.Component {
+	componentDidMount() {
+		console.log(this.props);
+	}
+
+	transitionActivity = async (activityId) => {
+    const activityToTransition = {
+      "_id" : activityId,
+      "activity_type" : "past"
+    };
+
+    const response = await fetch("/main/change_activity_type", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(activityToTransition)
+    });
+
+    if (response.ok) {
+      console.log("response worked!");
+      this.props.updateDashboard();
+    }
+  }
+
   render() {
     return(
       <div className="upcoming-tasks-widget">
-        <div className='tasks-widget-title'> &nbsp; Tasks <span className="new-task-button"> <NewTaskDialogBox /> </span> </div>
+
+        <div className='tasks-widget-title'> 
+					&nbsp; Upcoming Tasks 
+					<span className="new-task-button"> 
+						<NewTaskDialogBox /> 
+					</span> 
+				</div>
+
         <hr />
+
     		<div className="tasks-scroller-container">
     			<ul className="tasks-list">
-						{tasksList.map( (element,i) => {
-							return (							
-								<div key={i}>
-									<li className="task-title">		
-									&nbsp; <input type="checkbox" className="largerCheckbox" />
-									<Link to={{ pathname: '/accountprofile', state:{uid:""} }}>
-										&nbsp; {element.taskTitle}                      
-									</Link>
-										  <span className="task-date">  {element.taskDate} </span> 
-									</li>
-									<li className="task-body"> &nbsp; {element.taskBody} </li>
-								</div>
-							);
-						})
+						{
+							//filter activitesList to return only future activities. Then map those activities to the returned block of code.
+							this.props.activitiesList.filter( (activity) =>  activity.activity_type = "future").map( (element,i) => {
+								return(							
+									<div key={i}>
+										
+										<li className="task-title">		
+										&nbsp; <input type="checkbox" className="largerCheckbox" onClick={() => {this.transitionActivity(element._id)}} />
+										<Link to={{ pathname: '/accountprofile', state:{cid: element.user_id} }}>
+											&nbsp; {element.title}                      
+										</Link>
+											  <span className="task-date">  {element.date} </span> 
+										</li>
+
+										<li className="task-body"> &nbsp; {element.body} </li>
+									</div>
+								);
+							})
 						}
     			</ul>
         </div>
