@@ -51,6 +51,7 @@ export default class NewTaskDialogBox extends React.Component{
       console.log("response worked!");
       console.log(response);
       this.setState({ open:false });
+      this.props.updateActivityTracker();
     }
   }
   

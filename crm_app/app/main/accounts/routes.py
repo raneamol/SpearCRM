@@ -196,6 +196,9 @@ def create_order():
 	"trans_type": trans_type 
 }
 
+	accounts = mongo.db.Accounts
+	accounts.update({"_id": ObjectId(account_id)},{"$set" : {"latest_order_stage": 1}})
+
 	orders = mongo.db.Orders
 	orders.insert(values)
 
@@ -246,7 +249,22 @@ def show_all_orders():
 @accounts.route("/delete_order/<order_id>")
 def delete_order(order_id):
 	orders = mongo.db.Orders
+	order = orders.find({"_id":ObjectId(order_id)})
+
+	accounts = mongo.db.Accounts
+	#accounts.update({"_id": order["account_id"]}, {"$set": {"latest_order_stage"}})
+	account_id = order[0]["account_id"]
+	
 	orders.delete_one({"_id" : ObjectId(order_id)})
+	print(account_id)
+	order_count = orders.count_documents({"account_id":account_id})
+	max_stage_order = orders.find({"account_id":account_id}).sort("stage",-1).limit(1)
+	
+	if(order_count==0):
+		accounts.update({"_id": ObjectId(account_id)}, {"$set": {"latest_order_stage": 0}})
+	else:
+		accounts.update({"_id": ObjectId(account_id)}, {"$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
+	
 	return "Order Deleted"
 
 @accounts.route('/create_activity',methods = ["POST"])
