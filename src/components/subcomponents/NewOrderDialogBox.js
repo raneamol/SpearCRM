@@ -7,6 +7,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
+import '../styles/NewOrderDialogBox.css'
 
 
 export default class NewTaskDialogBox extends React.Component{
@@ -18,7 +19,7 @@ export default class NewTaskDialogBox extends React.Component{
     cost_of_share: 0,
   };
 
-  handleClickOpen = () => {
+  handleOpen = () => {
     this.setState({ open:true });
   };
 
@@ -55,10 +56,12 @@ export default class NewTaskDialogBox extends React.Component{
   
   render() {
     return (
-      <div>
-        <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-          + Add New Order
-        </Button>
+      <>
+        <span>
+          <Button className="add-new-order-button" variant="outlined" color="primary" onClick={this.handleOpen}>
+            + Add New Order
+          </Button>
+        </span>
         <Dialog
           open={this.state.open}
           onClose={this.handleClose}
@@ -138,7 +141,7 @@ export default class NewTaskDialogBox extends React.Component{
             </Button>
           </DialogActions>
         </Dialog>
-      </div>
+      </>
     );
   }
 }

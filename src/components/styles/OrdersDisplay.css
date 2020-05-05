@@ -1,0 +1,7 @@
+.orders-container {
+  overflow: auto;
+  height: 300px;
+  width: 400px;
+}
+
+/* view-orders-button is set to 290px width inline */
