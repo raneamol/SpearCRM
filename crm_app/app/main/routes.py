@@ -4,8 +4,12 @@ from ..extensions import mongo
 
 from app.main import main
 
+from .helper import fetch_order
+
 #main = Blueprint('main',__name__)
 
 @main.route('/homepage')
 def homepage():
-    return '<h1>You are on the hopepage!!!<h1>'
+    abc = fetch_order()
+
+    return str(abc)
