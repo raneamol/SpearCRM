@@ -13,6 +13,8 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
+import DeleteIcon from '@material-ui/icons/Delete';
+
 import '../styles/OrdersDisplay.css'
 
 export default function OrdersDisplay (props) {
@@ -24,6 +26,19 @@ export default function OrdersDisplay (props) {
 
   const handleClose = () => {
     setOpen(false);
+  }
+
+  const deleteOrder = (orderId) => {
+    fetch(`main/delete_order/${orderId}`).then(response =>
+      response.json().then(data => {
+        if (data==="Order Deleted"){
+          this.props.updateActivityTracker()
+          .then( () => this.props.updateAccountProfile())
+          .catch( () => console.log("deleteOrder chaining error"));
+          //chained together promises
+        }
+      })
+    );
   }
 
   return (
@@ -52,11 +67,17 @@ export default function OrdersDisplay (props) {
         <DialogContent>
           <div className="orders-container">
             <List>
+
               {/* Display non-archived orders here */}
               {
                 props.ordersList.map( (order, i) => {
                   let iconContent = (order.trans_type === "Buy" ? "B" : "S" );
-                  let orderLane = (order.stage === 3 ? "Transacted" : order.stage === 2 ? "Finalized" : order.stage === 1 ? "Negotiating" : order.stage === 0 ? "Archived" : "");
+                  let orderLane = (
+                    order.stage === 3 ? "Initiated" :
+                    order.stage === 2 ? "Finalized" : 
+                    order.stage === 1 ? "To-be-transacted" : 
+                    order.stage === 0 ? "Transacted" : ""
+                  );
                   return(
                     <div key={i}>
                       <ListItem>
@@ -76,6 +97,13 @@ export default function OrdersDisplay (props) {
                           <div style={{ right:5 }}>
                             {orderLane}
                           </div>
+
+                          <IconButton 
+                            edge="end"
+                            onClick={deleteOrder(order._id)}  
+                          >
+                            <DeleteIcon />
+                          </IconButton>
                         </ListItemSecondaryAction>
 
                       </ListItem>
@@ -107,8 +135,9 @@ export default function OrdersDisplay (props) {
 
                         <ListItemSecondaryAction>
                           <div style={{ right:5 }}>
-                            Archived
+                            Transacted
                           </div>
+                          
                         </ListItemSecondaryAction>
 
                       </ListItem>

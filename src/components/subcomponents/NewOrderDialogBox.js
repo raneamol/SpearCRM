@@ -51,7 +51,10 @@ export default class NewTaskDialogBox extends React.Component{
       console.log("response worked!");
       console.log(response);
       this.setState({ open:false });
-      this.props.updateActivityTracker();
+
+      this.props.updateActivityTracker()
+      .then(() => this.props.updateAccountProfile())
+      .catch("Error in updating ActivityTracker or AccountProfile after new Order addition");
     }
   }
   

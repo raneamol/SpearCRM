@@ -29,25 +29,25 @@ export default class Pipeline extends React.Component {
       lanes: [
         {
           id: 1,
-          title: 'Negotiating order',
+          title: 'Order Initiated',
           label: '',
           cards: []
         },
         {
           id: 2,
-          title: 'Finalized order',
+          title: 'Order Finalized',
           label: '',
           cards: []
         },
         {
           id: 3,
-          title: 'Transacted order',
+          title: 'Order To-be-transacted',
           label: '',
           cards: []
         },
         {
           id: 0,
-          title: 'Archived order',
+          title: 'Order Transacted',
           label: '',
           cards: []
         }
@@ -59,7 +59,6 @@ export default class Pipeline extends React.Component {
       entry.id = entry["_id"];
       entry.stage = entry["stage"];
       entry.title = entry["company"];
-      //TODO: Add account name
       if (entry.trans_type = "Sell") {
         entry.description = `Sell account's stocks`;
       }
@@ -69,10 +68,6 @@ export default class Pipeline extends React.Component {
       entry.label = `${entry.no_of_shares} X $${entry.cost_of_share}`;
     });
 
-    // populating board with formatted orders
-      //old way below can still be edited, hardcoded in for better performance
-      //board.lanes[entry.stage].cards.push(entry);
-
     board.lanes.forEach( (Lane) => {
       Lane.cards = orders.filter(entry => entry.stage === Lane.id);
     });
@@ -81,25 +76,34 @@ export default class Pipeline extends React.Component {
   }
 
   updateCardStage = async (fromLaneId, toLaneId, cardId, index) => {
-    const newCardStage = {
-      "_id" : cardId,
-      "stage" : toLaneId
-    };
+    //these are the only permissible drag-and-drop transitions
+    if (   fromLaneId === 1 && toLaneId === 2
+        || fromLaneId === 2 && toLaneId === 3
+        || fromLaneId === 2 && toLaneId === 0){
+      const newCardStage = {
+        "_id" : cardId,
+        "stage" : toLaneId
+      };
 
-    console.log(newCardStage);
+      console.log(newCardStage);
 
-    const response = await fetch("/main/order_stage_change", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(newCardStage)
-    });
-    
-    if (response.ok) {
-      console.log("response worked!");
-      console.log(response);
-      this.updatePipelineAPICall();
+      const response = await fetch("/main/order_stage_change", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify(newCardStage)
+      });
+      
+      if (response.ok) {
+        console.log("response worked!");
+        console.log(response);
+        this.updatePipelineAPICall();
+      } 
+    }
+    else {
+      this.forceUpdate();
+      alert("This kind of drag-and-drop is not allowed.")
     }
   }
 

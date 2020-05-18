@@ -16,27 +16,68 @@ export default class FieldsContainer1 extends React.Component {
          <h2 style={{ textAlign: "center"}}> Fields 1</h2>
           <List>
             <ListItem>
-              <EditableField name="name" fieldName="Name" fieldData={this.props.fields.name} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField 
+                name="name" 
+                fieldName="Name" 
+                fieldData={this.props.fields.name} 
+                onChange={this.props.handleChange} 
+                onSubmit={this.props.onSubmit}
+              />
             </ListItem>
             <Divider />
+
             <ListItem>
-              <EditableField name="company" fieldName="Company" fieldData={this.props.fields.company} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField
+                name="company"
+                fieldName="Company"
+                fieldData={this.props.fields.company}
+                onChange={this.props.handleChange}
+                onSubmit={this.props.onSubmit}
+              />
             </ListItem>
             <Divider />
+
             <ListItem>
-              <EditableField name="education" fieldName="Education" fieldData={this.props.fields.education} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField 
+                name="education" 
+                fieldName="Education" 
+                fieldData={this.props.fields.education} 
+                onChange={this.props.handleChange}  
+                onSubmit={this.props.onSubmit}
+              />
             </ListItem>
             <Divider />
+
             <ListItem>
-              <EditableField name="city" fieldName="City" fieldData={this.props.fields.city} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField 
+                name="city" 
+                fieldName="City" 
+                fieldData={this.props.fields.city} 
+                onChange={this.props.handleChange} 
+                onSubmit={this.props.onSubmit}
+              />
             </ListItem>
             <Divider />
+            
             <ListItem>
-              <EditableField name="state" fieldName="State" fieldData={this.props.fields.state} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField 
+                name="state" 
+                fieldName="State" 
+                fieldData={this.props.fields.state} 
+                onChange={this.props.handleChange} 
+                onSubmit={this.props.onSubmit}
+              />
             </ListItem>
             <Divider />
+
             <ListItem>
-              <EditableField name="country" fieldName="Country" fieldData={this.props.fields.country} onChange={this.props.handleChange} onSubmit={this.props.onSubmit}/>
+              <EditableField 
+                name="country" 
+                fieldName="Country" 
+                fieldData={this.props.fields.country} 
+                onChange={this.props.handleChange} 
+                onSubmit={this.props.onSubmit}
+              />
              </ListItem>
             <Divider />
           </List>

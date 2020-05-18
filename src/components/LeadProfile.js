@@ -92,11 +92,13 @@ export default class LeadProfile extends React.Component {
           fields={this.state.leadData}
           handleChange={this.handleChange} 
           onSubmit={this.postFields}
+          lead = {1}
         /> 
         <ActivityTracker 
           _id = {this.props.location.state.cid}
           lead = {1}
         />
+{/* 'lead = 1' communicates that the parent component is LeadProfile */}
       </div>     
     );
   }

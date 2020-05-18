@@ -132,7 +132,6 @@ export default class LeadProfileHeader extends React.Component {
             Cancel
           </Button>
           <Button onClick={this.transitionLeadToAccount} color="primary">
-            {/* TODO: Validate the input somehow */}
             Confirm
           </Button>
         </DialogActions>

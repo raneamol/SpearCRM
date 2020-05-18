@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -12,6 +12,10 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
 
 
 const data = [
@@ -164,7 +168,11 @@ const data = [
 
 
 export default function NewTaskDialogBox() {
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
+  //const [activityType, setActivityType] = useState("past"); //past or future
+  const [activityTitle, setActivityTitle] = useState("");
+  const [activityBody, setActivityBody] = useState("");
+  const [activityDate, setActivityDate] = useState(new Date().toJSON().slice(0,10));
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -173,6 +181,19 @@ export default function NewTaskDialogBox() {
   const handleClose = () => {
     setOpen(false);
   };
+
+  let allCustomersAPIData = null;
+  let allCustomers = null;
+  
+
+  useEffect( () => {
+    //update API name
+    fetch("/main/get_all_customers_and_ids").then(response =>
+      response.json().then(data => {
+        allCustomersAPIData = data;
+      })
+    );
+  }, []);
 
   return (
     <div>
@@ -186,16 +207,26 @@ export default function NewTaskDialogBox() {
       >
         <DialogTitle id="form-dialog-title">Add New Task</DialogTitle>
         <DialogContent>
-        <Autocomplete
-          options={data}
-          getOptionLabel={data => data.name}
-          style={{ width: 300 }}
-          renderInput={params => (
-            <TextField {...params} label="Lead/Account" variant="outlined" />
-          )}
-        />
+          <FormControl 
+            variant="outlined" 
+            fullWidth
+          >
+            <InputLabel>Lead/Account</InputLabel>
+            <Select
+              value={activityDate}
+              onChange={(event) => setActivityDate(event.target.value)}
+              label="Lead/Account"
+              name="activityDate"
+            >
+              {allCustomers}
+              <MenuItem value=""> <em>None</em> </MenuItem>
+              <MenuItem value={"high school"}>High school</MenuItem>
+              <MenuItem value={"college"}>College</MenuItem>
+            </Select>
+          </FormControl>
 
           <MaterialUIPickers />
+
           <TextField
             autoFocus
             margin="dense"

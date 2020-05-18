@@ -11,6 +11,11 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import MenuItem from '@material-ui/core/MenuItem';
+import FormControl from '@material-ui/core/FormControl';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+
 
 export default class NewTaskDialogBox extends React.Component{
   state = {
@@ -36,7 +41,10 @@ export default class NewTaskDialogBox extends React.Component{
 
   handleChange = (event) => {
     this.setState({
-      [event.target.id] : event.target.value
+      [event.target.id || event.target.name] : event.target.value
+      //takes the first truthy value
+      //textField inputs generate synthetic event and use event.target.id
+      //dropdown inputs generate normal event use event.target.name
     });
   }
 
@@ -163,38 +171,69 @@ export default class NewTaskDialogBox extends React.Component{
 
             <MaterialUIPickers date={this.state.dob} handleChangeInDate={this.handleChangeInDate} />
 
-            <TextField
-              autoFocus
-              margin="dense"
-              id="education"
-              label="Education"
-              type="text"
-              variant="outlined"
-              fullWidth
-              onChange={this.handleChange}
-            />
+            <div style={{ paddingTop: 10 }}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel>Education</InputLabel>
+                <Select
+                  value={this.state.education}
+                  onChange={this.handleChange}
+                  label="Education"
+                  name="education"
+                >
+                  <MenuItem value=""> <em>None</em> </MenuItem>
+                  <MenuItem value={"high school"}>High school</MenuItem>
+                  <MenuItem value={"college"}>College</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
 
-            <TextField
-              autoFocus
-              margin="dense"
-              id="job_type"
-              label="Job Type"
-              type="text"
-              variant="outlined"
-              fullWidth
-              onChange={this.handleChange}
-            />
+            <div style={{ paddingTop: 10 }}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel>Job Type</InputLabel>
+                <Select
+                  value={this.state.job_type}
+                  onChange={this.handleChange}
+                  label="Job Type"
+                  name="job_type"
+                >
+                  <MenuItem value=""> <em>None</em> </MenuItem>
+                  <MenuItem value={"services"}>Services</MenuItem>
+                  <MenuItem value={"other"}>Other</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
 
-            <TextField
-              autoFocus
-              margin="dense"
-              id="marital_status"
-              label="Marital Status"
-              type="text"
-              variant="outlined"
-              fullWidth
-              onChange={this.handleChange}
-            />
+            <div style={{ paddingTop: 10 }}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel>Marital Status</InputLabel>
+                <Select
+                  value={this.state.marital_status}
+                  onChange={this.handleChange}
+                  label="Marital Status"
+                  name="marital_status"
+                >
+                  <MenuItem value=""> <em>None</em> </MenuItem>
+                  <MenuItem value={"Married"}>Married</MenuItem>
+                  <MenuItem value={"Unmarried"}>Unmarried</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
+
+            <div style={{ paddingTop: 10 }}>
+              <FormControl variant="outlined" fullWidth>
+                <InputLabel>Lead Status</InputLabel>
+                <Select
+                  value={this.state.status}
+                  onChange={this.handleChange}
+                  label="Lead Status"
+                  name="status"
+                >
+                  <MenuItem value=""> <em>None</em> </MenuItem>
+                  <MenuItem value={"Open"}>Open</MenuItem>
+                  <MenuItem value={"Contacted"}>Contacted</MenuItem>
+                </Select>
+              </FormControl>
+            </div>
 
             <TextField
               autoFocus
@@ -206,19 +245,6 @@ export default class NewTaskDialogBox extends React.Component{
               fullWidth
               onChange={this.handleChange}
             />
-
-            <TextField
-              autoFocus
-              margin="dense"
-              id="status"
-              label="Lead Status (Open/Contacted)"
-              type="text"
-              variant="outlined"
-              fullWidth
-              onChange={this.handleChange}
-            />
-
-            {/* TODO: Use a Select field, not a text field for lead status */}
 
           </DialogContent>
           <DialogActions>

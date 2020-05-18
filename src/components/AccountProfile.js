@@ -5,8 +5,6 @@ import FieldsContainer1 from "./subcomponents/FieldsContainer1";
 import FieldsContainer2 from "./subcomponents/FieldsContainer2";
 import ActivityTracker from "./subcomponents/ActivityTracker";
 import AccountProfileHeader from "./subcomponents/AccountProfileHeader";
-import {cloneDeep} from 'lodash';
-const _ = require('lodash');
 
 export default class AccountProfile extends React.Component {
   state = {
@@ -34,10 +32,11 @@ export default class AccountProfile extends React.Component {
   
   handleChange = (event) => {
     console.log("handleChange triggered");
-    const deepClone = _.cloneDeep(this.state.accountData);
-    deepClone[event.target.name] = event.target.value;
     this.setState({
-      accountData : deepClone
+      accountData : {
+        ...this.state.accountData,
+        [event.target.name] : (event.target.id === "dob" ? event.toISOString() : event.target.value),
+      }
     });
   }
 
@@ -80,11 +79,14 @@ export default class AccountProfile extends React.Component {
           fields={this.state.accountData} 
           handleChange={this.handleChange} 
           onSubmit={this.postFields}
+          lead = {0}
         />
         <ActivityTracker 
           _id = {this.props.location.state.cid}
+          updateAccountProfile = {this.updateAccountProfileAPICall}
           lead = {0}
         />
+        {/* 'lead = 0' communicates that the parent component is AccountProfile */}
       </div>     
     );
   }

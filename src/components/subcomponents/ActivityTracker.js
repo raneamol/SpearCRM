@@ -84,9 +84,12 @@ export default function ActivityTracker(props) {
         <NewOrderDialogBox 
           account_id={props._id} 
           updateActivityTracker={updateActivityTrackerAPICall} 
+          updateAccountProfile={props.updateAccountProfile} 
         />
         <OrdersDisplay 
           ordersList={ordersList} 
+          updateAccountProfile={props.updateAccountProfile} 
+          updateActivityTracker={updateActivityTrackerAPICall} 
         />
       </div>
     );
@@ -112,6 +115,7 @@ export default function ActivityTracker(props) {
       <NextSteps 
         activitiesList={activitiesList.filter(activity => activity["activity_type"] === "future")} 
         updateActivityTracker={updateActivityTrackerAPICall}
+        updateAccountProfile={props.updateAccountProfile}
       />
       <PastActivity
         activitiesList={activitiesList.filter(activity => activity["activity_type"] === "past")}
