@@ -6,10 +6,13 @@ import json
 
 import datetime
 
+from datetime import timedelta
+
 from ...extensions import mongo
 
 from app.main.accounts import accounts
 
+from ..helper import fetch_order
 
 
 def myconverter(o):
@@ -193,7 +196,8 @@ def create_order():
     "cost_of_share" : cost_of_share,
     "stage" : stage,
     "account_id" : account_id,
-	"trans_type": trans_type 
+	"trans_type": trans_type,
+	"creation_date":datetime.datetime.now()
 }
 
 	accounts = mongo.db.Accounts
@@ -250,8 +254,16 @@ def show_all_orders():
 def delete_order(order_id):
 	orders = mongo.db.Orders
 	order = orders.find({"_id":ObjectId(order_id)})
+	activities = mongo.db.Activities
+
+	order1 = orders.find({"$and": [ {"_id":ObjectId(order_id)}, {"activity_id":{"$exists":True}}]})
+	order_count = order1.count()
+	
+	if(order_count==1):
+		activities.delete_one({"_id": ObjectId(order[0]["activity_id"])})
 
 	accounts = mongo.db.Accounts
+	
 	#accounts.update({"_id": order["account_id"]}, {"$set": {"latest_order_stage"}})
 	account_id = order[0]["account_id"]
 	
@@ -264,7 +276,7 @@ def delete_order(order_id):
 		accounts.update({"_id": ObjectId(account_id)}, {"$set": {"latest_order_stage": 0}})
 	else:
 		accounts.update({"_id": ObjectId(account_id)}, {"$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
-	
+
 	return "Order Deleted"
 
 @accounts.route('/create_activity',methods = ["POST"])
@@ -286,7 +298,8 @@ def create_activity():
     "activity_type" : activity_type,
 	"user_id": user_id,
 	#new
-	"elapsed": 0
+	"elapsed": 0,
+	"ai_activity": 0
 }
 
 	activities.insert(values)
@@ -341,6 +354,43 @@ def change_activity_type():
 
 	activities.update({"_id": ObjectId(_id)},{"$set":{"activity_type":activity_type}})
 	return "Activity updated"
+
+
+@accounts.route('/get_order_from_email')
+def get_order_from_email():
+	order_list = fetch_order()
+	for i in order_list:
+		n_email = i["From"]
+		n_email = n_email.split('<')[1]
+		email = n_email.split('>')[0]
+		company = i["company"]
+		action = i["action"]
+		no_of_shares = i["no_of_shares"]
+		amount = i["amount"]
+
+		accounts = mongo.db.Accounts
+		orders = mongo.db.Orders
+		activities = mongo.db.Activities
+		
+		account = accounts.find_one({"email":email},{"_id": 1, "name": 1})
+
+
+		if amount == '':
+			amount = "Any"
+
+		title = "{} {} shares of {} for Price:{}?".format(action,no_of_shares,company,amount)
+		body = "Finalize order of {} to {} {} shares of {}. Price:{}".format(account["name"],action,no_of_shares,company,amount)
+		date = datetime.datetime.now() + timedelta(hours = 2)
+
+		accounts.update({"_id": account["_id"]},{"$set" : {"latest_order_stage": 1}})
+		activities.insert({"title": title, "body": body, "date": date, "activity_type": "future", "user_id": str(account["_id"]), "elapsed":0, "ai_activity": 1})
+		activity = activities.find({}).sort("_id",-1).limit(1)
+		orders.insert({ "company": company, "no_of_shares": no_of_shares, "cost_of_share": amount, "stage": 1, "account_id":str(account["_id"]), "trans_type": action, "activity_id": str(activity[0]["_id"]), "creation_date":datetime.datetime.now()})
+
+
+	return "Inserted"
+
+
 
 
 

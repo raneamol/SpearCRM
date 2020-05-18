@@ -80,7 +80,11 @@ def fetch_order():
                 continue
             else:
                 break
-        if final is not 0:
+        
+        if final != 0:
+            email_id = (i["From"])
+            final["From"] = email_id
+
             order_list.append(final)
         #print(order_list)
     return order_list
