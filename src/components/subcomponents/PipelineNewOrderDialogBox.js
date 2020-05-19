@@ -9,18 +9,34 @@ import Select from '@material-ui/core/Select';
 import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
+import AddIcon from '@material-ui/icons/Add';
+
 import '../styles/NewOrderDialogBox.css'
 
 
-export default class NewOrderDialogBox extends React.Component{
+export default class PipelineNewOrderDialogBox extends React.Component{
   state = {
     open: false,
     company: "",
     trans_type: "",
     no_of_shares: 0,
     cost_of_share: 0,
+    selectOptions : [], //only set on initial load (mount)
+    account_id : 0,
   };
 
+  componentDidMount() {
+    fetch("/main/get_all_account_names").then(response =>
+      response.json().then(data => {
+        let menuItems = [<MenuItem value=""> <em>None</em> </MenuItem>] ;
+        data.forEach( (entry) => {
+          menuItems.push(<MenuItem value={entry._id}> {entry.name} </MenuItem>);
+        });
+        this.setState({ selectOptions: menuItems });
+      })
+    );
+  }
+  
   componentDidUpdate() {
     console.log(this.state);
   }
@@ -45,8 +61,8 @@ export default class NewOrderDialogBox extends React.Component{
   postNewOrder = async () => {
     const newOrder = this.state;
     newOrder.stage = 1;
-    newOrder.account_id = this.props.account_id;
-    delete newOrder["open"];
+    delete newOrder.open;
+    delete newOrder.selectOptions;
     console.log(newOrder);
     const response = await fetch("/main/create_order", {
       method: "POST",
@@ -61,7 +77,7 @@ export default class NewOrderDialogBox extends React.Component{
       console.log(response);
       this.setState({ open:false });
 
-      this.props.updateActivityTracker()
+      this.props.updatePipeline()
       .then(() => this.props.updateAccountProfile())
       .catch("Error in updating ActivityTracker or AccountProfile after new Order addition");
     }
@@ -71,8 +87,14 @@ export default class NewOrderDialogBox extends React.Component{
     return (
       <>
         <span>
-          <Button className="add-new-order-button" variant="outlined" color="primary" onClick={this.handleOpen}>
-            + Add New Order
+          <Button 
+            className="add-new-order-button" 
+            variant="contained" 
+            color="primary" 
+            onClick={this.handleOpen}
+            startIcon={<AddIcon />}
+          >
+            Add New Order
           </Button>
         </span>
         <Dialog
@@ -91,15 +113,17 @@ export default class NewOrderDialogBox extends React.Component{
             "usr_id" : "A_12342069"
         } */}
 
-            <TextField
-              autoFocus
-              margin="dense"
-              id="company"
-              label="Company"
-              type="text"
-              fullWidth
-              onChange={this.handleChange}
-            />
+            <FormControl variant="outlined" fullWidth>
+              <InputLabel>Account</InputLabel>
+              <Select
+                value={this.state.account_id}
+                onChange={this.handleChange}
+                label="Account"
+                name="account_id"
+              >
+                {this.state.selectOptions}
+              </Select>
+            </FormControl>
 
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Transaction Type</InputLabel>
@@ -114,6 +138,16 @@ export default class NewOrderDialogBox extends React.Component{
                 <MenuItem value={"sell"}>Sell</MenuItem>
               </Select>
             </FormControl>
+
+            <TextField
+              autoFocus
+              margin="dense"
+              id="company"
+              label="Company"
+              type="text"
+              fullWidth
+              onChange={this.handleChange}
+            />
 
             <TextField
               autoFocus

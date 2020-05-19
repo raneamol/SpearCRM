@@ -133,7 +133,7 @@ def create_lead():
 	return "Lead Created"
 
 
-@leads.route('lead_to_account', methods = ["POST"])
+@leads.route('/lead_to_account', methods = ["POST"])
 def lead_to_accounts():
 	req_data = request.get_json()
 
@@ -177,7 +177,10 @@ def lead_to_accounts():
 	print(str(account[0]["_id"]))
 	activities.update_many({"user_id": str(usr_id)},{"$set": {"user_id": str(account[0]["_id"])} })
 	leads.delete_one({"_id" : usr_id})
-	return "Lead converted to account"
+	#To send new account id, return new_acc_id
+	new_account_id = str(account[0]["_id"])
+	print(new_account_id)
+	return new_account_id
 
 
 

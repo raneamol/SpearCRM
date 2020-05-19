@@ -23,7 +23,7 @@ def split_into_sentence(body):
 
 def check_nlp(sent):
     #nltk part to get action and company
-    ignorewords= ['dear', 'sir','stockbroker','mr','mr.','respected','please','help','company','id.','id','\n','\r']
+    ignorewords= ['dear', 'sir','stockbroker','mr','mr.','respected','price','cost','please','help','company','id.','id','\n','\r']
     question = ['?','is it possible',"how","what","why"]
     sentence = sent
     sentence = sentence.lower()
@@ -44,6 +44,9 @@ def check_nlp(sent):
 
             elif value[0]=='sell':
                 action = value[0]
+
+            elif value[1]=='JJ':
+                company = value[0]
 
             elif value[1]=='NN':
                 company = value[0]

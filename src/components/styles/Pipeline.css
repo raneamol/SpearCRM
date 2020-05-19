@@ -1,0 +1,17 @@
+.add-order-button {
+  z-index: 2;
+  top: 55px;
+  right: 10px;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+}
+
+.complete-orders-button {
+  z-index: 2;
+  top: 100px;
+  right: 10px;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+}

@@ -1,7 +1,16 @@
 import React from 'react'
 import Board from 'react-trello/dist'
-
-//draggable is false for all orders in lane Lane 4 - archived orders
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link,
+  withRouter
+} from "react-router-dom";
+import PipelineNewOrderDialogBox from './subcomponents/PipelineNewOrderDialogBox.js';
+import SendIcon from '@material-ui/icons/Send';
+import Button from "@material-ui/core/Button";
+import './styles/Pipeline.css';
 
 export default class Pipeline extends React.Component {
   state = {
@@ -12,8 +21,13 @@ export default class Pipeline extends React.Component {
     fetch("/main/show_all_orders").then(response =>
       response.json().then(data => {
         this.setState({ fetchedOrders: data });
+        console.log(this.state.fetchedOrders);
       })
     );
+  }
+
+  componentDidUpdate() {
+    console.log(this.state.fetchedOrders);
   }
 
   updatePipelineAPICall() {
@@ -59,13 +73,14 @@ export default class Pipeline extends React.Component {
       entry.id = entry["_id"];
       entry.stage = entry["stage"];
       entry.title = entry["company"];
-      if (entry.trans_type = "Sell") {
-        entry.description = `Sell account's stocks`;
+      if ( (entry.trans_type).toLowerCase() == "sell" ) {
+        entry.description = `Sell stocks for ${entry.name}`;
       }
       else {
-        entry.description = `Buy stocks for account`;
+        entry.description = `Buy stocks for ${entry.name}`;
       }
       entry.label = `${entry.no_of_shares} X $${entry.cost_of_share}`;
+      entry.metadata = {account_id: entry.account_id}
     });
 
     board.lanes.forEach( (Lane) => {
@@ -79,7 +94,7 @@ export default class Pipeline extends React.Component {
     //these are the only permissible drag-and-drop transitions
     if (   fromLaneId === 1 && toLaneId === 2
         || fromLaneId === 2 && toLaneId === 3
-        || fromLaneId === 2 && toLaneId === 0){
+        || fromLaneId === 3 && toLaneId === 0){
       const newCardStage = {
         "_id" : cardId,
         "stage" : toLaneId
@@ -107,16 +122,34 @@ export default class Pipeline extends React.Component {
     }
   }
 
-  deleteCard = async (cardId, laneId) => {
+  deleteCard = (cardId, laneId) => {
     console.log(cardId);
     fetch(`main/delete_order/${cardId}`).then(response =>
       response.json().then(data => {
-        if (data==="Order Deleted"){
+        // if (data==="Order Deleted"){
           this.updatePipelineAPICall();
-        }
+        //}
       })
     );
   }
+
+  linkToAccountProfile = (cardId, metadata, laneId) => {
+    console.log(`metadata is ${metadata.account_id}`);
+    this.props.history.push({
+      pathname: "/accountprofile",
+      state: {cid: metadata.account_id}
+    });
+  }
+
+  markToBeTransactedOrdersAsTransacted = () => {
+    fetch("/main/complete_all_orders").then(response =>
+      response.json().then(data => {
+        console.log(data);
+        this.updatePipelineAPICall();
+      })
+    );
+  }
+     
 
   render() {
     return(
@@ -125,8 +158,24 @@ export default class Pipeline extends React.Component {
           data={this.transformOrdersToBoardData(this.state.fetchedOrders)}
           onCardDelete={this.deleteCard}
           onCardMoveAcrossLanes={this.updateCardStage}
+          onCardClick={this.linkToAccountProfile}
           collapsibleLanes
         />
+        
+        <div className="add-order-button"> 
+          <PipelineNewOrderDialogBox updatePipeline={this.updatePipelineAPICall} /> 
+        </div>
+
+        <div className="complete-orders-button">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={ () => {this.markToBeTransactedOrdersAsTransacted()} }
+            startIcon={<SendIcon />}
+          >
+            Mark Orders as transacted
+          </Button>
+        </div>
       </>
     );
   }

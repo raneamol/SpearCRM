@@ -29,16 +29,17 @@ export default function OrdersDisplay (props) {
   }
 
   const deleteOrder = (orderId) => {
-    fetch(`main/delete_order/${orderId}`).then(response =>
-      response.json().then(data => {
-        if (data==="Order Deleted"){
-          this.props.updateActivityTracker()
-          .then( () => this.props.updateAccountProfile())
-          .catch( () => console.log("deleteOrder chaining error"));
-          //chained together promises
-        }
-      })
-    );
+    // fetch(`main/delete_order/${orderId}`).then(response =>
+    //   response.json().then(data => {
+    //     if (data==="Order Deleted"){
+    //       this.props.updateActivityTracker()
+    //       .then( () => this.props.updateAccountProfile())
+    //       .catch( () => console.log("deleteOrder chaining error"));
+    //       //chained together promises
+    //     }
+    //   })
+    // );
+    return null;
   }
 
   return (
@@ -71,7 +72,7 @@ export default function OrdersDisplay (props) {
               {/* Display non-archived orders here */}
               {
                 props.ordersList.map( (order, i) => {
-                  let iconContent = (order.trans_type === "Buy" ? "B" : "S" );
+                  let iconContent = ( (order.trans_type).toLowerCase() === "buy" ? "B" : "S" );
                   let orderLane = (
                     order.stage === 3 ? "Initiated" :
                     order.stage === 2 ? "Finalized" : 
@@ -117,7 +118,7 @@ export default function OrdersDisplay (props) {
               {/* Display archived orders here */}
               {
                 props.ordersList.filter( (order) => order.stage === 0 ).map( (order, i) => {
-                  let iconContent = (order.trans_type === "Buy" ? "B" : "S" );
+                  let iconContent = ( (order.trans_type).toLowerCase() === "buy" ? "B" : "S" );
                   return(
                     <div key={i}>
                       <ListItem>

@@ -125,6 +125,33 @@ def complete_orders():
 
 	return "All transacted orders have been archived"
 
+@accounts.route('/complete_all_orders')
+def complete_all_orders():
+	#latest_order_stage = req_data["latest_order_stage"]
+	
+	accounts = mongo.db.Accounts
+	orders = mongo.db.Orders
+	#account_orders = orders.find({'account_id': usr_id})
+	
+	account_of_orders= orders.find({"stage":3},{"account_id": 1})
+	account_ids = list(account_of_orders)
+	
+	orders.update_many({"stage" : 3},{"$set": {"stage" : 0}})
+
+
+	print(account_ids)
+	for i in account_ids:
+
+		max_stage_order = orders.find({"account_id":i["account_id"]}).sort("stage",-1).limit(1)
+
+
+		accounts.update({"_id": ObjectId(i["account_id"])}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
+
+	
+
+	return "All transacted orders have been archived"
+
+
 
 @accounts.route('/create_account', methods = ["POST"])
 def create_account():
@@ -201,7 +228,7 @@ def create_order():
 }
 
 	accounts = mongo.db.Accounts
-	accounts.update({"_id": ObjectId(account_id)},{"$set" : {"latest_order_stage": 1}})
+	accounts.update({"_id": ObjectId(account_id)},{"$set" : {"latest_order_stage": 2}})
 
 	orders = mongo.db.Orders
 	orders.insert(values)
@@ -219,6 +246,7 @@ def display_user_orders(usr_id):
 
 	return account_orders
 
+#comeback
 @accounts.route('/order_stage_change',methods = ["POST"])
 def order_stage_change():
 	req_data = request.get_json()
@@ -227,16 +255,31 @@ def order_stage_change():
 	stage = req_data["stage"]
 
 	orders = mongo.db.Orders
+	accounts = mongo.db.Accounts
+	order = orders.find_one({"_id":_id})
+	account = accounts.find_one({"_id":ObjectId(order["account_id"])})
+	activities = mongo.db.Activities
+	'''
+	#new
+	if stage == 2:
+		orders.update({"_id":_id},{"$set": {"stage" : stage}})
+		activities.update({"_id": ObjectId(order["activity_id"])},{"$set": {"activity_type": "past"}})
+		message = """\
+		Subject: Hi """+str(account["name"])+"""
+		Hi """+str(account["name"])+""",
+		Your transaction to """+str(order["trans_type"]) +""" """+order["no_of_shares"]+""" shares of """+order["company"]+""" for cost """+order["cost_of_share"]+""" is finalized"""
+	
+		send_email(message)
+		#add send_email api
+	'''
 
 	orders.update({"_id":_id},{"$set": {"stage" : stage}})
 
-	accounts = mongo.db.Accounts
-	order = orders.find_one({"_id":_id})
 
 	max_stage_order = orders.find({"_id":_id}).sort("stage",-1).limit(1)
 
-
 	accounts.update({"_id": ObjectId(order["account_id"])}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
+
 
 	return "Order has been changed to stage {}".format(stage)
 
@@ -244,14 +287,27 @@ def order_stage_change():
 @accounts.route('/show_all_orders')
 def show_all_orders():
 	orders = mongo.db.Orders
+
+	accounts = mongo.db.Accounts
+
 	all_orders = orders.find()
+
+	#for  all_orders
 	all_orders = list(all_orders)
+	for i in all_orders:
+		account_name = accounts.find_one({"_id":ObjectId(i["account_id"])},{"name" :1})
+		i["name"] = account_name["name"]
+
+
 	all_orders = json.dumps(all_orders, default =myconverter)
 
 	return all_orders
 
 @accounts.route("/delete_order/<order_id>")
 def delete_order(order_id):
+	##If post
+	#req_data = request.get_json()
+	#order_id = req_data["order_id"]
 	orders = mongo.db.Orders
 	order = orders.find({"_id":ObjectId(order_id)})
 	activities = mongo.db.Activities
@@ -390,6 +446,21 @@ def get_order_from_email():
 
 	return "Inserted"
 
+
+
+
+
+
+
+@accounts.route('/get_all_account_names')
+def get_all_account_names():
+	accounts = mongo.db.Accounts
+
+	all_accounts = accounts.find({},{"_id":1,"name":1})
+	all_accounts = list(all_accounts)
+	all_accounts = json.dumps(all_accounts, default =myconverter)
+
+	return all_accounts
 
 
 

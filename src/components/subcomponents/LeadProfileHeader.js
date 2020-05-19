@@ -17,6 +17,7 @@ export default class LeadProfileHeader extends React.Component {
     submitted: false,
     demat_accno: 0,
     trading_accno: 0,
+    newId: 0, //set after lead converts to account
   }
 
   handleClickOpen = () => {
@@ -50,13 +51,29 @@ export default class LeadProfileHeader extends React.Component {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(fields)
-    });
+    })
+    .then( 
+      response => { let result = response.json(); console.log(result); },
+      error => console.log('An error occurred.',error)
+    )
+    .then(
+      () => {
+        this.setState({ open:false });
+        this.setState({ submitted: true });
+      }
+    )
 
-    if (response.ok) {
-      console.log("response worked!");
-      this.setState({ open:false });
-      this.setState({ submitted: true });
-    }
+    // if (response.ok) {
+    //   console.log("response worked!");
+    //   this.setState({ open:false });
+    //   this.setState({ submitted: true });
+    // }
+
+    //let result = await response.json();
+    
+    //this.setState({ newId : response.json });
+    //console.log( result );
+
   };
 
   handleChange = (event) => {
@@ -155,7 +172,7 @@ export default class LeadProfileHeader extends React.Component {
                 Return
               </Button>
             </Link>
-            <Link to={{pathname:'./AccountProfile', state:{ cid:this.props._id }}}>
+            <Link to={{pathname:'./AccountProfile', state:{ cid:this.state.newId }}}>
               <Button onClick={this.handleModalClose} color="primary" autoFocus>
                 Proceed
               </Button>

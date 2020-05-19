@@ -12,8 +12,9 @@ export default class FieldsContainer2 extends React.Component {
 
   render() {
     let fieldsBasedOnParentComponent = null;
+    let tempDateObj = null;
     
-    if (this.props.lead === 0) {
+    if (this.props.lead === 1) {
       fieldsBasedOnParentComponent = (
         <ListItem>
           <EditableField 
@@ -49,12 +50,14 @@ export default class FieldsContainer2 extends React.Component {
               onSubmit={this.props.onSubmit}
             />
           </ListItem>
+          <Divider />
+
 
           {/* Last Contacted value is immutable */}
           <ListItem>
             <div className="noneditable-field-component">
               <p> Last Contacted </p>
-              <div> {this.props.fields.last_contact} </div>;
+              <div> {this.props.fields.last_contact} </div>
             </div>  
           </ListItem>
         </>
@@ -121,6 +124,7 @@ export default class FieldsContainer2 extends React.Component {
             <Divider />
 
             {fieldsBasedOnParentComponent}
+            <Divider />
 
           </List>
       </div>
