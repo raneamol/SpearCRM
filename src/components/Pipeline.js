@@ -30,10 +30,13 @@ export default class Pipeline extends React.Component {
     console.log(this.state.fetchedOrders);
   }
 
-  updatePipelineAPICall() {
+  updatePipelineAPICall = () => {
+    console.log("Update triggered");
     fetch("/main/show_all_orders").then(response =>
       response.json().then(data => {
+        console.log(data);
         this.setState({ fetchedOrders: data });
+        console.log(this.state.fetchedOrders);
       })
     );
   }
@@ -92,7 +95,8 @@ export default class Pipeline extends React.Component {
 
   updateCardStage = async (fromLaneId, toLaneId, cardId, index) => {
     //these are the only permissible drag-and-drop transitions
-    if (   fromLaneId === 1 && toLaneId === 2
+    if (   fromLaneId === toLaneId
+        || fromLaneId === 1 && toLaneId === 2
         || fromLaneId === 2 && toLaneId === 3
         || fromLaneId === 3 && toLaneId === 0){
       const newCardStage = {
@@ -124,13 +128,7 @@ export default class Pipeline extends React.Component {
 
   deleteCard = (cardId, laneId) => {
     console.log(cardId);
-    fetch(`main/delete_order/${cardId}`).then(response =>
-      response.json().then(data => {
-        // if (data==="Order Deleted"){
-          this.updatePipelineAPICall();
-        //}
-      })
-    );
+    fetch(`main/delete_order/${cardId}`).then( () => {this.updatePipelineAPICall()} );
   }
 
   linkToAccountProfile = (cardId, metadata, laneId) => {
@@ -142,15 +140,10 @@ export default class Pipeline extends React.Component {
   }
 
   markToBeTransactedOrdersAsTransacted = () => {
-    fetch("/main/complete_all_orders").then(response =>
-      response.json().then(data => {
-        console.log(data);
-        this.updatePipelineAPICall();
-      })
-    );
+    console.log("Completion trigerred");
+    fetch("/main/complete_all_orders").then( () => this.updatePipelineAPICall() );     
   }
-     
-
+  
   render() {
     return(
       <>
@@ -170,7 +163,7 @@ export default class Pipeline extends React.Component {
           <Button
             variant="contained"
             color="primary"
-            onClick={ () => {this.markToBeTransactedOrdersAsTransacted()} }
+            onClick={this.markToBeTransactedOrdersAsTransacted}
             startIcon={<SendIcon />}
           >
             Mark Orders as transacted

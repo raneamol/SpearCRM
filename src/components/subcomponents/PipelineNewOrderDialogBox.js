@@ -60,7 +60,8 @@ export default class PipelineNewOrderDialogBox extends React.Component{
 
   postNewOrder = async () => {
     const newOrder = this.state;
-    newOrder.stage = 1;
+    newOrder.stage = 2;
+    newOrder.no_of_shares = parseInt(this.state.no_of_shares);
     delete newOrder.open;
     delete newOrder.selectOptions;
     console.log(newOrder);
@@ -77,9 +78,7 @@ export default class PipelineNewOrderDialogBox extends React.Component{
       console.log(response);
       this.setState({ open:false });
 
-      this.props.updatePipeline()
-      .then(() => this.props.updateAccountProfile())
-      .catch("Error in updating ActivityTracker or AccountProfile after new Order addition");
+      this.props.updatePipeline();
     }
   }
   
