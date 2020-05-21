@@ -29,17 +29,12 @@ export default function OrdersDisplay (props) {
   }
 
   const deleteOrder = (orderId) => {
-    // fetch(`main/delete_order/${orderId}`).then(response =>
-    //   response.json().then(data => {
-    //     if (data==="Order Deleted"){
-    //       this.props.updateActivityTracker()
-    //       .then( () => this.props.updateAccountProfile())
-    //       .catch( () => console.log("deleteOrder chaining error"));
-    //       //chained together promises
-    //     }
-    //   })
-    // );
-    return null;
+    fetch(`main/delete_order/${orderId}`).then( () => {
+      props.updateActivityTracker()
+      .then( () => props.updateAccountProfile() );
+      //using .then is possible since updateActivityTracker is defined as an async function
+      //parent component is updated, then grandparent component is updated
+    });
   }
 
   return (
@@ -101,7 +96,7 @@ export default function OrdersDisplay (props) {
 
                           <IconButton 
                             edge="end"
-                            onClick={deleteOrder(order._id)}  
+                            onClick={() => deleteOrder(order._id)}  
                           >
                             <DeleteIcon />
                           </IconButton>

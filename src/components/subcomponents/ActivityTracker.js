@@ -18,22 +18,22 @@ export default function ActivityTracker(props) {
 //   {"_id": "5eaade2467f5adbdd24460a8", "title": "Finalize Amol's order", "body": "eh", "date": “2020-02-04T15:08:56.000Z”, "activity_type": "past", "user_id": "5ea58fbc63e50fc607cf6a10", "elapsed": 0}]
 
   useEffect( () => {
-    fetch(`/main/show_user_activities/${props._id}`).then(response => {
-      response.json().then( data => setActivitiesList(data) );
-    });
-    fetch(`/main/display_account_orders/${props._id}`).then(response => {
-      response.json().then( data => setOrdersList(data) );
+    Promise.all([fetch(`/main/show_user_activities/${props._id}`), fetch(`/main/display_account_orders/${props._id}`)])
+    .then(values => {
+      values[0].json().then( activities => setActivitiesList(activities));
+      values[1].json().then( orders => setOrdersList(orders));
     });
   }, []);
 
-  const updateActivityTrackerAPICall = () => {
-    fetch(`/main/show_user_activities/${props._id}`).then(response => {
-      response.json().then( data => setActivitiesList(data) );
-    });
-    fetch(`/main/display_account_orders/${props._id}`).then(response => {
-      response.json().then( data => setOrdersList(data) );
+  const updateActivityTrackerAPICall = async () => {
+    Promise.all([fetch(`/main/show_user_activities/${props._id}`), fetch(`/main/display_account_orders/${props._id}`)])
+    .then(values => {
+      values[0].json().then( activities => setActivitiesList(activities));
+      values[1].json().then( orders => setOrdersList(orders));
     });
   }
+  //above API call is defined as async function to chain it with updateAccountProfileAPICall
+  //for components like newOrderDialogBox
 
   const handleActivityType = (event, newActivityType) => {
     if (newActivityType !== null) {

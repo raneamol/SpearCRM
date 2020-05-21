@@ -32,12 +32,23 @@ export default class AccountProfile extends React.Component {
   
   handleChange = (event) => {
     console.log("handleChange triggered");
-    this.setState({
-      accountData : {
-        ...this.state.accountData,
-        [event.target.name] : (event.target.id === "dob" ? event.toISOString() : event.target.value),
-      }
-    });
+    if (Object.prototype.toString.call(event) === "[object Date]") {
+      this.setState({
+        accountData : {
+          ...this.state.accountData,
+          dob : event.toISOString(),
+        }
+      });
+    }
+    //above code handles change in date (dob)
+    else{
+      this.setState({
+        accountData : {
+          ...this.state.accountData,
+          [event.target.name] : event.target.value,
+        }
+      });
+    }
   }
 
   postFields = async () => {

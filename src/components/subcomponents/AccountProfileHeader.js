@@ -4,7 +4,7 @@ import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import { Tooltip } from '@material-ui/core';
 
 export default class AccountProfileHeader extends React.Component {
-  archiveTransactedOrders = async () => {
+  markToBeTransactedOrdersAsTransacted = async () => {
     if (this.props.furthestStage != 3) {return null;}
     console.log({"account_id": this.props._id._id});
 
@@ -47,7 +47,7 @@ export default class AccountProfileHeader extends React.Component {
 
           <span style={{ verticalAlign: "middle" }}>
             <Tooltip title="Successful transaction">
-              <CheckCircleIcon onClick={this.archiveTransactedOrders}/>
+              <CheckCircleIcon onClick={this.markToBeTransactedOrdersAsTransacted}/>
             </Tooltip> 
           </span>
         </span> 

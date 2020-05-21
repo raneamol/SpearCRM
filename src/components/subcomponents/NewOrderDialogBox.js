@@ -18,7 +18,7 @@ export default class NewOrderDialogBox extends React.Component{
     company: "",
     trans_type: "",
     no_of_shares: 0,
-    cost_of_share: 0,
+    cost_of_share: "",
   };
 
   componentDidUpdate() {
@@ -44,10 +44,12 @@ export default class NewOrderDialogBox extends React.Component{
 
   postNewOrder = async () => {
     const newOrder = this.state;
-    newOrder.stage = 1;
+    newOrder.stage = 2;
     newOrder.account_id = this.props.account_id;
-    delete newOrder["open"];
+    newOrder.no_of_shares = parseInt(this.state.no_of_shares);
+    delete newOrder.open;
     console.log(newOrder);
+
     const response = await fetch("/main/create_order", {
       method: "POST",
       headers: {
@@ -62,8 +64,9 @@ export default class NewOrderDialogBox extends React.Component{
       this.setState({ open:false });
 
       this.props.updateActivityTracker()
-      .then(() => this.props.updateAccountProfile())
-      .catch("Error in updating ActivityTracker or AccountProfile after new Order addition");
+      .then( () => this.props.updateAccountProfile() );
+      //using .then is possible since updateActivityTracker is defined as an async function
+      //parent component is updated, then grandparent component is updated
     }
   }
   

@@ -264,7 +264,7 @@ class UpcomingTasksWidget extends React.Component {
 										<Link to={{ pathname: '/accountprofile', state:{cid: element.user_id} }}>
 											&nbsp; {element.title}                      
 										</Link>
-											  <span className="task-date">  {element.date} </span> 
+											  <span className="task-date">  {convertIsoDateToDateString(element.date)} </span> 
 										</li>
 
 										<li className="task-body"> &nbsp; {element.body} </li>
@@ -315,3 +315,8 @@ const tasksList = [
 	},
 	
 ];
+
+export const convertIsoDateToDateString = (isoDate) => {
+	let tempDateObj = new Date(isoDate);
+	return tempDateObj.toDateString();
+};

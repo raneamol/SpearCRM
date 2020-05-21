@@ -1,5 +1,7 @@
 import React, {useEffect} from 'react'
 import '../styles/PrettyList.css'
+import {convertIsoDateToDateString} from "../Dashboard.js"
+
 
 export default function PastActivity(props) {
   useEffect (() => {
@@ -19,7 +21,7 @@ export default function PastActivity(props) {
             return (
               <li className="blue" key={i}>
                 <div className="where"> {cross} {element.title} </div>
-                <div className="when"> {element.date} </div>
+                <div className="when"> {convertIsoDateToDateString(element.date)} </div>
                 <p className="description"> {element.body} </p>
              </li>
             );

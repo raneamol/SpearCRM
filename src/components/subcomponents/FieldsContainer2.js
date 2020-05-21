@@ -4,6 +4,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import '../styles/FieldsContainer.css'
+import {convertIsoDateToDateString} from "../Dashboard.js"
 
 export default class FieldsContainer2 extends React.Component {
   componentDidMount() {
@@ -12,7 +13,6 @@ export default class FieldsContainer2 extends React.Component {
 
   render() {
     let fieldsBasedOnParentComponent = null;
-    let tempDateObj = null;
     
     if (this.props.lead === 1) {
       fieldsBasedOnParentComponent = (
@@ -57,7 +57,7 @@ export default class FieldsContainer2 extends React.Component {
           <ListItem>
             <div className="noneditable-field-component">
               <p> Last Contacted </p>
-              <div> {this.props.fields.last_contact} </div>
+              <div> {convertIsoDateToDateString(this.props.fields.last_contact)} </div>
             </div>  
           </ListItem>
         </>
