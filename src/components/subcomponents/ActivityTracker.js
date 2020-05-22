@@ -10,7 +10,7 @@ export default function ActivityTracker(props) {
   const [activityType, setActivityType] = useState("past"); //past or future
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
-  const [activityDate, setActivityDate] = useState(new Date().toJSON().slice(0,10));
+  const [activityDate, setActivityDate] = useState(new Date());
   const [activitiesList, setActivitiesList] = useState([]);
   const [ordersList, setOrdersList] = useState([]);
 
@@ -54,12 +54,25 @@ export default function ActivityTracker(props) {
   };
 
   const postNewActivity = async () => {
+    let today = new Date();
+
+    if (    activityType === "future" && activityDate.getDate() <= today.getDate() 
+         || activityType === "past"   && activityDate.getDate() > today.getDate() 
+         || activityTitle === ""
+    ){
+      console.log("Date invalid");
+      console.log(activityDate.getDate() + "<" + today.getDate())
+      return null;
+    }
+    //date validation against type of activity
+
     const newActivity = {
       "user_id": props._id,
       "title": activityTitle,
       "body": activityBody,
       "date": new Date( Date.parse(activityDate) ),
       "activity_type": activityType,
+      "ai_activity": 0,
     };
     console.log(newActivity);
     const response = await fetch("/main/create_activity", {
@@ -73,6 +86,8 @@ export default function ActivityTracker(props) {
     if (response.ok) {
       console.log("response worked!");
       console.log(response);
+      setActivityBody("");
+      setActivityTitle("");
       updateActivityTrackerAPICall();
     }
   }
@@ -116,6 +131,7 @@ export default function ActivityTracker(props) {
         activitiesList={activitiesList.filter(activity => activity["activity_type"] === "future")} 
         updateActivityTracker={updateActivityTrackerAPICall}
         updateAccountProfile={props.updateAccountProfile}
+        lead = {props.lead}
       />
       <PastActivity
         activitiesList={activitiesList.filter(activity => activity["activity_type"] === "past")}

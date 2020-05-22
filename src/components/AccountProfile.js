@@ -17,7 +17,6 @@ export default class AccountProfile extends React.Component {
     fetch(`/main/display_account/${cid}`).then(response =>
       response.json().then(data => {
         this.setState({ accountData: data });
-        console.log(data);
       })
     );
   }
@@ -29,6 +28,10 @@ export default class AccountProfile extends React.Component {
       })
     );
   }
+
+  componentDidUpdate() {
+    console.log(typeof(this.state.accountData.dob));
+  }
   
   handleChange = (event) => {
     console.log("handleChange triggered");
@@ -36,11 +39,19 @@ export default class AccountProfile extends React.Component {
       this.setState({
         accountData : {
           ...this.state.accountData,
-          dob : event.toISOString(),
+          dob : event,
         }
       });
     }
     //above code handles change in date (dob)
+    else if(event.target.name === "demat_accno" || event.target.name === "trading_accno"){
+      this.setState({
+        accountData : {
+          ...this.state.accountData,
+          [event.target.name] : parseInt(event.target.value),
+        }
+      });
+    }
     else{
       this.setState({
         accountData : {
@@ -53,7 +64,7 @@ export default class AccountProfile extends React.Component {
 
   postFields = async () => {
     const accountDataObj = this.state.accountData;
-    console.log(accountDataObj);
+    accountDataObj.dob = new Date( Date.parse(accountDataObj.dob) );
     const response = await fetch("/main/edit_account", {
       method: "POST",
       headers: {

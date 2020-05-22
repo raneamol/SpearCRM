@@ -53,7 +53,7 @@ def display_account(usr_id):
 @accounts.route('/edit_account', methods = ['POST'])
 def edit_account():
 	req_data = request.get_json()
-
+	print(req_data)
 	#JSON data into variables
 	usr_id = req_data["_id"]
 	usr_id = ObjectId(usr_id)
@@ -63,13 +63,12 @@ def edit_account():
 	country = req_data["country"]
 	demat_accno = req_data["demat_accno"]
 	dob = req_data["dob"]
-	#dob = datetime.datetime.strptime(dob, "%Y-%m-%dT%H:%M:%S.000Z")
-	#dob = new Date(dob)
+	dob = datetime.datetime.strptime(dob, '%Y-%m-%dT%H:%M:%S.%fZ')
 	education = req_data["education"]
 	email = req_data["email"]
 	job_type = req_data["job_type"]
 	last_contact = req_data["last_contact"]
-	#last_contact = datetime.datetime.strptime(last_contact, "%Y-%m-%dT%H:%M:%S")
+	#last_contact = datetime.datetime.strptime(last_contact, "%Y-%m-%dT%H:%M:%S.%fZ")
 	latest_order_stage = req_data["latest_order_stage"]
 	marital_status = req_data["marital_status"]
 	name = req_data["name"]
@@ -123,7 +122,10 @@ def complete_orders():
 		
 		activities = mongo.db.Activities
 		activities.update({"_id":ObjectId(i["activity_id"]) },{ "$set": {"activity_type": "past"}})
-		current_price = get_stock_price(i["company"])
+		try:
+			current_price = get_stock_price(i["company"])
+		except:
+			current_price = 0.0
 		orders.update({"_id":i["_id"]},{"$set": {"cost_of_share": current_price}})
 		account = accounts.find_one({"_id": ObjectId(i["account_id"])})
 
@@ -174,9 +176,10 @@ def complete_all_orders():
 		account = accounts.find_one({"_id": ObjectId(i["account_id"])})
 		
 		order = orders.find_one({"_id": i["_id"]})
-		
-		current_price = get_stock_price(order["company"])
-
+		try:
+			current_price = get_stock_price(order["company"])
+		except:
+			current_price = 0.0
 		orders.update({"_id":i["_id"]},{"$set": {"cost_of_share": current_price}})
 
 		activities.update({"_id": ObjectId(order["activity_id"])},{"$set": {"activity_type": "past"}})
@@ -329,7 +332,10 @@ for cost """+str(order["cost_of_share"])+""" is finalized"""
 	
 	elif stage == 0:
 		#api to get share value
-		current_price = get_stock_price(order["company"])
+		try:
+			current_price = get_stock_price(order["company"])
+		except:
+			current_price = 0.0
 		orders.update({"_id":_id},{"$set": {"stage" : stage, "cost_of_share": current_price}})
 		activities.update({"_id": ObjectId(order["activity_id"])},{"$set": {"activity_type": "past"}})
 		email_id = account["email"]
@@ -411,6 +417,7 @@ def delete_order(order_id):
 @accounts.route('/create_activity',methods = ["POST"])
 def create_activity():
 	req_data = request.get_json()
+	print(req_data)
 	title = req_data["title"]
 	body = req_data["body"]
 	date = req_data["date"]
@@ -502,7 +509,10 @@ for cost """+str(order["cost_of_share"])+""" is finalized"""
 			send_email(account["email"] ,message)
 
 		elif order["stage"] == 3:
-			current_price = get_stock_price(order["company"])
+			try:
+				current_price = get_stock_price(order["company"])
+			except:
+				current_price = 0.0
 			orders.update({"activity_id": _id},{"$set":{"stage": 0 , "cost_of_share": current_price}})
 			order = orders.find_one({"activity_id":_id})
 			activities.update({"_id": ObjectId(_id)},{"$set":{"activity_type":activity_type}})
@@ -592,15 +602,17 @@ def top_accounts():
 	accounts = mongo.db.Accounts
 	orders = mongo.db.Orders
 	
-	order = orders.aggregate([{"$match": {"stage": 0}},{"$group":{"_id": "$account_id" ,"count": {"$sum" : "$no_of_shares"},"num_count": { "$sum": 1 }}}])
+	order = orders.aggregate([{"$match": {"stage": 0}},{"$group":{"_id": "$account_id" ,"count": {"$sum" : "$no_of_shares"},"acc_score": { "$sum": {"$multiply": ["$no_of_shares", "$cost_of_share"] }}}}])
 	order = list(order)
-	
+	print(order)
 	for i in order:
 		account = accounts.find_one({"_id": ObjectId(i["_id"])})
 		i["name"] = account["name"]
 
 	order = json.dumps(order, default = myconverter)
 	return order
+
+
 
 '''Data for create activity
 {

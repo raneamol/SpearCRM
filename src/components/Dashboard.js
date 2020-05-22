@@ -279,43 +279,6 @@ class UpcomingTasksWidget extends React.Component {
   }
 }
 
-const tasksList = [
-	{
-		uid:"",
-		taskTitle: "Call X",
-		taskBody: "Encourage them to buy MSFT",
-		taskDate: "Nov. 8",
-	},
-	{
-		uid:"",
-		taskTitle: "Call Y",
-		taskDate: "Nov. 9",
-		taskBody: "Encourage them to buy AMZN",
-	},
-	{
-		uid:"",
-		taskTitle: "Call Z",
-		taskBody: "Encourage them to buy IBM",
-		taskDate: "Nov. 8",
-	},
-	{
-		taskTitle: "Call Company X",
-		taskBody: "Encourage them to buy MSFT",
-		taskDate: "Nov. 8",
-	},
-	{
-		taskTitle: "Call Company X",
-		taskBody: "Encourage them to buy MSFT",
-		taskDate: "Nov. 8",
-	},
-	{
-		taskTitle: "Call Company X",
-		taskBody: "Encourage them to buy MSFT",
-		taskDate: "Nov. 8",
-	},
-	
-];
-
 export const convertIsoDateToDateString = (isoDate) => {
 	let tempDateObj = new Date(isoDate);
 	return tempDateObj.toDateString();

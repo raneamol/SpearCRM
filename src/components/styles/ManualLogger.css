@@ -1,5 +1,5 @@
 .manual-logger{
-  height: 260px;
+  height: 285px;
   border: 2px solid black;
   border-radius:5px;
   padding-left: 2px;
@@ -9,6 +9,7 @@
 .manual-logger > * {
   padding: 2px;
 }
+
 /* 
 .grid-container {
   max-height: 600px;

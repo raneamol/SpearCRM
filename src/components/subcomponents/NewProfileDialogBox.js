@@ -24,7 +24,7 @@ export default class NewTaskDialogBox extends React.Component{
     company: "",
     country: "",
     demat_accno: 0,
-    dob: new Date().toJSON(),
+    dob: new Date().toJSON(),//
     education: "",
     email: "",
     job_type: "",
@@ -68,7 +68,9 @@ export default class NewTaskDialogBox extends React.Component{
 
   postNewProfile = async () => {
     const newProfile = this.state;
-    delete newProfile["open"];
+    delete newProfile.open;
+    newProfile.demat_accno = parseInt(newProfile.demat_accno);
+    newProfile.trading_accno = parseInt(newProfile.trading_accno);
     const response = await fetch("/main/create_account", {
       method: "POST",
       headers: {

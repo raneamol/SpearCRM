@@ -20,7 +20,11 @@ export default class LeadProfileHeader extends React.Component {
     newId: 0, //set after lead converts to account
   }
 
-  handleClickOpen = () => {
+  componentDidUpdate() {
+    console.log(this.state);
+  }
+
+  handleOpen = () => {
     if (this.props.leadStatus == "Contacted") {
       this.setState({ open:true });
     }
@@ -30,7 +34,7 @@ export default class LeadProfileHeader extends React.Component {
     this.setState({ open:false });
   };
 
-  handleModalClose = () => {
+  handleCloseSecondary = () => {
     this.setState({ submitted:false });
   }
 
@@ -41,7 +45,7 @@ export default class LeadProfileHeader extends React.Component {
       _id : this.props._id,
       contact_comm_type: "Email",
       latest_order_stage: 0,
-      last_contact: new Date()
+      last_contact: new Date(),
     }
     console.log(fields);
 
@@ -51,29 +55,15 @@ export default class LeadProfileHeader extends React.Component {
         "Content-Type": "application/json"
       },
       body: JSON.stringify(fields)
-    })
-    .then( 
-      response => { let result = response.json(); console.log(result); },
-      error => console.log('An error occurred.',error)
-    )
-    .then(
-      () => {
-        this.setState({ open:false });
-        this.setState({ submitted: true });
-      }
-    )
+    });
 
-    // if (response.ok) {
-    //   console.log("response worked!");
-    //   this.setState({ open:false });
-    //   this.setState({ submitted: true });
-    // }
-
-    //let result = await response.json();
-    
-    //this.setState({ newId : response.json });
-    //console.log( result );
-
+    if (response.ok) {
+      this.setState({ open:false });
+      this.setState({ submitted: true });
+      response.json().then( data =>
+        this.setState({ newId: data })
+      );
+    }
   };
 
   handleChange = (event) => {
@@ -89,7 +79,7 @@ export default class LeadProfileHeader extends React.Component {
         <span className="stage-indicator">
           <span 
            className="stage1" 
-           onClick={this.props.onClick} 
+           onClick={this.props.onDivClick} 
            id="Uncontacted"
            style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"forestgreen"} : {backgroundColor:"blue"} }
           >
@@ -98,7 +88,7 @@ export default class LeadProfileHeader extends React.Component {
 
           <span 
            className="stage2" 
-           onClick={this.props.onClick} 
+           onClick={this.props.onDivClick} 
            id="Contacted"
            style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }
           > 
@@ -107,7 +97,7 @@ export default class LeadProfileHeader extends React.Component {
 
           <span style={{ verticalAlign: "middle" }}>
             <Tooltip title="Lead created account">
-              <CheckCircleIcon onClick={this.handleClickOpen} />
+              <CheckCircleIcon onClick={this.handleOpen} />
             </Tooltip>
           </span>
         </span> 
@@ -156,7 +146,7 @@ export default class LeadProfileHeader extends React.Component {
 
         <Dialog
           open={this.state.submitted}
-          onClose={this.handleModalClose}
+          onClose={this.handleCloseSecondary}
           aria-labelledby="alert-dialog-title"
           aria-describedby="alert-dialog-description"
         >
@@ -168,12 +158,12 @@ export default class LeadProfileHeader extends React.Component {
           </DialogContent>
           <DialogActions>
             <Link to={{pathname:'./leads'}}>
-              <Button onClick={this.handleModalClose} color="primary">
+              <Button onClick={this.handleCloseSecondary} color="primary">
                 Return
               </Button>
             </Link>
             <Link to={{pathname:'./AccountProfile', state:{ cid:this.state.newId }}}>
-              <Button onClick={this.handleModalClose} color="primary" autoFocus>
+              <Button onClick={this.handleCloseSecondary} color="primary" autoFocus>
                 Proceed
               </Button>
             </Link>

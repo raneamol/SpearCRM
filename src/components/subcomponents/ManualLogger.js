@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import '../styles/ManualLogger.css'
 import { Button } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
@@ -18,6 +18,7 @@ export default class ManualLogger extends React.Component {
 
   componentDidUpdate() {
     console.log(this.props);
+
   }
 
   render(){
@@ -72,25 +73,51 @@ export default class ManualLogger extends React.Component {
         </div>
 
         {/* date input */}
-        <MuiPickersUtilsProvider utils={DateFnsUtils}>
-          <KeyboardDatePicker
-            variant="inline"
-            //'%Y-%m-%dT%H:%M:%S.%fZ'
-            format="MM/dd/yyyy"
-            id="date-picker-inline"
-            label="Birth date"
-            value={this.props.draftDate}
-            onChange={this.props.handleChangeInDate}
-            KeyboardButtonProps={{
-              'aria-label': 'change date',
-            }}
-            disablePast = {this.props.draftType=="future"}
-            disableFuture = {this.props.draftType=="past"}
+        <div className="activity-date-picker">
+          <MaterialUIPickers 
+            draftDate={this.props.draftDate} 
+            draftType={this.props.draftType} 
+            handleChangeInDate={this.props.handleChangeInDate}
           />
-        </MuiPickersUtilsProvider>
-        
-        <div> <Button variant="contained" color="primary" onClick={this.props.postNewActivity} disableElevation> Add Activity </Button> </div>
+        </div>
+
+        <div className="activity-submit-button">
+          <Button variant="contained" color="primary" onClick={this.props.postNewActivity} disableElevation> Add Activity </Button>
+        </div>
       </div>
     );
   }
 }
+
+function MaterialUIPickers(props) {
+  const [minDate, setMinDate] = useState(new Date().toJSON().slice(0,10));
+
+  useEffect( () => {
+    let d = new Date();
+    d.setDate(d.getDate() + 1)
+    setMinDate(d);
+  }, []);
+
+  return (
+    <MuiPickersUtilsProvider utils={DateFnsUtils}>
+      <KeyboardDatePicker
+        variant="inline"
+        //'%Y-%m-%dT%H:%M:%S.%fZ'
+        format="MM/dd/yyyy"
+        id="date-picker-inline"
+        label="Date"
+        value={props.draftDate}
+        onChange={props.handleChangeInDate}
+        KeyboardButtonProps={{
+          'aria-label': 'change date',
+        }}
+        disablePast = {props.draftType==="future"}
+        disableFuture = {props.draftType==="past"}
+        minDate={props.draftType === "future" ? minDate : null}
+      />
+    </MuiPickersUtilsProvider>
+  );
+}
+
+//the options for each date picker are different on each component.
+//Do not copy paste without reading.

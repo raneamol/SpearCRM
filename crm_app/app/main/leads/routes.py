@@ -183,7 +183,15 @@ def lead_to_accounts():
 	return new_account_id
 
 
+@leads.route('/get_all_lead_names')
+def get_all_lead_names():
+	leads = mongo.db.Leads
 
+	all_leads = leads.find({},{"_id":1,"name":1})
+	all_leads = list(all_leads)
+	all_leads = json.dumps(all_leads, default =myconverter)
+
+	return all_leads
 
 
 

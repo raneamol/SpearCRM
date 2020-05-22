@@ -4,10 +4,6 @@ import {convertIsoDateToDateString} from "../Dashboard.js"
 
 
 export default function NextSteps(props) {
-  useEffect (() => {
-    console.log(props);
-  })
-
   const transitionActivity = async (activityId) => {
     const activityToTransition = {
       "_id" : activityId,
@@ -25,10 +21,13 @@ export default function NextSteps(props) {
     if (response.ok) {
       console.log("response worked!");
       console.log(response);
-      props.updateActivityTracker()
-      .then( () => props.updateAccountProfile() );
-      //using .then is possible since updateActivityTracker is defined as an async function
-      //parent component is updated, then grandparent component is updated
+      if (props.lead === 1) {props.updateActivityTracker()}
+      else {
+        props.updateActivityTracker()
+        .then( () => props.updateAccountProfile() );
+        //using .then is possible since updateActivityTracker is defined as an async function
+        //parent component is updated, then grandparent component is updated
+      }
     }
   }
 

@@ -4,7 +4,6 @@ import FieldsContainer1 from "./subcomponents/FieldsContainer1";
 import FieldsContainer2 from "./subcomponents/FieldsContainer2";
 import ActivityTracker from "./subcomponents/ActivityTracker";
 import LeadProfileHeader from "./subcomponents/LeadProfileHeader";
-const _ = require('lodash');
 
 export default class LeadProfile extends React.Component {
   state = {
@@ -32,11 +31,23 @@ export default class LeadProfile extends React.Component {
 
   handleChange = (event) => {
     console.log("handleChange triggered");
-    const deepClone = _.cloneDeep(this.state.leadData);
-    deepClone[event.target.name] = event.target.value;
-    this.setState({
-      leadData : deepClone
-    });
+    if (Object.prototype.toString.call(event) === "[object Date]") {
+      this.setState({
+        leadData : {
+          ...this.state.leadData,
+          dob : event,
+        }
+      });
+    }
+    //above code handles change in date (dob)
+    else{
+      this.setState({
+        leadData : {
+          ...this.state.leadData,
+          [event.target.name] : event.target.value,
+        }
+      });
+    }
   }
 
   componentDidUpdate() {
@@ -45,17 +56,17 @@ export default class LeadProfile extends React.Component {
   }
 
   onDivClick = (event) => {
-    const deepClone = _.cloneDeep(this.state.leadData);
-    deepClone.status = event.target.id; //used to be event.target.value
     this.setState({ 
-      leadData: deepClone
+      leadData: {
+        ...this.state.leadData,
+        status: event.target.id
+      }
     }, () => {this.postFields()} );
   }
 
   postFields = async () => {
     const leadDataObj = this.state.leadData;
-    console.log("POSTFIELD CALLED");
-    console.log(leadDataObj);
+    leadDataObj.dob = new Date( Date.parse(leadDataObj.dob) );
     const response = await fetch("/main/edit_lead", {
       method: "POST",
       headers: {
@@ -76,7 +87,7 @@ export default class LeadProfile extends React.Component {
       <div className="profile-page-grid-container">
         <div className='profile-header-container'>
           <LeadProfileHeader
-            onClick = {this.onDivClick} 
+            onDivClick = {this.onDivClick} 
             name = {this.state.leadData.name}
             leadStatus = {this.state.leadData.status}
             _id = {this.state.leadData._id}
@@ -103,13 +114,3 @@ export default class LeadProfile extends React.Component {
     );
   }
 } 
-
-const sample_data = {
-  key: '1',
-  name: 'John Brown',
-  company: '3C Electronics',
-  type: 'Small Business',
-  city: 'New York',
-  phoneNumber: '9090909090',
-  email: 'johnbrown@gmail.com',
-};
