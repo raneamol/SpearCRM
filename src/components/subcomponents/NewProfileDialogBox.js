@@ -17,18 +17,18 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 
 
-export default class NewTaskDialogBox extends React.Component{
+export default class NewProfileDialogBox extends React.Component{
   state = {
     open: false,
     city: "",
     company: "",
     country: "",
     demat_accno: 0,
-    dob: new Date().toJSON(),//
+    dob: new Date(),
     education: "",
     email: "",
     job_type: "",
-    last_contact: new Date().toJSON(),
+    last_contact: new Date(),
     latest_order_stage: 0,
     name: "",
     state: "",
@@ -71,6 +71,10 @@ export default class NewTaskDialogBox extends React.Component{
     delete newProfile.open;
     newProfile.demat_accno = parseInt(newProfile.demat_accno);
     newProfile.trading_accno = parseInt(newProfile.trading_accno);
+    //date and last_contact are sent as date objects
+    //demat_accno and trading_accno are sent as integers
+    //all other fields are sent as strings
+
     const response = await fetch("/main/create_account", {
       method: "POST",
       headers: {
@@ -171,7 +175,7 @@ export default class NewTaskDialogBox extends React.Component{
               margin="dense"
               id="phone_number"
               label="Phone Number"
-              type="number"
+              type="text"
               variant="outlined"
               fullWidth
               onChange={this.handleChange}

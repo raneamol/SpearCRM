@@ -1,4 +1,3 @@
-
 import React from 'react';
 import './styles/AccountProfile.css';
 import FieldsContainer1 from "./subcomponents/FieldsContainer1";
@@ -65,6 +64,10 @@ export default class AccountProfile extends React.Component {
   postFields = async () => {
     const accountDataObj = this.state.accountData;
     accountDataObj.dob = new Date( Date.parse(accountDataObj.dob) );
+    //date and last_contact are sent as date objects
+    //demat_accno and trading_accno are sent as integers
+    //all other fields are sent as strings
+
     const response = await fetch("/main/edit_account", {
       method: "POST",
       headers: {

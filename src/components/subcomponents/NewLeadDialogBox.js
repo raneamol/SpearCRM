@@ -17,13 +17,13 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 
 
-export default class NewTaskDialogBox extends React.Component{
+export default class NewLeadDialogBox extends React.Component{
   state = {
     open: false,
     city: "",
     company: "",
     country: "",
-    dob: new Date().toJSON(),
+    dob: new Date(),
     education: "",
     email: "",
     job_type: "",
@@ -163,7 +163,7 @@ export default class NewTaskDialogBox extends React.Component{
               margin="dense"
               id="phone_number"
               label="Phone Number"
-              type="number"
+              type="text"
               variant="outlined"
               fullWidth
               onChange={this.handleChange}
