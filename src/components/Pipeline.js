@@ -95,10 +95,12 @@ export default class Pipeline extends React.Component {
 
   updateCardStage = async (fromLaneId, toLaneId, cardId, index) => {
     //these are the only permissible drag-and-drop transitions
-    if (   fromLaneId === toLaneId
-        || fromLaneId === 1 && toLaneId === 2
-        || fromLaneId === 2 && toLaneId === 3
-        || fromLaneId === 3 && toLaneId === 0){
+    if (fromLaneId === toLaneId){
+      return null;
+    }
+    else if(     fromLaneId === 1 && toLaneId === 2
+              || fromLaneId === 2 && toLaneId === 3
+              || fromLaneId === 3 && toLaneId === 0){
       const newCardStage = {
         "_id" : cardId,
         "stage" : toLaneId
@@ -119,6 +121,10 @@ export default class Pipeline extends React.Component {
         console.log(response);
         this.updatePipelineAPICall();
       } 
+      else if(response.ok === false) {
+        this.forceUpdate();
+        alert("Server error encountered");
+      }
     }
     else {
       this.forceUpdate();

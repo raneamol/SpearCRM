@@ -60,13 +60,8 @@ export default class NewOrderDialogBox extends React.Component{
     
     if (response.ok) {
       console.log("response worked!");
-      console.log(response);
       this.setState({ open:false });
-
-      this.props.updateActivityTracker()
-      .then( () => this.props.updateAccountProfile() );
-      //using .then is possible since updateActivityTracker is defined as an async function
-      //parent component is updated, then grandparent component is updated
+      this.props.fetchAccountDataAndOrders();
     }
   }
   
@@ -133,6 +128,7 @@ export default class NewOrderDialogBox extends React.Component{
               margin="dense"
               id="cost_of_share"
               label="Cost of one share"
+              helperText="Leave this empty if you wish to transact regardless of the stock price."
               type="text"
               fullWidth
               onChange={this.handleChange}

@@ -8,19 +8,62 @@ import AccountProfileHeader from "./subcomponents/AccountProfileHeader";
 export default class AccountProfile extends React.Component {
   state = {
     accountData: {},
+    activitiesList: [],
+    ordersList: []
   };
 
   componentDidMount() {
     const { cid } = this.props.location.state;
     console.log("CID is " + cid);
-    fetch(`/main/display_account/${cid}`).then(response =>
-      response.json().then(data => {
-        this.setState({ accountData: data });
-      })
+
+    fetch("/main/get_order_from_email")
+    .then(
+      () => {
+        Promise.all([
+          fetch(`/main/display_account/${cid}`), 
+          fetch(`/main/show_user_activities/${cid}`),
+          fetch(`/main/display_account_orders/${cid}`)
+        ])
+        .then(responses => {
+          responses[0].json().then( data => this.setState({ accountData: data }));
+          responses[1].json().then( data => this.setState({ activitiesList: data }));
+          responses[2].json().then( data => this.setState({ ordersList: data }));
+        })
+      }
     );
+    //first we call the API that updates the database in case a new email has been received from an account
+    //then we fetch all their account details, activites, orders to use here and set it to the state
   }
 
-  updateAccountProfileAPICall = () => {
+  //function used by OrdersDisplay and NextSteps in ActivityTracker
+  //and also used by markToBeTransactedOrdersAsTransacted in AccountProfileHeader
+  fetchAccountDataAndOrdersAndActivitiesAPICall = () => {
+    Promise.all([
+      fetch(`/main/display_account/${this.state.accountData._id}`), 
+      fetch(`/main/show_user_activities/${this.state.accountData._id}`),
+      fetch(`/main/display_account_orders/${this.state.accountData._id}`)
+    ])
+    .then(responses => {
+      responses[0].json().then( data => this.setState({ accountData: data }));
+      responses[1].json().then( data => this.setState({ activitiesList: data }));
+      responses[2].json().then( data => this.setState({ ordersList: data }));
+    })
+  }
+
+  //function used by NewOrderDialogBox after POSTing new order
+  fetchAccountDataAndOrdersAPICall = () => {
+    Promise.all([
+      fetch(`/main/display_account/${this.state.accountData._id}`), 
+      fetch(`/main/display_account_orders/${this.state.accountData._id}`)
+    ])
+    .then(responses => {
+      responses[0].json().then( data => this.setState({ accountData: data }));
+      responses[1].json().then( data => this.setState({ ordersList: data }));
+    })
+  }
+
+  //function used by FieldContainer1 and FieldContainer2 after POSTing new fields
+  fetchAccountDataAPICall = () => {
     fetch(`/main/display_account/${this.state.accountData._id}`).then(response =>
       response.json().then(data => {
         this.setState({ accountData: data });
@@ -28,12 +71,19 @@ export default class AccountProfile extends React.Component {
     );
   }
 
-  componentDidUpdate() {
-    console.log(typeof(this.state.accountData.dob));
+  //function used by ManualLogger after POSTing new order
+  fetchActivitiesAPICall = () => {
+    fetch(`/main/show_user_activities/${this.state.accountData._id}`).then(response =>
+      response.json().then(data => {
+        this.setState({ activitiesList: data });
+      })
+    );
   }
   
+  //function used to handle change in field container as it is a controlled component
   handleChange = (event) => {
     console.log("handleChange triggered");
+
     if (Object.prototype.toString.call(event) === "[object Date]") {
       this.setState({
         accountData : {
@@ -43,6 +93,7 @@ export default class AccountProfile extends React.Component {
       });
     }
     //above code handles change in date (dob)
+
     else if(event.target.name === "demat_accno" || event.target.name === "trading_accno"){
       this.setState({
         accountData : {
@@ -51,6 +102,8 @@ export default class AccountProfile extends React.Component {
         }
       });
     }
+    //above code handles change in numeric fields
+
     else{
       this.setState({
         accountData : {
@@ -61,6 +114,7 @@ export default class AccountProfile extends React.Component {
     }
   }
 
+  //function used by FieldContainer1 and FieldContainer2
   postFields = async () => {
     const accountDataObj = this.state.accountData;
     accountDataObj.dob = new Date( Date.parse(accountDataObj.dob) );
@@ -79,7 +133,7 @@ export default class AccountProfile extends React.Component {
     if (response.ok) {
       console.log("response worked!");
       console.log(response);
-      this.updateAccountProfileAPICall();
+      this.fetchAccountDataAPICall();
     }
   }
 
@@ -91,8 +145,8 @@ export default class AccountProfile extends React.Component {
           <AccountProfileHeader 
             name = {this.state.accountData.name} 
             furthestStage = {this.state.accountData.latest_order_stage} 
-            updateAccountProfile = {this.updateAccountProfileAPICall}
-            _id = { {"_id": this.state.accountData._id} }
+            fetchAccountDataAndOrdersAndActivities = {this.fetchAccountDataAndOrdersAndActivitiesAPICall}
+            _id = {this.state.accountData._id}
           />
         </div>
         <FieldsContainer1 
@@ -107,8 +161,13 @@ export default class AccountProfile extends React.Component {
           lead = {0}
         />
         <ActivityTracker 
-          _id = {this.props.location.state.cid}
-          updateAccountProfile = {this.updateAccountProfileAPICall}
+          _id = {this.state.accountData._id}
+          ordersList = {this.state.ordersList}
+          activitiesList = {this.state.activitiesList}
+          fetchAccountDataAndOrdersAndActivities = {this.fetchAccountDataAndOrdersAndActivitiesAPICall}
+          fetchAccountDataAndOrders = {this.fetchAccountDataAndOrdersAPICall}
+          fetchAccountData = {this.fetchAccountDataAPICall}
+          fetchActivities = {this.fetchActivitiesAPICall}
           lead = {0}
         />
         {/* 'lead = 0' communicates that the parent component is AccountProfile */}

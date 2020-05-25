@@ -29,11 +29,9 @@ export default function OrdersDisplay (props) {
   }
 
   const deleteOrder = (orderId) => {
-    fetch(`main/delete_order/${orderId}`).then( () => {
-      props.updateActivityTracker()
-      .then( () => props.updateAccountProfile() );
-      //using .then is possible since updateActivityTracker is defined as an async function
-      //parent component is updated, then grandparent component is updated
+    fetch(`main/delete_order/${orderId}`)
+    .then( () => {
+      props.fetchAccountDataAndOrdersAndActivities();
     });
   }
 
@@ -66,14 +64,15 @@ export default function OrdersDisplay (props) {
 
               {/* Display non-archived orders here */}
               {
-                props.ordersList.map( (order, i) => {
+                props.ordersList.filter( (order) => order.stage !== 0 ).map( (order, i) => {
+                  
                   let iconContent = ( (order.trans_type).toLowerCase() === "buy" ? "B" : "S" );
                   let orderLane = (
-                    order.stage === 3 ? "Initiated" :
+                    order.stage === 3 ? "To-be-transacted" :
                     order.stage === 2 ? "Finalized" : 
-                    order.stage === 1 ? "To-be-transacted" : 
-                    order.stage === 0 ? "Transacted" : ""
+                    order.stage === 1 ? "Initiated" : ""
                   );
+
                   return(
                     <div key={i}>
                       <ListItem>

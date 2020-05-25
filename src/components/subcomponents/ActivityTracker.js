@@ -11,30 +11,7 @@ export default function ActivityTracker(props) {
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date());
-  const [activitiesList, setActivitiesList] = useState([]);
-  const [ordersList, setOrdersList] = useState([]);
-
-//   [{"_id": "5eaade1967f5adbdd24460a7", "title": "Finalize Amol's order", "body": "eh", "date": “2020-02-04T15:08:56.000Z”, "activity_type": "future", "user_id": "5ea58fbc63e50fc607cf6a10", "elapsed": 0}, 
-//   {"_id": "5eaade2467f5adbdd24460a8", "title": "Finalize Amol's order", "body": "eh", "date": “2020-02-04T15:08:56.000Z”, "activity_type": "past", "user_id": "5ea58fbc63e50fc607cf6a10", "elapsed": 0}]
-
-  useEffect( () => {
-    Promise.all([fetch(`/main/show_user_activities/${props._id}`), fetch(`/main/display_account_orders/${props._id}`)])
-    .then(values => {
-      values[0].json().then( activities => setActivitiesList(activities));
-      values[1].json().then( orders => setOrdersList(orders));
-    });
-  }, []);
-
-  const updateActivityTrackerAPICall = async () => {
-    Promise.all([fetch(`/main/show_user_activities/${props._id}`), fetch(`/main/display_account_orders/${props._id}`)])
-    .then(values => {
-      values[0].json().then( activities => setActivitiesList(activities));
-      values[1].json().then( orders => setOrdersList(orders));
-    });
-  }
-  //above API call is defined as async function to chain it with updateAccountProfileAPICall
-  //for components like newOrderDialogBox
-
+  
   const handleActivityType = (event, newActivityType) => {
     if (newActivityType !== null) {
       setActivityType(newActivityType);
@@ -56,9 +33,9 @@ export default function ActivityTracker(props) {
   const postNewActivity = async () => {
     let today = new Date();
 
-    if (    activityType === "future" && activityDate.getDate() <= today.getDate() 
-         || activityType === "past"   && activityDate.getDate() > today.getDate() 
-         || activityTitle === ""
+    if( activityType === "future" && activityDate.getDate() <= today.getDate() 
+        || activityType === "past"   && activityDate.getDate() > today.getDate() 
+        || activityTitle === ""
     ){
       console.log("Date invalid");
       console.log(activityDate.getDate() + "<" + today.getDate())
@@ -72,7 +49,6 @@ export default function ActivityTracker(props) {
       "body": activityBody,
       "date": new Date( Date.parse(activityDate) ),
       "activity_type": activityType,
-      "ai_activity": 0,
     };
     console.log(newActivity);
     const response = await fetch("/main/create_activity", {
@@ -85,10 +61,9 @@ export default function ActivityTracker(props) {
     
     if (response.ok) {
       console.log("response worked!");
-      console.log(response);
       setActivityBody("");
       setActivityTitle("");
-      updateActivityTrackerAPICall();
+      props.fetchActivities();
     }
   }
 
@@ -98,13 +73,12 @@ export default function ActivityTracker(props) {
       <div className="orders-components-container">
         <NewOrderDialogBox 
           account_id={props._id} 
-          updateActivityTracker={updateActivityTrackerAPICall} 
-          updateAccountProfile={props.updateAccountProfile} 
+          fetchAccountDataAndOrders = {props.fetchAccountDataAndOrders}
         />
+
         <OrdersDisplay 
-          ordersList={ordersList} 
-          updateAccountProfile={props.updateAccountProfile} 
-          updateActivityTracker={updateActivityTrackerAPICall} 
+          ordersList={props.ordersList} 
+          fetchAccountDataAndOrdersAndActivities = {props.fetchAccountDataAndOrdersAndActivities}
         />
       </div>
     );
@@ -125,16 +99,17 @@ export default function ActivityTracker(props) {
         handleChangeInBody={handleChangeInBody}
         handleChangeInTitle={handleChangeInTitle}
         handleChangeInDate={handleChangeInDate}
-        postNewActivity = {postNewActivity}
+        postNewActivity={postNewActivity}
+        fetchActivities={props.fetchActivities}
       />
       <NextSteps 
-        activitiesList={activitiesList.filter(activity => activity["activity_type"] === "future")} 
-        updateActivityTracker={updateActivityTrackerAPICall}
-        updateAccountProfile={props.updateAccountProfile}
+        activitiesList={props.activitiesList.filter(activity => activity["activity_type"] === "future")} 
+        fetchAccountDataAndOrdersAndActivities = {props.fetchAccountDataAndOrdersAndActivities}
+        fetchActivities = {props.fetchActivities}
         lead = {props.lead}
       />
       <PastActivity
-        activitiesList={activitiesList.filter(activity => activity["activity_type"] === "past")}
+        activitiesList={props.activitiesList.filter(activity => activity["activity_type"] === "past")}
       />
     </div>
   ); 

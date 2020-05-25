@@ -163,6 +163,7 @@ export default class PipelineNewOrderDialogBox extends React.Component{
               margin="dense"
               id="cost_of_share"
               label="Cost of one share"
+              helperText="Leave this empty if you wish to transact regardless of the stock price."
               type="text"
               fullWidth
               onChange={this.handleChange}

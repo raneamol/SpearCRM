@@ -25,8 +25,7 @@ export default function PastActivity(props) {
                 <p className="description"> {element.body} </p>
              </li>
             );
-          })
-          }
+          })}
         </ul>
       </div>
     </>

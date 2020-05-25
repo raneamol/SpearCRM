@@ -4,7 +4,8 @@ import {convertIsoDateToDateString} from "../Dashboard.js"
 
 
 export default function NextSteps(props) {
-  const transitionActivity = async (activityId) => {
+
+  const transitionActivity = async (activityId, ai_activity_bool) => {
     const activityToTransition = {
       "_id" : activityId,
       "activity_type" : "past"
@@ -20,14 +21,15 @@ export default function NextSteps(props) {
 
     if (response.ok) {
       console.log("response worked!");
-      console.log(response);
-      if (props.lead === 1) {props.updateActivityTracker()}
-      else {
-        props.updateActivityTracker()
-        .then( () => props.updateAccountProfile() );
-        //using .then is possible since updateActivityTracker is defined as an async function
-        //parent component is updated, then grandparent component is updated
+      //change the calls ifparent is LeadProfile
+      if (ai_activity_bool) {
+        props.fetchAccountDataAndOrdersAndActivities();
       }
+      else {
+        props.fetchActivities();
+      }
+      //an AI generated activity can cause wider changes than user generated activity upon transition.
+      //the above code reflects the difference in the API calls made as a response to the transition
     }
   }
 
@@ -40,10 +42,23 @@ export default function NextSteps(props) {
           {props.activitiesList.map( (element, i) => {
             return (
               <li className="blue" key={i}>
-                <input className="largerCheckbox" type="checkbox" onClick={() => {transitionActivity(element._id)}}/>
-                <div className="where"> {element.title} </div>
-                <div className="when"> {convertIsoDateToDateString(element.date)} </div>
-                <p className="description"> {element.body} </p>
+                <input 
+                  className="largerCheckbox" 
+                  type="checkbox" 
+                  onClick={() => {transitionActivity(element._id, element.ai_activity)}}
+                />
+
+                <div className="where"> 
+                  {element.title} 
+                </div>
+
+                <div className="when"> 
+                  {convertIsoDateToDateString(element.date)} 
+                </div>
+
+                <p className="description"> 
+                  {element.body} 
+                </p>
              </li>
             );
           })

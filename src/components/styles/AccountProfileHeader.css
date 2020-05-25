@@ -7,7 +7,7 @@
   right: 20px;
 }
 
-.negotiating{
+.initiated{
   clip-path: polygon(75% 25%, 95% 50%, 75% 75%, 0 75%, 0 50%, 0 25%);
   padding-left: 15px;
   padding-top: 40px;
@@ -22,14 +22,20 @@
   border: 1px solid gray;
 }
 
-.transacted{
+.to-be-transacted{
+  clip-path: polygon(75% 25%, 95% 50%, 75% 75%, 0 75%, 20% 50%, 0 25%);
+  padding: 40px;
+  border: 1px solid gray;
+}
+
+/* .transacted{
   clip-path: polygon(100% 25%, 100% 50%, 100% 75%, 0 75%, 25% 50%, 0 25%);
   padding-left: 60px;
   padding-top: 40px;
   padding-bottom: 40px;
   padding-right: 15px;
   border: 1px solid gray;
-}
+} */
 
 .stage-name {
   z-index: 2;

@@ -21,6 +21,7 @@ def split_into_sentence(body):
     sent_list = sent_tokenize(body)
     return sent_list
 
+
 def check_nlp(sent):
     #nltk part to get action and company
     ignorewords= ['dear', 'sir','stockbroker','mr','mr.','respected','price','cost','please','help','company','id.','id','\n','\r']
@@ -70,6 +71,16 @@ def check_nlp(sent):
             return final_json
         except:
             return 0
+
+def get_cost_from_text(s1):
+    sentence1 = word_tokenize(s1)
+    pos = pos_tag(sentence1)
+    if pos == []:
+        cost_of_share = "undefined"
+    for value in pos:
+        if value[1] == 'CD':
+            cost_of_share = int(value[0])
+    return cost_of_share
 
 
 def fetch_order():
