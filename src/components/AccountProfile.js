@@ -16,23 +16,16 @@ export default class AccountProfile extends React.Component {
     const { cid } = this.props.location.state;
     console.log("CID is " + cid);
 
-    fetch("/main/get_order_from_email")
-    .then(
-      () => {
-        Promise.all([
-          fetch(`/main/display_account/${cid}`), 
-          fetch(`/main/show_user_activities/${cid}`),
-          fetch(`/main/display_account_orders/${cid}`)
-        ])
-        .then(responses => {
-          responses[0].json().then( data => this.setState({ accountData: data }));
-          responses[1].json().then( data => this.setState({ activitiesList: data }));
-          responses[2].json().then( data => this.setState({ ordersList: data }));
-        })
-      }
-    );
-    //first we call the API that updates the database in case a new email has been received from an account
-    //then we fetch all their account details, activites, orders to use here and set it to the state
+    Promise.all([
+      fetch(`/main/display_account/${cid}`), 
+      fetch(`/main/show_user_activities/${cid}`),
+      fetch(`/main/display_account_orders/${cid}`)
+    ])
+    .then(responses => {
+      responses[0].json().then( data => this.setState({ accountData: data }));
+      responses[1].json().then( data => this.setState({ activitiesList: data }));
+      responses[2].json().then( data => this.setState({ ordersList: data }));
+    })
   }
 
   //function used by OrdersDisplay and NextSteps in ActivityTracker

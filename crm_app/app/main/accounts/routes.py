@@ -597,37 +597,41 @@ Your order to """+str(order["trans_type"]) +""" """+str(order["no_of_shares"])+"
 @accounts.route('/get_order_from_email')
 def get_order_from_email():
 	order_list = fetch_order()
-	for i in order_list:
-		n_email = i["From"]
-		n_email = n_email.split('<')[1]
-		email = n_email.split('>')[0]
-		company = i["company"]
-		action = i["action"]
-		no_of_shares = i["no_of_shares"]
-		amount = i["amount"]
+	if order_list == []:
+		return "No new order"
+	else:
+	#if not any(d["From"] == email_id for d in order_list):
+		for i in order_list:
+			n_email = i["From"]
+			n_email = n_email.split('<')[1]
+			email = n_email.split('>')[0]
+			company = i["company"]
+			action = i["action"]
+			no_of_shares = i["no_of_shares"]
+			amount = i["amount"]
 
-		accounts = mongo.db.Accounts
-		orders = mongo.db.Orders
-		activities = mongo.db.Activities
-		
-		account = accounts.find_one({"email":email},{"_id": 1, "name": 1})
-
-
-		#if amount == '':
-		#	amount = "Any"
-
-		title = "{} {} shares of {} for Price:{}?".format(action,no_of_shares,company,amount)
-		body = "Finalize order of {} to {} {} shares of {}. Price:{}".format(account["name"],action,no_of_shares,company,amount)
-		date = datetime.datetime.now() + timedelta(hours = 2)
-		max_stage_order = orders.find({"account_id":str(account["_id"])}).sort("stage",-1).limit(1)
-
-		accounts.update({"_id": account["_id"]}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
-		activities.insert({"title": title, "body": body, "date": date, "activity_type": "future", "user_id": str(account["_id"]), "elapsed":0, "ai_activity": 1})
-		activity = activities.find({}).sort("_id",-1).limit(1)
-		orders.insert({ "company": company, "no_of_shares": no_of_shares, "cost_of_share": amount, "stage": 1, "account_id":str(account["_id"]), "trans_type": action, "activity_id": str(activity[0]["_id"]), "creation_date":datetime.datetime.now()})
+			accounts = mongo.db.Accounts
+			orders = mongo.db.Orders
+			activities = mongo.db.Activities
+			
+			account = accounts.find_one({"email":email},{"_id": 1, "name": 1})
 
 
-	return "Inserted"
+			#if amount == '':
+			#	amount = "Any"
+
+			title = "{} {} shares of {} for Price:{}?".format(action,no_of_shares,company,amount)
+			body = "Finalize order of {} to {} {} shares of {}. Price:{}".format(account["name"],action,no_of_shares,company,amount)
+			date = datetime.datetime.now() + timedelta(hours = 2)
+			max_stage_order = orders.find({"account_id":str(account["_id"])}).sort("stage",-1).limit(1)
+
+			accounts.update({"_id": account["_id"]}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
+			activities.insert({"title": title, "body": body, "date": date, "activity_type": "future", "user_id": str(account["_id"]), "elapsed":0, "ai_activity": 1})
+			activity = activities.find({}).sort("_id",-1).limit(1)
+			orders.insert({ "company": company, "no_of_shares": no_of_shares, "cost_of_share": amount, "stage": 1, "account_id":str(account["_id"]), "trans_type": action, "activity_id": str(activity[0]["_id"]), "creation_date":datetime.datetime.now()})
+
+
+		return "Inserted"
 
 
 

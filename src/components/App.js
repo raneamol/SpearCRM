@@ -1,4 +1,4 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import Pipeline from './Pipeline.js';
 import Dashboard from './Dashboard.js';
 import Accounts from './Accounts.js'; 
@@ -15,6 +15,21 @@ import {
 import './styles/App.css';
 
 export default function App() {
+  useEffect( () => {
+    let timer = setInterval( () => {
+      fetch("/main/get_order_from_email")
+      .then( response => 
+        response.text()
+        .then( text => {
+          if (text === "Inserted") {alert(" New orders received from email. Refresh page to view changes.")}
+        })
+      )}, 300000);
+
+    return () => {
+      clearInterval(timer);
+    }
+  }, []);
+
   return(
     <Router>
       <div>
