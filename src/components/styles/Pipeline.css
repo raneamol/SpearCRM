@@ -1,6 +1,6 @@
 .add-order-button {
   z-index: 2;
-  top: 55px;
+  top: 60px;
   right: 10px;
   position: absolute;
   padding: 0;
@@ -9,7 +9,16 @@
 
 .complete-orders-button {
   z-index: 2;
-  top: 100px;
+  top: 105px;
+  right: 10px;
+  position: absolute;
+  padding: 0;
+  margin: 0;
+}
+
+.pricecheck-orders-button {
+  z-index: 2;
+  top: 150px;
   right: 10px;
   position: absolute;
   padding: 0;

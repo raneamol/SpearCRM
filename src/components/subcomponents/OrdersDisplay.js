@@ -14,7 +14,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
-
+import RefreshIcon from '@material-ui/icons/Refresh';
 import '../styles/OrdersDisplay.css'
 
 export default function OrdersDisplay (props) {
@@ -30,9 +30,12 @@ export default function OrdersDisplay (props) {
 
   const deleteOrder = (orderId) => {
     fetch(`main/delete_order/${orderId}`)
-    .then( () => {
-      props.fetchAccountDataAndOrdersAndActivities();
-    });
+    .then( () => props.fetchAccountDataAndOrdersAndActivities() );
+  }
+
+  const priceCheckFinalizedOrders = () => {
+    fetch("/main/convert_finalized_orders")
+    .then( () => props.fetchAccountDataAndOrdersAndActivities() );  
   }
 
   return (
@@ -55,6 +58,9 @@ export default function OrdersDisplay (props) {
             <IconButton aria-label="close" onClick={handleClose}>
               <CloseIcon />
             </IconButton>  
+            <IconButton aria-label="close" onClick={priceCheckFinalizedOrders}>
+              <RefreshIcon />
+            </IconButton> 
           </span>
         </DialogTitle>
           

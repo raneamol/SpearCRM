@@ -40,8 +40,8 @@ def check_nlp(sent):
         tokens_without_sw = [word for word in pos if not word[0] in stopwords.words()]
         tokens_without_sw = [word for word in tokens_without_sw if not word[0].lower() in ignorewords]
         for value in tokens_without_sw:
-            if value[0]=='buy':
-                action = value[0]
+            if value[0]=='buy' or value[0]=='purchase':
+                action = 'buy'
 
             elif value[0]=='sell':
                 action = value[0]

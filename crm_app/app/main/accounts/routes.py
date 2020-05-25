@@ -688,6 +688,45 @@ def pie_chart():
 	order = json.dumps(order, default = myconverter)
 	return order
 
+@accounts.route('/convert_finalized_orders')
+def convert_finalized_orders():
+	accounts = mongo.db.Accounts
+	orders = mongo.db.Orders
+	activities = mongo.db.Activities
+
+	finalized_orders = orders.find({"stage": 2}) 
+	finalized_orders = list(finalized_orders)
+	
+	#orders.update({"stage": 2},{"$set": {"stage": 3}})
+	
+	for i in finalized_orders:
+		
+		current_price = get_stock_price(i["company"])
+		cost_of_share = get_cost_from_text(i["cost_of_share"])
+		if cost_of_share == 'undefined':
+			cost_of_share = current_price		
+		action = i["trans_type"].lower()
+		account = accounts.find_one({"_id":ObjectId(i["account_id"])})
+		print(action)
+		print(current_price)
+		print(cost_of_share)
+		if (action == 'buy' and cost_of_share >= current_price) or (action == 'sell' and cost_of_share <= current_price):
+			orders.update({"_id": i["_id"]},{"$set":{"stage": 3}})
+			title = "Transact order for {}ing {} {} shares.".format(i["trans_type"],i["no_of_shares"],i["company"])
+			body = "Transact order of {} to {} {} shares of {}. Price:{}".format(account["name"],i["trans_type"],i["no_of_shares"],\
+			i["company"],cost_of_share)
+			date = datetime.datetime.now() + timedelta(hours = 2)
+
+			activities.insert({"title": title, "body": body, "date": date, "activity_type": "future", "user_id": i["account_id"],\
+			"elapsed":0, "ai_activity": 1})
+			activity = activities.find({}).sort("_id",-1).limit(1)
+			orders.update({"_id": i["_id"]},{"$set" : {"activity_id": str(activity[0]["_id"])}})
+			
+		max_stage_order = orders.find({"account_id":i["account_id"]}).sort("stage",-1).limit(1)
+		accounts.update({"_id": ObjectId(i["account_id"])}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
+
+	return "Success"
+
 
 
 '''Data for create activity

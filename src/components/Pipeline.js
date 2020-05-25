@@ -9,6 +9,7 @@ import {
 } from "react-router-dom";
 import PipelineNewOrderDialogBox from './subcomponents/PipelineNewOrderDialogBox.js';
 import SendIcon from '@material-ui/icons/Send';
+import ShowChartIcon from '@material-ui/icons/ShowChart';
 import Button from "@material-ui/core/Button";
 import './styles/Pipeline.css';
 
@@ -149,6 +150,12 @@ export default class Pipeline extends React.Component {
     console.log("Completion trigerred");
     fetch("/main/complete_all_orders").then( () => this.updatePipelineAPICall() );     
   }
+
+  //compares price constraint of order in finalized stage against actual current stock price
+  //may move an order to to-be-transacted stage accordingly
+  priceCheckFinalizedOrders = () => {
+    fetch("/main/convert_finalized_orders").then( () => this.updatePipelineAPICall() );  
+  }
   
   render() {
     return(
@@ -173,6 +180,18 @@ export default class Pipeline extends React.Component {
             startIcon={<SendIcon />}
           >
             Mark Orders as transacted
+          </Button>
+        </div>
+
+        <div className="pricecheck-orders-button">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={this.priceCheckFinalizedOrders}
+            startIcon={<ShowChartIcon />}
+            helperText="Checks real-time share price and moves finalized orders to to-be-transacted if eligible"
+          >
+            Check share price & update
           </Button>
         </div>
       </>
