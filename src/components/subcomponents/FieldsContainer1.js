@@ -11,6 +11,39 @@ export default class FieldsContainer1 extends React.Component {
 
   render() {
     console.log(this.props);
+    let fieldsBasedOnParentComponent = null;
+    
+    if (this.props.lead === 1) {
+      fieldsBasedOnParentComponent =  null;
+    }
+    else {
+      fieldsBasedOnParentComponent = (
+        <>
+          <ListItem>
+            <EditableField 
+              name="demat_accno" 
+              fieldName="Demat Account Number" 
+              fieldData={this.props.fields.demat_accno} 
+              onChange={this.props.handleChange} 
+              onSubmit={this.props.onSubmit}
+            />
+          </ListItem>
+          <Divider />
+          
+          <ListItem>
+            <EditableField 
+              name="trading_accno" 
+              fieldName="Trading Account Number" 
+              fieldData={this.props.fields.trading_accno} 
+              onChange={this.props.handleChange} 
+              onSubmit={this.props.onSubmit}
+            />
+          </ListItem>
+          <Divider />
+        </>
+      );
+    }
+
     return(
       <div>
          <h2 style={{ textAlign: "center"}}> Fields 1</h2>
@@ -80,6 +113,8 @@ export default class FieldsContainer1 extends React.Component {
               />
              </ListItem>
             <Divider />
+
+            {fieldsBasedOnParentComponent}
           </List>
       </div> 
     );

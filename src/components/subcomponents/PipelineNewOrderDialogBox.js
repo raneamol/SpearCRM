@@ -104,13 +104,6 @@ export default class PipelineNewOrderDialogBox extends React.Component{
           <DialogTitle id="form-dialog-title">Add New Order</DialogTitle>
           <DialogContent>
 
-        {/* {
-            "company" : "Google",
-            "no_of_shares" : 40,
-            "cost_of_share" : 20,
-            "stage" : 3,
-            "usr_id" : "A_12342069"
-        } */}
 
             <FormControl variant="outlined" fullWidth>
               <InputLabel>Account</InputLabel>
@@ -146,6 +139,7 @@ export default class PipelineNewOrderDialogBox extends React.Component{
               type="text"
               fullWidth
               onChange={this.handleChange}
+              helperText="Enter valid security ID or symbol of the company."
             />
 
             <TextField

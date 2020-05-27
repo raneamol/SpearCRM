@@ -749,8 +749,18 @@ def delete_activity(activity_id):
 		accounts.update({"_id": ObjectId(account_id)}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
 	return "activity deleted"
 
-
-
+@accounts.route('account_turnover/<usr_id>')
+def account_turnover(usr_id):
+	accounts = mongo.db.Accounts
+	orders = mongo.db.Orders
+	order = orders.aggregate([{"$match": {"stage": 0, "account_id": usr_id}},{"$group":{"_id": "$account_id",\
+	"turnover": { "$sum": {"$multiply": ["$no_of_shares", "$cost_of_share"] }}}}])
+	order = list(order)
+	order[0].pop('_id',None)
+	print(order)
+	order = json.dumps(order[0], default = myconverter)
+	return order
+	
 
 
 

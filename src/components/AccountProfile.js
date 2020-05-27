@@ -9,7 +9,8 @@ export default class AccountProfile extends React.Component {
   state = {
     accountData: {},
     activitiesList: [],
-    ordersList: []
+    ordersList: [],
+    accountTurnover: {},
   };
 
   componentDidMount() {
@@ -19,12 +20,14 @@ export default class AccountProfile extends React.Component {
     Promise.all([
       fetch(`/main/display_account/${cid}`), 
       fetch(`/main/show_user_activities/${cid}`),
-      fetch(`/main/display_account_orders/${cid}`)
+      fetch(`/main/display_account_orders/${cid}`),
+      fetch(`/main/account_turnover/${cid}`)
     ])
     .then(responses => {
       responses[0].json().then( data => this.setState({ accountData: data }));
       responses[1].json().then( data => this.setState({ activitiesList: data }));
       responses[2].json().then( data => this.setState({ ordersList: data }));
+      responses[3].json().then( data => this.setState({ accountTurnover: data }));
     })
   }
 
@@ -34,12 +37,14 @@ export default class AccountProfile extends React.Component {
     Promise.all([
       fetch(`/main/display_account/${this.state.accountData._id}`), 
       fetch(`/main/show_user_activities/${this.state.accountData._id}`),
-      fetch(`/main/display_account_orders/${this.state.accountData._id}`)
+      fetch(`/main/display_account_orders/${this.state.accountData._id}`),
+      fetch(`/main/account_turnover/${this.state.accountData._id}`)
     ])
     .then(responses => {
       responses[0].json().then( data => this.setState({ accountData: data }));
       responses[1].json().then( data => this.setState({ activitiesList: data }));
       responses[2].json().then( data => this.setState({ ordersList: data }));
+      responses[3].json().then( data => this.setState({ accountTurnover: data }));
     })
   }
 
@@ -87,16 +92,6 @@ export default class AccountProfile extends React.Component {
     }
     //above code handles change in date (dob)
 
-    else if(event.target.name === "demat_accno" || event.target.name === "trading_accno"){
-      this.setState({
-        accountData : {
-          ...this.state.accountData,
-          [event.target.name] : parseInt(event.target.value),
-        }
-      });
-    }
-    //above code handles change in numeric fields
-
     else{
       this.setState({
         accountData : {
@@ -112,7 +107,6 @@ export default class AccountProfile extends React.Component {
     const accountDataObj = this.state.accountData;
     accountDataObj.dob = new Date( Date.parse(accountDataObj.dob) );
     //date and last_contact are sent as date objects
-    //demat_accno and trading_accno are sent as integers
     //all other fields are sent as strings
 
     const response = await fetch("/main/edit_account", {
@@ -145,11 +139,13 @@ export default class AccountProfile extends React.Component {
           fields={this.state.accountData} 
           handleChange={this.handleChange} 
           onSubmit={this.postFields}
+          lead = {0}
         />
         <FieldsContainer2 
           fields={this.state.accountData} 
           handleChange={this.handleChange} 
           onSubmit={this.postFields}
+          accountTurnover={this.state.accountTurnover}
           lead = {0}
         />
         <ActivityTracker 

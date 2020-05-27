@@ -112,6 +112,7 @@ export default class LeadProfile extends React.Component {
           fields={this.state.leadData}
           handleChange={this.handleChange} 
           onSubmit={this.postFields}
+          lead = {1}
         /> 
         <FieldsContainer2
           fields={this.state.leadData}

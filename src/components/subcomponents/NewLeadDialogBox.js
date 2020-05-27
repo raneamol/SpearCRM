@@ -15,7 +15,12 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
-
+import Collapse from '@material-ui/core/Collapse';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import FormHelperText from '@material-ui/core/FormHelperText';
+import FormGroup from '@material-ui/core/FormGroup';
+import Switch from '@material-ui/core/Switch';
+import Checkbox from '@material-ui/core/Checkbox';
 
 export default class NewLeadDialogBox extends React.Component{
   state = {
@@ -33,6 +38,17 @@ export default class NewLeadDialogBox extends React.Component{
     phone_number: "",
     marital_status: "",
     status: "",
+    showMlFields: false,
+    ml_doNotEmail : 0,
+    ml_filledRegistrationForm : 0,
+    ml_fromWebsite : 0,
+    ml_unemployed : 0,
+    ml_isBusy : 0,
+    ml_phoneReachableFrequently : 0,
+    ml_willRevert : 0,
+    ml_phoneReachable : 0,
+    ml_leadQualityUncertainty : 0,
+    ml_poorLeadQuality : 0,
   }
 
   componentDidUpdate() {
@@ -48,6 +64,13 @@ export default class NewLeadDialogBox extends React.Component{
     });
   }
 
+  handleChangeInMlFields = (event) => {
+    this.setState({
+      [event.target.name] : event.target.checked ? 1 : 0
+    });
+  }
+
+
   handleChangeInDate = (event) => {
     this.setState({ dob: event });
   }
@@ -62,7 +85,8 @@ export default class NewLeadDialogBox extends React.Component{
 
   postNewLead = async () => {
     const newLead = this.state;
-    delete newLead["open"];
+    delete newLead.open;
+    delete newLead.showMlFields;
     const response = await fetch("/main/create_lead", {
       method: "POST",
       headers: {
@@ -229,7 +253,7 @@ export default class NewLeadDialogBox extends React.Component{
                   name="status"
                 >
                   <MenuItem value=""> <em>None</em> </MenuItem>
-                  <MenuItem value={"Open"}>Open</MenuItem>
+                  <MenuItem value={"Uncontacted"}>Uncontacted</MenuItem>
                   <MenuItem value={"Contacted"}>Contacted</MenuItem>
                 </Select>
               </FormControl>
@@ -245,6 +269,61 @@ export default class NewLeadDialogBox extends React.Component{
               fullWidth
               onChange={this.handleChange}
             />
+
+            <FormControlLabel
+              control={<Switch checked={this.state.showMlFields} onChange={() => {this.setState({ showMlFields: !this.state.showMlFields })}}/>}
+              label="Add additional details"
+            />
+            
+            <div>
+              <FormControl component="fieldset" >
+                <Collapse in={this.state.showMlFields}>
+                <FormGroup>
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_doNotEmail} onChange={this.handleChangeInMlFields} name="ml_doNotEmail" />}
+                    label="Do not email"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_filledRegistrationForm} onChange={this.handleChangeInMlFields} name="ml_filledRegistrationForm" />}
+                    label="Filled Registration Form"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_fromWebsite} onChange={this.handleChangeInMlFields} name="ml_fromWebsite" />}
+                    label="Redirected from website"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_unemployed} onChange={this.handleChangeInMlFields} name="ml_unemployed" />}
+                    label="Unemployed"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_isBusy} onChange={this.handleChangeInMlFields} name="ml_isBusy" />}
+                    label="Is generally busy"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_phoneReachableFrequently} onChange={this.handleChangeInMlFields} name="ml_phoneReachableFrequently" />}
+                    label="Phone is generally reachable"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_willRevert} onChange={this.handleChangeInMlFields} name="ml_willRevert" />}
+                    label="Lead will revert upon contact"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_phoneReachable} onChange={this.handleChangeInMlFields} name="ml_phoneReachable" />}
+                    label="Reachable over phone at all"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_leadQualityUncertainty} onChange={this.handleChangeInMlFields} name="ml_leadQualityUncertainty" />}
+                    label="Uncertain lead quality"
+                  />
+                  <FormControlLabel
+                    control={<Checkbox checked={this.state.ml_poorLeadQuality} onChange={this.handleChangeInMlFields} name="ml_poorLeadQuality" />}
+                    label="Poor lead quality"
+                  />
+                </FormGroup>
+                </Collapse>
+                <FormHelperText> You can leave fields unchecked </FormHelperText>
+              </FormControl>
+            </div>
 
           </DialogContent>
           <DialogActions>

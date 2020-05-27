@@ -107,6 +107,16 @@ def create_lead():
 	state = req_data["state"]
 	status = req_data["status"]
 	lead_source = req_data["lead_source"]
+	ml_doNotEmail = req_data["ml_doNotEmail"]
+	ml_filledRegistrationForm = req_data["ml_filledRegistrationForm"]
+	ml_fromWebsite = req_data["ml_fromWebsite"]
+	ml_isBusy = req_data["ml_isBusy"] 
+	ml_leadQualityUncertainty = req_data["ml_leadQualityUncertainty"]
+	ml_phoneReachable = req_data["ml_phoneReachable"]
+	ml_phoneReachableFrequently = req_data["ml_phoneReachableFrequently"]
+	ml_poorLeadQuality = req_data["ml_poorLeadQuality"]
+	ml_unemployed = req_data["ml_unemployed"]
+	ml_willRevert = req_data["ml_willRevert"]
 
 	leads = mongo.db.Leads
 
@@ -127,18 +137,18 @@ def create_lead():
     "lead_source":lead_source,
 	"ml_fields" : {
         "const" : 1,
-        "Do Not Email" : 0,
-        "Lead Origin_Lead Add Form" : 0,
-        "Lead Source_Welingak Website" : 0,
-        "What is your current occupation_Unemployed" : 0,
-        "Tags_Busy" : 0,
+        "Do Not Email" : ml_doNotEmail,
+        "Lead Origin_Lead Add Form" : ml_filledRegistrationForm,
+        "Lead Source_Welingak Website" : ml_fromWebsite,
+        "What is your current occupation_Unemployed" : ml_unemployed,
+        "Tags_Busy" : ml_isBusy,
         "Tags_Closed by Horizzon" : 0,
         "Tags_Lost to EINS" : 0,
-        "Tags_Ringing" : 0,
-        "Tags_Will revert after reading the email" : 0,
-        "Tags_switched off" : 0,
-        "Lead Quality_Not Sure" : 0,
-        "Lead Quality_Worst" : 0,
+        "Tags_Ringing" : ml_phoneReachableFrequently,
+        "Tags_Will revert after reading the email" : ml_willRevert,
+        "Tags_switched off" : ml_phoneReachable,
+        "Lead Quality_Not Sure" : ml_leadQualityUncertainty,
+        "Lead Quality_Worst" : ml_poorLeadQuality,
         "Last Notable Activity_SMS Sent" : 0
     }
 }
