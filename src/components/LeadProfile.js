@@ -8,23 +8,37 @@ import LeadProfileHeader from "./subcomponents/LeadProfileHeader";
 export default class LeadProfile extends React.Component {
   state = {
     leadData: {},
+    activitiesList: [],
+    ordersList: []
   };
 
   componentDidMount() {
     const { cid } = this.props.location.state;
     console.log("CID is " + cid);
-    fetch(`/main/display_lead/${cid}`).then(response =>
+    
+    
+    Promise.all([
+      fetch(`/main/display_lead/${cid}`), 
+      fetch(`/main/show_user_activities/${cid}`),])
+    .then(responses => {
+      responses[0].json().then( data => this.setState({ leadData: data }));
+      responses[1].json().then( data => this.setState({ activitiesList: data }));
+    })
+  }
+
+  fetchLeadDataAPICall = () => {
+    fetch(`/main/display_lead/${this.state.leadData._id}`).then(response =>
       response.json().then(data => {
         this.setState({ leadData: data });
-        console.log(this.state.leadData);
       })
     );
   }
 
-  updateLeadProfileAPICall = () => {
-    fetch(`/main/display_lead/${this.state.leadData._id}`).then(response =>
+  fetchActivitiesAPICall = () => {
+    fetch(`/main/show_user_activities/${this.state.leadData._id}`).then(response =>
       response.json().then(data => {
-        this.setState({ leadData: data });
+        console.log(data);
+        this.setState({ activitiesList: data });
       })
     );
   }
@@ -78,7 +92,7 @@ export default class LeadProfile extends React.Component {
     if (response.ok) {
       console.log(leadDataObj);
       console.log("response worked!");
-      this.updateLeadProfileAPICall();
+      this.fetchLeadDataAPICall();
     }
   }
 
@@ -91,7 +105,7 @@ export default class LeadProfile extends React.Component {
             name = {this.state.leadData.name}
             leadStatus = {this.state.leadData.status}
             _id = {this.state.leadData._id}
-            updateLeadProfile = {this.updateLeadProfileAPICall}
+            fetchLeadData = {this.fetchLeadDataAPICall}
           />
         </div>
         <FieldsContainer1 
@@ -108,6 +122,8 @@ export default class LeadProfile extends React.Component {
         <ActivityTracker 
           _id = {this.props.location.state.cid}
           lead = {1}
+          fetchActivities = {this.fetchActivitiesAPICall}
+          activitiesList = {this.state.activitiesList}
         />
 {/* 'lead = 1' communicates that the parent component is LeadProfile */}
       </div>     

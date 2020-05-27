@@ -15,10 +15,13 @@ import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import '../styles/OrdersDisplay.css'
 
 export default function OrdersDisplay (props) {
   const [open, setOpen] = useState(false);
+  const [openSpinner, setOpenSpinner] = useState(false);
 
   const handleOpen = () => {
     setOpen(true);
@@ -34,8 +37,12 @@ export default function OrdersDisplay (props) {
   }
 
   const priceCheckFinalizedOrders = () => {
+    setOpenSpinner(true);
     fetch("/main/convert_finalized_orders")
-    .then( () => props.fetchAccountDataAndOrdersAndActivities() );  
+    .then( () => {
+      setOpenSpinner(false);
+      props.fetchAccountDataAndOrdersAndActivities();
+    });  
   }
 
   return (
@@ -52,20 +59,27 @@ export default function OrdersDisplay (props) {
         open={open}
         onClose={handleClose}
       >
+        
         <DialogTitle id="form-dialog-title">
           View all orders 
           <span style={{ right: 5 }}> 
             <IconButton aria-label="close" onClick={handleClose}>
               <CloseIcon />
             </IconButton>  
+
             <IconButton aria-label="close" onClick={priceCheckFinalizedOrders}>
               <RefreshIcon />
             </IconButton> 
+            
           </span>
         </DialogTitle>
           
         <DialogContent>
           <div className="orders-container">
+            <Backdrop className="spinner-backdrop" open={openSpinner}>
+              <CircularProgress color="inherit" />
+            </Backdrop>
+
             <List>
 
               {/* Display non-archived orders here */}

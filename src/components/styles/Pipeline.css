@@ -24,3 +24,9 @@
   padding: 0;
   margin: 0;
 }
+
+.spinner-backdrop {
+  z-index: 2;
+  position: absolute;
+  color: 'blue';
+}

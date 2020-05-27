@@ -5,7 +5,7 @@ import {convertIsoDateToDateString} from "../Dashboard.js"
 
 export default function NextSteps(props) {
 
-  const transitionActivity = async (activityId, ai_activity_bool) => {
+  const transitionActivity = async (activityId, isAiActivity) => {
     const activityToTransition = {
       "_id" : activityId,
       "activity_type" : "past"
@@ -21,10 +21,11 @@ export default function NextSteps(props) {
 
     if (response.ok) {
       console.log("response worked!");
-      //change the calls ifparent is LeadProfile
-      if (ai_activity_bool) {
+      if (isAiActivity && props.lead === 0) {
         props.fetchAccountDataAndOrdersAndActivities();
       }
+      //isAiActivity is 1 for activities generated through automation
+      //props.lead indicates the grandparent page. prop.lead===0 being true means AccountProfile is the grandparent.
       else {
         props.fetchActivities();
       }
@@ -32,6 +33,19 @@ export default function NextSteps(props) {
       //the above code reflects the difference in the API calls made as a response to the transition
     }
   }
+
+  const deleteActivity = (activityId, isAiActivity) => {
+		fetch(`/main/delete_activity/${activityId}`)
+		.then( () => {
+      if (isAiActivity) {
+        props.fetchAccountDataAndOrdersAndActivities();
+      }
+      //isAiActivity is 1 for activities generated through automation
+      else {
+        props.fetchActivities();
+      }
+    });
+	}
 
   return(
     <> 
@@ -45,12 +59,15 @@ export default function NextSteps(props) {
                 <input 
                   className="largerCheckbox" 
                   type="checkbox" 
+                  checked={false}
                   onClick={() => {transitionActivity(element._id, element.ai_activity)}}
                 />
 
                 <div className="where"> 
                   {element.title} 
                 </div>
+
+                <span onClick={() => {deleteActivity(element._id, element.ai_activity)}}> &times; </span>
 
                 <div className="when"> 
                   {convertIsoDateToDateString(element.date)} 

@@ -32,8 +32,7 @@ def show_leads():
 @leads.route('/display_lead/<usr_id>')
 def display_lead(usr_id):
 	leads = mongo.db.Leads
-	lead = leads.find({"_id" : ObjectId(usr_id)})
-	
+	lead = leads.find({"_id" : ObjectId(usr_id)}, {"ml_fields": 0})
 	lead = list(lead)
 	lead = json.dumps(lead[0],default = myconverter)
 	
@@ -125,7 +124,23 @@ def create_lead():
 	"phone_number": phone_number, 
 	"state": state, 
 	"status": status,
-    "lead_source":lead_source
+    "lead_source":lead_source,
+	"ml_fields" : {
+        "const" : 1,
+        "Do Not Email" : 0,
+        "Lead Origin_Lead Add Form" : 0,
+        "Lead Source_Welingak Website" : 0,
+        "What is your current occupation_Unemployed" : 0,
+        "Tags_Busy" : 0,
+        "Tags_Closed by Horizzon" : 0,
+        "Tags_Lost to EINS" : 0,
+        "Tags_Ringing" : 0,
+        "Tags_Will revert after reading the email" : 0,
+        "Tags_switched off" : 0,
+        "Lead Quality_Not Sure" : 0,
+        "Lead Quality_Worst" : 0,
+        "Last Notable Activity_SMS Sent" : 0
+    }
 }
 	
 	leads.insert_one(values)
@@ -172,6 +187,7 @@ def lead_to_accounts():
 	b.pop("_id", None)
 	b.pop("lead_source", None)
 	b.pop("status", None)
+	b.pop("ml_fields", None)
 	accounts.insert_one(b)
 	account = accounts.find({}).sort("_id",-1).limit(1)
 	print(str(account[0]["_id"]))

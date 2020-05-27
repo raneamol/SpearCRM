@@ -668,11 +668,12 @@ def top_accounts():
 	
 	order = orders.aggregate([{"$match": {"stage": 0}},{"$group":{"_id": "$account_id" ,"count": {"$sum" : "$no_of_shares"},"acc_score": { "$sum": {"$multiply": ["$no_of_shares", "$cost_of_share"] }}}}])
 	order = list(order)
+	order = sorted(order, key = lambda k:k['acc_score'], reverse = True)
 	print(order)
 	for i in order:
 		account = accounts.find_one({"_id": ObjectId(i["_id"])})
 		i["name"] = account["name"]
-
+	
 	order = json.dumps(order, default = myconverter)
 	return order
 
@@ -726,6 +727,32 @@ def convert_finalized_orders():
 		accounts.update({"_id": ObjectId(i["account_id"])}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
 
 	return "Success"
+
+
+@accounts.route('/delete_activity/<activity_id>')
+def delete_activity(activity_id):
+	activities = mongo.db.Activities
+	orders = mongo.db.Orders
+	accounts = mongo.db.accounts
+
+	activity = activities.find_one({"_id": ObjectId(activity_id)})
+	if activity["ai_activity"] == 0:
+		activities.delete_one({"_id": ObjectId(activity_id)})
+
+	elif activity["ai_activity"] == 1 and activity["activity_type"] == "future":
+		order = orders.find_one({"activity_id": activity_id})
+		account_id = order["account_id"]
+		orders.delete_one({"activity_id": activity_id})
+		activities.delete_one({"_id": ObjectId(activity_id)})
+		max_stage_order = orders.find({"account_id":account_id}).sort("stage",-1).limit(1)
+
+		accounts.update({"_id": ObjectId(account_id)}, { "$set": {"latest_order_stage": max_stage_order[0]["stage"]}})
+	return "activity deleted"
+
+
+
+
+
 
 
 

@@ -11,11 +11,14 @@ import PipelineNewOrderDialogBox from './subcomponents/PipelineNewOrderDialogBox
 import SendIcon from '@material-ui/icons/Send';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
 import Button from "@material-ui/core/Button";
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import './styles/Pipeline.css';
 
 export default class Pipeline extends React.Component {
   state = {
     fetchedOrders : [],
+    openSpinner : false,
   };
 
   componentDidMount() {
@@ -28,7 +31,7 @@ export default class Pipeline extends React.Component {
   }
 
   componentDidUpdate() {
-    console.log(this.state.fetchedOrders);
+    console.log(this.state);
   }
 
   updatePipelineAPICall = () => {
@@ -147,14 +150,24 @@ export default class Pipeline extends React.Component {
   }
 
   markToBeTransactedOrdersAsTransacted = () => {
+    this.setState({ openSpinner: true});
     console.log("Completion trigerred");
-    fetch("/main/complete_all_orders").then( () => this.updatePipelineAPICall() );     
+    fetch("/main/complete_all_orders")
+    .then( () => {
+      this.setState({ openSpinner: false});
+      this.updatePipelineAPICall();     
+    });
   }
 
   //compares price constraint of order in finalized stage against actual current stock price
   //may move an order to to-be-transacted stage accordingly
   priceCheckFinalizedOrders = () => {
-    fetch("/main/convert_finalized_orders").then( () => this.updatePipelineAPICall() );  
+    this.setState({ openSpinner: true});
+    fetch("/main/convert_finalized_orders")
+    .then( () => {
+      this.setState({ openSpinner: false});
+      this.updatePipelineAPICall(); 
+    });  
   }
   
   render() {
@@ -189,10 +202,13 @@ export default class Pipeline extends React.Component {
             color="primary"
             onClick={this.priceCheckFinalizedOrders}
             startIcon={<ShowChartIcon />}
-            helperText="Checks real-time share price and moves finalized orders to to-be-transacted if eligible"
           >
             Check share price & update
           </Button>
+
+          <Backdrop className="spinner-backdrop" open={this.state.openSpinner}>
+            <CircularProgress color="inherit" />
+          </Backdrop>
         </div>
       </>
     );

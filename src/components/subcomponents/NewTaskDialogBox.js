@@ -21,7 +21,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
-export default function NewTaskDialogBox() {
+export default function NewTaskDialogBox(props) {
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date().toJSON().slice(0,10));
@@ -46,6 +46,7 @@ export default function NewTaskDialogBox() {
       let leadsMenuItems = [<MenuItem value=""> <em>None</em> </MenuItem>];
       let accountsMenuItems = [<MenuItem value=""> <em>None</em> </MenuItem>];
 
+      //sort and format account names
       values[0].json().then(accounts => {
         accounts = accounts.sort(function(a,b){ 
           var x = a.name < b.name? -1:1; 
@@ -57,6 +58,7 @@ export default function NewTaskDialogBox() {
         });
       });
 
+      //sort and format lead names
       values[1].json().then(leads => {
         leads = leads.sort(function(a,b){ 
           var x = a.name < b.name? -1:1; 
@@ -101,7 +103,7 @@ export default function NewTaskDialogBox() {
       console.log("response worked!");
       setActivityBody("");
       setActivityTitle("");
-      //updateDashboard();
+      props.updateDashboard();
     }
   }
 

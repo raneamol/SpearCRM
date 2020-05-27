@@ -61,7 +61,7 @@ export default class LeadProfileHeader extends React.Component {
       this.setState({ open:false });
       this.setState({ submitted: true });
 
-      response.text().then( (text) => {
+      response.text().then( text => {
         this.setState({ newId: text });
       });
     }

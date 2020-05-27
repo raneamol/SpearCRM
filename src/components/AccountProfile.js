@@ -133,7 +133,6 @@ export default class AccountProfile extends React.Component {
   render(){
     return(
       <div className="profile-page-grid-container">
-        {console.log(this.state.accountData)}
         <div className='profile-header-container'>
           <AccountProfileHeader 
             name = {this.state.accountData.name} 

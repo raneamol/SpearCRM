@@ -24,7 +24,7 @@ export default function TopOpportunitiesWidget(props) {
   };
 
   useEffect( () => {
-    console.log(alignment);
+    console.log(props.topAccounts);
   });
 
   return (
@@ -48,7 +48,42 @@ export default function TopOpportunitiesWidget(props) {
 
       <div className="material-ui-list">
         <List dense={true}>
-          {props.topLeads.map( (element,i) => {
+          {/* list for top leads */}
+          {alignment === "leads" &&
+            props.topLeads.map( (element,i) => {
+              return(
+                <div key={element.id}>
+                  <ListItem>
+                    <ListItemAvatar>
+                      <Avatar>
+                        <div> {i+1} </div>
+                      </Avatar>
+                    </ListItemAvatar>
+
+                    <ListItemText
+                      primary={element.name}
+                      secondary={`Prospects: ${(element.lead_score) > 90 ? "Excellent " : "Very good"}` +
+                      ` Score:${roundToTwo(element.lead_score)}`}
+                    />
+                    
+                    <ListItemSecondaryAction>
+                      <IconButton edge="end" aria-label="delete">
+                        <Link to={{ pathname: '/leadprofile', state:{cid:element._id} }}>
+                            <OpenInNewIcon/>
+                        </Link>
+                      </IconButton>
+                    </ListItemSecondaryAction>
+                  </ListItem>
+                </div>
+              );
+            })
+          }
+
+          
+
+          {/* list for top accounts */}
+          
+          {alignment === "accounts" && props.topAccounts.map( (element,i) => {
             return(
               <div key={element.id}>
                 <ListItem>
@@ -60,12 +95,12 @@ export default function TopOpportunitiesWidget(props) {
 
                   <ListItemText
                     primary={element.name}
-                    secondary={element.lead_score}
+                    secondary={`Prospects: ${(element.acc_score) > 10000 ? "Excellent" : "Very good"}`}
                   />
                   
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete">
-                      <Link to={{ pathname: (alignment === "accounts" ? '/accountprofile' : '/leadprofile'), state:{cid:element._id} }}>
+                      <Link to={{ pathname: '/accountprofile', state:{cid:element._id} }}>
                           <OpenInNewIcon/>
                       </Link>
                     </IconButton>
@@ -73,7 +108,8 @@ export default function TopOpportunitiesWidget(props) {
                 </ListItem>
               </div>
             );
-          })}
+          })
+          }
         </List>
       </div>
     </div>
@@ -95,4 +131,8 @@ const sample_opps = {
     // {"id":"9", "name":"Rahul", "hotness":"Moderate" },
     // {"id":"10", "name":"Nikhil", "hotness":"Low" },
   ],
+}
+
+function roundToTwo(num) {    
+  return +(Math.round(num + "e+2")  + "e-2");
 }
