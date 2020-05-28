@@ -11,7 +11,7 @@ import {
   Link
 } from "react-router-dom";
 import './styles/Accounts.css'
-import NewProfileDialogBox from './subcomponents/NewProfileDialogBox'
+import NewAccountDialogBox from './subcomponents/NewAccountDialogBox'
 
 const rowSelection = {
   onChange: (selectedRowKeys, selectedRows) => {
@@ -38,7 +38,7 @@ export default class Accounts extends React.Component {
 //Searching logic
 
   componentDidMount() {
-    fetch("/main/show_accounts").then(response =>
+    fetch("/main/show_all_accounts").then(response =>
       response.json().then(data => {
         this.setState({ fetchedData: data });
       })
@@ -46,7 +46,7 @@ export default class Accounts extends React.Component {
   }
 
   updateAccountsAPICall = () => {
-    fetch("/main/show_accounts").then(response =>
+    fetch("/main/show_all_accounts").then(response =>
       response.json().then(data => {
         this.setState({ fetchedData: data });
       })
@@ -187,7 +187,7 @@ export default class Accounts extends React.Component {
       },
       {
         title: 'Phone No.',
-        dataIndex: 'phone_number', // used to be phoneNumber
+        dataIndex: 'phone_number', 
         key: 'phone_number',
         sorter: (a, b) => a.name.length - b.name.length,
         sortDirections: ['descend'],
@@ -203,7 +203,7 @@ export default class Accounts extends React.Component {
         title={() => 'Accounts'}
         onChange={onChange}
       />
-      <div className="add-profile-button"> <NewProfileDialogBox updateAccounts={this.updateAccountsAPICall}/> </div>
+      <div className="add-profile-button"> <NewAccountDialogBox updateAccounts={this.updateAccountsAPICall}/> </div>
     </>
     ); 
   }

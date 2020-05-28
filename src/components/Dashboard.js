@@ -3,7 +3,7 @@ import './styles/Dashboard.css';
 import Chart from 'react-google-charts';
 import CanvasJSReact from './Other/canvasjs.react';
 import TopOpportunitiesWidget from './subcomponents/TopOpportunitiesWidget.js'
-import NewTaskDialogBox from './subcomponents/NewTaskDialogBox';
+import NewActivityDialogBox from './subcomponents/NewActivityDialogBox';
 import {Link} from 'react-router-dom';
 
 export default function Dashboard() {
@@ -19,8 +19,8 @@ export default function Dashboard() {
       fetch("/main/top_leads"),
       fetch("/main/top_accounts"),
       fetch("/main/show_all_activities"),
-      fetch("/main/line_graph"),
-      fetch("/main/pie_chart")
+      fetch("/main/get_line_graph_data"),
+      fetch("/main/get_pie_chart_data")
     ])
 		.then(responses => {
 			responses[0].json().then( data => setTopLeads(data) );
@@ -32,13 +32,12 @@ export default function Dashboard() {
 	}, []);
 
 	const updateDashboardAPICall = () => {
-    console.log("update called");
 		Promise.all([
       fetch("/main/top_leads"),
       fetch("/main/top_accounts"),
       fetch("/main/show_all_activities"),
-      fetch("/main/line_graph"),
-      fetch("/main/pie_chart")
+      fetch("/main/get_line_graph_data"),
+      fetch("/main/get_pie_chart_data")
     ])
 		.then(responses => {
 			responses[0].json().then( data => setTopLeads(data) );
@@ -110,10 +109,6 @@ class PieChart extends React.Component {
     chartImageURI: ""
   };
 
-  componentDidUpdate() {
-    console.log(this.props.pieChartData);
-  }
-
   transformOrdersToDataPoints = (orders) => {
     let dataPoints = [
       ['Stage', 'Volume'],
@@ -136,7 +131,6 @@ class PieChart extends React.Component {
       }
     });
 
-    console.log(dataPoints);
     return dataPoints;
   }
 
@@ -191,7 +185,6 @@ class LineChart extends React.Component {
       element.y = element.y/1000;
     });
 
-    console.log(dataPoints);
     return dataPoints;
   }
 
@@ -274,10 +267,6 @@ class FunnelChart extends React.Component {
 }
 
 class UpcomingTasksWidget extends React.Component {
-	componentDidMount() {
-		console.log(this.props);
-	}
-
 	transitionActivity = async (activityId) => {
 		const activityToTransition = {
       "_id" : activityId,
@@ -293,7 +282,6 @@ class UpcomingTasksWidget extends React.Component {
 		});
 
 		if (response.ok) {
-      console.log("response worked!");
       this.props.updateDashboard();
 		}
 	}
@@ -310,7 +298,7 @@ class UpcomingTasksWidget extends React.Component {
         <div className='tasks-widget-title'> 
 					&nbsp; Upcoming Tasks 
 					<span className="new-task-button"> 
-						<NewTaskDialogBox updateDashboard = {this.props.updateDashboard} /> 
+						<NewActivityDialogBox updateDashboard = {this.props.updateDashboard} /> 
 					</span> 
 				</div>
 
@@ -319,7 +307,6 @@ class UpcomingTasksWidget extends React.Component {
     		<div className="tasks-scroller-container">
     			<ul className="tasks-list">
 						{
-							//filter activitesList to return only future activities. Then map those activities to the returned block of code.
 							this.props.activitiesList.map( (element,i) => {
 								return(							
 									<div key={i}>

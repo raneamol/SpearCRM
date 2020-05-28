@@ -14,9 +14,7 @@ export default class LeadProfile extends React.Component {
 
   componentDidMount() {
     const { cid } = this.props.location.state;
-    console.log("CID is " + cid);
-    
-    
+
     Promise.all([
       fetch(`/main/display_lead/${cid}`), 
       fetch(`/main/show_user_activities/${cid}`),])
@@ -37,14 +35,12 @@ export default class LeadProfile extends React.Component {
   fetchActivitiesAPICall = () => {
     fetch(`/main/show_user_activities/${this.state.leadData._id}`).then(response =>
       response.json().then(data => {
-        console.log(data);
         this.setState({ activitiesList: data });
       })
     );
   }
 
   handleChange = (event) => {
-    console.log("handleChange triggered");
     if (Object.prototype.toString.call(event) === "[object Date]") {
       this.setState({
         leadData : {
@@ -62,11 +58,6 @@ export default class LeadProfile extends React.Component {
         }
       });
     }
-  }
-
-  componentDidUpdate() {
-    console.log("Status is " + this.state.leadData.status);
-    console.log(this.state.leadData);
   }
 
   onDivClick = (event) => {
@@ -90,8 +81,6 @@ export default class LeadProfile extends React.Component {
     });
     
     if (response.ok) {
-      console.log(leadDataObj);
-      console.log("response worked!");
       this.fetchLeadDataAPICall();
     }
   }

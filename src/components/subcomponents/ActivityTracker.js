@@ -37,8 +37,6 @@ export default function ActivityTracker(props) {
         || activityType === "past"   && activityDate.getDate() > today.getDate() 
         || activityTitle === ""
     ){
-      console.log("Date invalid");
-      console.log(activityDate.getDate() + "<" + today.getDate())
       return null;
     }
     //date validation against type of activity
@@ -50,7 +48,6 @@ export default function ActivityTracker(props) {
       "date": new Date( Date.parse(activityDate) ),
       "activity_type": activityType,
     };
-    console.log(newActivity);
     const response = await fetch("/main/create_activity", {
       method: "POST",
       headers: {
@@ -60,7 +57,6 @@ export default function ActivityTracker(props) {
     });
     
     if (response.ok) {
-      console.log("response worked!");
       setActivityBody("");
       setActivityTitle("");
       props.fetchActivities();

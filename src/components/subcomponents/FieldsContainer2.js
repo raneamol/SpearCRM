@@ -7,10 +7,6 @@ import '../styles/FieldsContainer.css'
 import {convertIsoDateToDateString} from "../Dashboard.js"
 
 export default class FieldsContainer2 extends React.Component {
-  componentDidMount() {
-    console.log(this.props.fields);
-  }
-
   render() {
     let fieldsBasedOnParentComponent = null;
     

@@ -22,7 +22,7 @@ export default class AccountProfileHeader extends React.Component {
     }
 
     console.log("Completion triggered");
-    const response = await fetch("/main/complete_orders", {
+    const response = await fetch("/main/complete_account_orders", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
@@ -31,14 +31,9 @@ export default class AccountProfileHeader extends React.Component {
     });
     
     if (response.ok) {
-      console.log("response worked!");
       this.props.fetchAccountDataAndOrdersAndActivities();
       this.setState({ openDialog: 1})
     }
-  }
-
-  componentDidMount() {
-    console.log(this.props);
   }
 
   render() {

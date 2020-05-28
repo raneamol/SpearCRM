@@ -12,15 +12,6 @@ import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 
 export default class ManualLogger extends React.Component {
-  componentDidMount() {
-    console.log(this.props);
-  }
-
-  componentDidUpdate() {
-    console.log(this.props);
-
-  }
-
   render(){
     return(
       <div className="manual-logger">

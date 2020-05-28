@@ -48,7 +48,7 @@ def leads_top():
     for i in  lead_ml_data:
         del i["_id"]
         ml_data.append(i["ml_fields"])
-    #print(lead_ml_data)
+    
     ml_data = pd.DataFrame(ml_data)
 
 

@@ -5,12 +5,7 @@ import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 
 export default class FieldsContainer1 extends React.Component { 
-  componentDidMount() {
-    console.log(this.props.fields);
-  }
-
   render() {
-    console.log(this.props);
     let fieldsBasedOnParentComponent = null;
     
     if (this.props.lead === 1) {

@@ -15,15 +15,6 @@ export default class EditableField extends React.Component {
     };
   }
 
-  componentDidMount() {
-    console.log(`State is ${this.state.isBeingEdited}`)
-  }
-
-  componentDidUpdate() {
-    console.log(`State is ${this.state.isBeingEdited}`);
-    console.log(`Received prop data is ${this.props.fieldData}`);
-  }
-
   alternateViews = () => {
     this.setState({
       isBeingEdited: !this.state.isBeingEdited
@@ -32,7 +23,6 @@ export default class EditableField extends React.Component {
 
   postFieldsAndAlternateViews = () => {
     this.props.onSubmit();
-    //TODO:check if correctness depends on successfull submit
     this.setState({
       isBeingEdited: false
     });
@@ -51,10 +41,7 @@ export default class EditableField extends React.Component {
       );
     }
 
-    //above if block has a return statement. Hence the below code doesn't need to be in a else block.
-
     if(this.state.isBeingEdited) {
-
       if (this.props.name === "dob"){
         fieldDataComponent = (
           <DatePicker 

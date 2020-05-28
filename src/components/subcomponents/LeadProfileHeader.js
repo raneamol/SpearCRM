@@ -20,10 +20,6 @@ export default class LeadProfileHeader extends React.Component {
     newId: 0, //set after lead converts to account
   }
 
-  componentDidUpdate() {
-    console.log(this.state);
-  }
-
   handleOpen = () => {
     if (this.props.leadStatus == "Contacted") {
       this.setState({ open:true });
@@ -40,16 +36,15 @@ export default class LeadProfileHeader extends React.Component {
 
   transitionLeadToAccount = async () => {
     const fields = {
-      demat_accno: parseInt(this.state.demat_accno),
-      trading_accno: parseInt(this.state.trading_accno),
+      demat_accno: this.state.demat_accno,
+      trading_accno: this.state.trading_accno,
       _id : this.props._id,
       contact_comm_type: "Email",
       latest_order_stage: 0,
       last_contact: new Date(),
     }
-    console.log(fields);
 
-    const response = await fetch("/main/lead_to_account", {
+    const response = await fetch("/main/convert_lead_to_account", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

@@ -20,17 +20,17 @@ export default function NextSteps(props) {
     });
 
     if (response.ok) {
-      console.log("response worked!");
       if (isAiActivity && props.lead === 0) {
         props.fetchAccountDataAndOrdersAndActivities();
       }
-      //isAiActivity is 1 for activities generated through automation
+      //isAiActivity is 1 for activities generated through automation. 
+      //Deleting an AI generated activity might involve deletion of corresponding order and updating activity data
       //props.lead indicates the grandparent page. prop.lead===0 being true means AccountProfile is the grandparent.
       else {
         props.fetchActivities();
       }
+      //User generated activities can be deleted without updating orders and activities.
       //an AI generated activity can cause wider changes than user generated activity upon transition.
-      //the above code reflects the difference in the API calls made as a response to the transition
     }
   }
 

@@ -39,7 +39,7 @@ export default class Leads extends React.Component {
   };
 
   componentDidMount() {
-    fetch("/main/show_leads").then(response =>
+    fetch("/main/show_all_leads").then(response =>
       response.json().then(data => {
         this.setState({ fetchedData: data });
       })
@@ -47,7 +47,7 @@ export default class Leads extends React.Component {
   }
 
   updateLeadsAPICall = () => {
-    fetch("/main/show_leads").then(response =>
+    fetch("/main/show_all_leads").then(response =>
       response.json().then(data => {
         this.setState({ fetchedData: data });
       })
@@ -189,7 +189,7 @@ export default class Leads extends React.Component {
       },
       {
         title: 'Phone No.',
-        dataIndex: 'phone_number', // used to be phoneNumber
+        dataIndex: 'phone_number',
         key: 'phone_number',
         sorter: (a, b) => a.name.length - b.name.length,
         sortDirections: ['descend'],

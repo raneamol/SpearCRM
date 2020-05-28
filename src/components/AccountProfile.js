@@ -15,13 +15,12 @@ export default class AccountProfile extends React.Component {
 
   componentDidMount() {
     const { cid } = this.props.location.state;
-    console.log("CID is " + cid);
 
     Promise.all([
       fetch(`/main/display_account/${cid}`), 
       fetch(`/main/show_user_activities/${cid}`),
       fetch(`/main/display_account_orders/${cid}`),
-      fetch(`/main/account_turnover/${cid}`)
+      fetch(`/main/get_account_turnover/${cid}`)
     ])
     .then(responses => {
       responses[0].json().then( data => this.setState({ accountData: data }));
@@ -38,7 +37,7 @@ export default class AccountProfile extends React.Component {
       fetch(`/main/display_account/${this.state.accountData._id}`), 
       fetch(`/main/show_user_activities/${this.state.accountData._id}`),
       fetch(`/main/display_account_orders/${this.state.accountData._id}`),
-      fetch(`/main/account_turnover/${this.state.accountData._id}`)
+      fetch(`/main/get_account_turnover/${this.state.accountData._id}`)
     ])
     .then(responses => {
       responses[0].json().then( data => this.setState({ accountData: data }));
@@ -80,8 +79,6 @@ export default class AccountProfile extends React.Component {
   
   //function used to handle change in field container as it is a controlled component
   handleChange = (event) => {
-    console.log("handleChange triggered");
-
     if (Object.prototype.toString.call(event) === "[object Date]") {
       this.setState({
         accountData : {
@@ -118,8 +115,6 @@ export default class AccountProfile extends React.Component {
     });
     
     if (response.ok) {
-      console.log("response worked!");
-      console.log(response);
       this.fetchAccountDataAPICall();
     }
   }

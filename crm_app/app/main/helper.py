@@ -100,6 +100,6 @@ def fetch_order():
             final["From"] = email_id
 
             order_list.append(final)
-        #print(order_list)
+    
     return order_list
 

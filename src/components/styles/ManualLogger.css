@@ -10,22 +10,6 @@
   padding: 2px;
 }
 
-/* 
-.grid-container {
-  max-height: 600px;
-  display: grid;
-  grid-template-rows: 1fr 2fr;
-  border: 1px solid black;
-} 
-
-
-.manual-logger-inputarea {
-  grid-column-start: 1;
-  grid-column-end: 3;
-  padding: 5px;
-}
-*/
-
 .togglebutton {
   width: 100%;
 }

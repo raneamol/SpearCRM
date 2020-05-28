@@ -51,10 +51,6 @@ export default class NewLeadDialogBox extends React.Component{
     ml_poorLeadQuality : 0,
   }
 
-  componentDidUpdate() {
-    console.log(this.state);
-  }
-
   handleChange = (event) => {
     this.setState({
       [event.target.id || event.target.name] : event.target.value
@@ -96,8 +92,6 @@ export default class NewLeadDialogBox extends React.Component{
     });
     
     if (response.ok) {
-      console.log("response worked!");
-      console.log(response);
       this.setState({ open:false });
       this.props.updateLeads();
     }

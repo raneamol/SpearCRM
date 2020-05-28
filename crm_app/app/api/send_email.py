@@ -1,18 +1,14 @@
 import smtplib, ssl
-
+from app.settings import user,password
 
 def send_email(receiver_email,message):
-    print(message)
-    print(receiver_email)
+
     port = 465  # For SSL
     smtp_server = "smtp.gmail.com"
-    sender_email = "raneamol1967@gmail.com"  # Enter your address
-    password = "amol9699"
-
     context = ssl.create_default_context()
     with smtplib.SMTP_SSL(smtp_server, port, context=context) as server:
-        server.login(sender_email, password)
-        server.sendmail(sender_email, receiver_email, message)
+        server.login(user, password)
+        server.sendmail(user, receiver_email, message)
 
 
 
@@ -30,4 +26,5 @@ Hi """+str(name)+""",
 Your order to """+str(trans_type) +""" """+str(no_of_shares)+""" shares of """+str(company)+"""\
 for cost """+str(cost_of_share)+""" is finalized"""
 
-send_email(receiver_email,message)'''
+send_email(receiver_email,message)
+'''

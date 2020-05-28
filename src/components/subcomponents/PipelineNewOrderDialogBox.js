@@ -21,7 +21,7 @@ export default class PipelineNewOrderDialogBox extends React.Component{
     trans_type: "",
     no_of_shares: 0,
     cost_of_share: 0,
-    selectOptions : [], //only set on initial load (mount)
+    selectOptions : [], //value is only set on first load
     account_id : 0,
   };
 
@@ -35,10 +35,6 @@ export default class PipelineNewOrderDialogBox extends React.Component{
         this.setState({ selectOptions: menuItems });
       })
     );
-  }
-  
-  componentDidUpdate() {
-    console.log(this.state);
   }
 
   handleOpen = () => {
@@ -64,7 +60,6 @@ export default class PipelineNewOrderDialogBox extends React.Component{
     newOrder.no_of_shares = parseInt(this.state.no_of_shares);
     delete newOrder.open;
     delete newOrder.selectOptions;
-    console.log(newOrder);
     const response = await fetch("/main/create_order", {
       method: "POST",
       headers: {
@@ -74,8 +69,6 @@ export default class PipelineNewOrderDialogBox extends React.Component{
     });
     
     if (response.ok) {
-      console.log("response worked!");
-      console.log(response);
       this.setState({ open:false });
 
       this.props.updatePipeline();

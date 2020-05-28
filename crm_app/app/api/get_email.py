@@ -6,20 +6,18 @@ import os
 from datetime import timezone
 from email.header import decode_header
 import html2text
-
+from app.settings import user, password
 
 basedir=os.path.dirname(os.path.abspath(__file__))
 gmail_time = os.path.join(basedir, 'data/gmail_time.txt')
 gmail_mail = os.path.join(basedir, 'data/gmail_mail.txt')
 
 
-
 def get_email():
     #auth details
-    user = "raneamol1967@gmail.com"
-    password = "amol9699"
+    
     imap_url = "imap.gmail.com"
-
+    
 
     date_time = dt.datetime.now()
 
@@ -73,15 +71,14 @@ def get_email():
                     except:
                         pass
                     if (d<date1):
-                        print(raw['Date'])
-
+                        
                         sender = raw['From']
-                        print(raw['From'])
+                        
                         subject = decode_header(raw['subject'])[0][0]
                         if isinstance(subject, bytes):
                             # if it's a bytes, decode to str
                             subject = subject.decode()
-                        print("Subject:",subject)
+                        
 
                         #body
                         if raw.is_multipart():
@@ -95,18 +92,13 @@ def get_email():
                                     body = part.get_payload(decode=True).decode()
                                 except:
                                     pass
-                                if content_type == "text/plain" and "attachment" not in content_disposition:
-                                    # print text/plain emails and skip attachments
-                                    print(body)
+                                
                         else:
 
                             # extract content type of email
                             content_type = msg.get_content_type()
                             # get the email body
                             body = msg.get_payload(decode=True).decode()
-                            if content_type == "text/plain":
-                                # print only text email parts
-                                print(body)
 
                         #Store data into list of json
                         abc = {
@@ -119,7 +111,7 @@ def get_email():
                         test_json.append(abc)
 
                         f2 = open(gmail_time, "w+")
-                        print("This is the date",date)
+
                         f2.write(date)
                         f2.close()
                     else:

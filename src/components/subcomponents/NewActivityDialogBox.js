@@ -21,7 +21,7 @@ import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
-export default function NewTaskDialogBox(props) {
+export default function NewActivityDialogBox(props) {
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date().toJSON().slice(0,10));
@@ -90,7 +90,6 @@ export default function NewTaskDialogBox(props) {
       "date": new Date( Date.parse(activityDate) ),
       "activity_type": "future",
     };
-    console.log(newActivity);
     const response = await fetch("/main/create_activity", {
       method: "POST",
       headers: {
@@ -100,7 +99,6 @@ export default function NewTaskDialogBox(props) {
     });
     
     if (response.ok) {
-      console.log("response worked!");
       setActivityBody("");
       setActivityTitle("");
       props.updateDashboard();

@@ -25,22 +25,15 @@ export default class Pipeline extends React.Component {
     fetch("/main/show_all_orders").then(response =>
       response.json().then(data => {
         this.setState({ fetchedOrders: data });
-        console.log(this.state.fetchedOrders);
       })
     );
-  }
-
-  componentDidUpdate() {
-    console.log(this.state);
   }
 
   updatePipelineAPICall = () => {
     console.log("Update triggered");
     fetch("/main/show_all_orders").then(response =>
       response.json().then(data => {
-        console.log(data);
         this.setState({ fetchedOrders: data });
-        console.log(this.state.fetchedOrders);
       })
     );
   }
@@ -110,8 +103,6 @@ export default class Pipeline extends React.Component {
         "stage" : toLaneId
       };
 
-      console.log(newCardStage);
-
       const response = await fetch("/main/order_stage_change", {
         method: "POST",
         headers: {
@@ -121,8 +112,6 @@ export default class Pipeline extends React.Component {
       });
       
       if (response.ok) {
-        console.log("response worked!");
-        console.log(response);
         this.updatePipelineAPICall();
       } 
       else if(response.ok === false) {
@@ -137,12 +126,10 @@ export default class Pipeline extends React.Component {
   }
 
   deleteCard = (cardId, laneId) => {
-    console.log(cardId);
     fetch(`main/delete_order/${cardId}`).then( () => {this.updatePipelineAPICall()} );
   }
 
   linkToAccountProfile = (cardId, metadata, laneId) => {
-    console.log(`metadata is ${metadata.account_id}`);
     this.props.history.push({
       pathname: "/accountprofile",
       state: {cid: metadata.account_id}
@@ -151,7 +138,6 @@ export default class Pipeline extends React.Component {
 
   markToBeTransactedOrdersAsTransacted = () => {
     this.setState({ openSpinner: true});
-    console.log("Completion trigerred");
     fetch("/main/complete_all_orders")
     .then( () => {
       this.setState({ openSpinner: false});

@@ -17,7 +17,7 @@ import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
 
 
-export default class NewProfileDialogBox extends React.Component{
+export default class NewAccountDialogBox extends React.Component{
   state = {
     open: false,
     city: "",
@@ -38,13 +38,7 @@ export default class NewProfileDialogBox extends React.Component{
     contact_comm_type : "Email",
   }
 
-  componentDidUpdate() {
-    console.log(this.state);
-  }
-
   handleChange = (event) => {
-    console.log(event);
-    console.log(event.target.value);
     this.setState({
       [event.target.id || event.target.name] : event.target.value
       //takes the first truthy value
@@ -54,7 +48,6 @@ export default class NewProfileDialogBox extends React.Component{
   }
 
   handleChangeInDate = (event) => {
-    console.log(event);
     this.setState({ dob: event });
   }
 
@@ -69,10 +62,7 @@ export default class NewProfileDialogBox extends React.Component{
   postNewProfile = async () => {
     const newProfile = this.state;
     delete newProfile.open;
-    newProfile.demat_accno = parseInt(newProfile.demat_accno);
-    newProfile.trading_accno = parseInt(newProfile.trading_accno);
     //date and last_contact are sent as date objects
-    //demat_accno and trading_accno are sent as integers
     //all other fields are sent as strings
 
     const response = await fetch("/main/create_account", {
@@ -84,8 +74,6 @@ export default class NewProfileDialogBox extends React.Component{
     });
     
     if (response.ok) {
-      console.log("response worked!");
-      console.log(response);
       this.setState({ open:false });
       this.props.updateAccounts();
     }
@@ -95,7 +83,7 @@ export default class NewProfileDialogBox extends React.Component{
     return (
       <div>
         <Button variant="outlined" color="primary" onClick={this.handleClickOpen}>
-          + New Profile
+          + New Account
         </Button>
         <Dialog
           open={this.state.open}

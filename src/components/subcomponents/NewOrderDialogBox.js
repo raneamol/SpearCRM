@@ -21,10 +21,6 @@ export default class NewOrderDialogBox extends React.Component{
     cost_of_share: "",
   };
 
-  componentDidUpdate() {
-    console.log(this.state);
-  }
-
   handleOpen = () => {
     this.setState({ open:true });
   };
@@ -48,7 +44,6 @@ export default class NewOrderDialogBox extends React.Component{
     newOrder.account_id = this.props.account_id;
     newOrder.no_of_shares = parseInt(this.state.no_of_shares);
     delete newOrder.open;
-    console.log(newOrder);
 
     const response = await fetch("/main/create_order", {
       method: "POST",
@@ -59,7 +54,6 @@ export default class NewOrderDialogBox extends React.Component{
     });
     
     if (response.ok) {
-      console.log("response worked!");
       this.setState({ open:false });
       this.props.fetchAccountDataAndOrders();
     }

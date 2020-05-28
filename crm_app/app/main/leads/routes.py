@@ -19,8 +19,10 @@ def myconverter(o):
 	else:
 		raise TypeError(o)
 
-@leads.route('/show_leads')
-def show_leads():
+
+#RENAME TO show_all_leads--- DONE
+@leads.route('/show_all_leads')
+def show_all_leads():
 	leads = mongo.db.Leads
 	leads_view = leads.find({}, {"_id" : 1, "name" : 1, "job_type" : 1, "company" : 1, "city" : 1, "email" : 1, "phone_number" : 1})
 	#dumps converts cursor to string json
@@ -37,6 +39,7 @@ def display_lead(usr_id):
 	lead = json.dumps(lead[0],default = myconverter)
 	
 	return lead
+
 
 #edit lead details
 @leads.route('/edit_lead', methods = ['POST'])
@@ -89,15 +92,11 @@ def edit_lead():
 @leads.route('/create_lead', methods = ["POST"])
 def create_lead():
 	req_data = request.get_json()
-
-	#JSON data into variables
-
 	city = req_data["city"]
 	company = req_data["company"]
 	country = req_data["country"]
 	dob = req_data["dob"]
 	dob = datetime.datetime.strptime(dob, '%Y-%m-%dT%H:%M:%S.%fZ')
-	#dob = new Date(dob)
 	education = req_data["education"]
 	email = req_data["email"]
 	job_type = req_data["job_type"]
@@ -119,7 +118,6 @@ def create_lead():
 	ml_willRevert = req_data["ml_willRevert"]
 
 	leads = mongo.db.Leads
-
 
 	values = {
 	"city": city, 
@@ -157,9 +155,9 @@ def create_lead():
 
 	return "Lead Created"
 
-
-@leads.route('/lead_to_account', methods = ["POST"])
-def lead_to_accounts():
+#RENAME TO convert_lead_to_account--- DONE
+@leads.route('/convert_lead_to_account', methods = ["POST"])
+def convert_lead_to_accounts():
 	req_data = request.get_json()
 
 	#get JSON variables
@@ -200,13 +198,14 @@ def lead_to_accounts():
 	b.pop("ml_fields", None)
 	accounts.insert_one(b)
 	account = accounts.find({}).sort("_id",-1).limit(1)
-	print(str(account[0]["_id"]))
+	
 	activities.update_many({"user_id": str(usr_id)},{"$set": {"user_id": str(account[0]["_id"])} })
 	leads.delete_one({"_id" : usr_id})
 	#To send new account id, return new_acc_id
 	new_account_id = str(account[0]["_id"])
-	print(new_account_id)
+	
 	return new_account_id
+
 
 
 @leads.route('/get_all_lead_names')

@@ -4,10 +4,6 @@ import {convertIsoDateToDateString} from "../Dashboard.js"
 
 
 export default function PastActivity(props) {
-  useEffect (() => {
-    console.log(props);
-  })
-
   return(
     <> 
       <h2> Past Activity</h2>
