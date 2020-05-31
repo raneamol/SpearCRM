@@ -22,6 +22,7 @@ import FormControl from '@material-ui/core/FormControl';
 import FormLabel from '@material-ui/core/FormLabel';
 
 export default function NewActivityDialogBox(props) {
+  //manual logger related hooks
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date().toJSON().slice(0,10));
@@ -32,16 +33,15 @@ export default function NewActivityDialogBox(props) {
   const [leadSelectOptions, setLeadSelectOptions] = useState([]);
   const [accountSelectOptions, setAccountSelectOptions] = useState([]);
 
-  const isMounted = useRef(false);
-
+  const _isMounted = useRef(true);
   useEffect( () => {
-    isMounted.current = true;
-
     Promise.all( [fetch(`/main/get_all_account_names`), fetch(`/main/get_all_lead_names`)] )
     .then(values => {
-      if (isMounted.current) {
-        let leadsMenuItems = [<MenuItem value=""> <em>None</em> </MenuItem>];
-        let accountsMenuItems = [<MenuItem value=""> <em>None</em> </MenuItem>];
+
+      //using if condition here to avoid unnecessary computation if component is unmounted
+      if (_isMounted.current) {
+        let leadsMenuItems = [<MenuItem value="" key={0}> <em>None</em> </MenuItem>];
+        let accountsMenuItems = [<MenuItem value="" key={0}> <em>None</em> </MenuItem>];
 
         //sort and format account names
         values[0].json().then(accounts => {
@@ -50,8 +50,9 @@ export default function NewActivityDialogBox(props) {
             return x; 
           });
 
-          accounts.forEach( (account) => {
-            accountsMenuItems.push([<MenuItem value={account._id}> {account.name} </MenuItem>])
+          accounts.forEach( (account, i) => {
+            accountsMenuItems.push([<MenuItem value={account._id} key={i+1}> {account.name} </MenuItem>])
+            //existing null MenuItem has key=0, these entries have key=i+1
           });
         });
 
@@ -62,21 +63,20 @@ export default function NewActivityDialogBox(props) {
             return x; 
           });
 
-          leads.forEach( (lead) => {
-            leadsMenuItems.push([<MenuItem value={lead._id}> {lead.name} </MenuItem>])
+          leads.forEach( (lead, i) => {
+            leadsMenuItems.push([<MenuItem value={lead._id} key={i+1}> {lead.name} </MenuItem>])
+            //existing None MenuItem has key=0, these entries have key=i+1
           });
         });
 
-        //checking a second time. if component unmounts between outer if block executing
-        //and this if block being entered, this inner if block will prevent state change
-        if (isMounted.current) {
+        if (_isMounted.current) {
           setLeadSelectOptions(leadsMenuItems);
           setAccountSelectOptions(accountsMenuItems);
         }
       }
 
       return () => {
-        isMounted.current = false;
+        _isMounted.current = false;
       }
     });
   }, []);
@@ -84,7 +84,7 @@ export default function NewActivityDialogBox(props) {
   useEffect( () => {
     let d = new Date();
     d.setDate(d.getDate() + 1)
-    if (isMounted.current) {
+    if (_isMounted.current) {
       setActivityDate(d);
     }
   }, []);
@@ -114,7 +114,7 @@ export default function NewActivityDialogBox(props) {
       body: JSON.stringify(newActivity)
     });
     
-    if (response.ok && isMounted.current) {
+    if (response.ok && _isMounted.current) {
       setActivityBody("");
       setActivityTitle("");
       props.updateDashboard();

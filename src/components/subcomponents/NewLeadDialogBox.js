@@ -51,6 +51,14 @@ export default class NewLeadDialogBox extends React.Component{
     ml_poorLeadQuality : 0,
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   handleChange = (event) => {
     this.setState({
       [event.target.id || event.target.name] : event.target.value
@@ -91,7 +99,7 @@ export default class NewLeadDialogBox extends React.Component{
       body: JSON.stringify(newLead)
     });
     
-    if (response.ok) {
+    if (response.ok && this._isMounted) {
       this.setState({ open:false });
       this.props.updateLeads();
     }

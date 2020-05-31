@@ -13,10 +13,8 @@ export default function Dashboard() {
 	const [pieChartData, setPieChartData] = useState([]);
 	const [lineChartData, setLineChartData] = useState([]);
 
-  const isMounted = useRef(false);
+  const _isMounted = useRef(true);
 	useEffect( () => {
-    isMounted.current = true;
-
 		Promise.all([
       fetch("/main/top_leads"),
       fetch("/main/top_accounts"),
@@ -25,18 +23,16 @@ export default function Dashboard() {
       fetch("/main/get_pie_chart_data")
     ])
 		.then(responses => {
-      if (isMounted.current) {
+      if (_isMounted.current) {
         responses[0].json().then( data => setTopLeads(data) );
-        responses[1].json().then( data => setTopAccounts(data));
+        responses[1].json().then( data => setTopAccounts(data) );
         responses[2].json().then( data => setAllActivities(data) );
         responses[3].json().then( data => setLineChartData(data) );
         responses[4].json().then( data => setPieChartData(data) );
       }
     })
     
-    return () => {
-      isMounted.current = false;
-    }
+    return () => _isMounted.current = false;
 	}, []);
 
 	const updateDashboardAPICall = () => {
@@ -48,9 +44,9 @@ export default function Dashboard() {
       fetch("/main/get_pie_chart_data")
     ])
 		.then(responses => {
-			if (isMounted.current) {
+			if (_isMounted.current) {
         responses[0].json().then( data => setTopLeads(data) );
-        responses[1].json().then( data => setTopAccounts(data));
+        responses[1].json().then( data => setTopAccounts(data) );
         responses[2].json().then( data => setAllActivities(data) );
         responses[3].json().then( data => setLineChartData(data) );
         responses[4].json().then( data => setPieChartData(data) );
@@ -132,12 +128,16 @@ class PieChart extends React.Component {
       switch(element.stage) {
         case 1:
           dataPoints[1][1] = dataPoints[1][1] + 1;
+          break;
         case 2:
           dataPoints[2][1] = dataPoints[2][1] + 1;
+          break;
         case 3:
           dataPoints[3][1] = dataPoints[3][1] + 1;
+          break;
         case 0:
           dataPoints[4][1] = dataPoints[4][1] + 1;
+          break;
       }
     });
 
@@ -218,7 +218,7 @@ class LineChart extends React.Component {
 			},
 			data: [{
 				type: "line",
-				toolTipContent: "Week {x}: ${y}",
+				toolTipContent: "Week {x}: Rs. {y}",
 				dataPoints: this.transformOrdersToDataPoints(this.props.lineChartData)
 			}]
 		}

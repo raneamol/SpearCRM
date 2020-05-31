@@ -38,6 +38,15 @@ export default class NewAccountDialogBox extends React.Component{
     contact_comm_type : "Email",
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
+
   handleChange = (event) => {
     this.setState({
       [event.target.id || event.target.name] : event.target.value
@@ -73,7 +82,7 @@ export default class NewAccountDialogBox extends React.Component{
       body: JSON.stringify(newProfile)
     });
     
-    if (response.ok) {
+    if (response.ok && this._isMounted) {
       this.setState({ open:false });
       this.props.updateAccounts();
     }

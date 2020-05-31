@@ -5,9 +5,18 @@
   position: absolute;
 }
 
-.batch-email-button {
+.batch-email-button-accounts {
   z-index: 2;
-  top: 55px;
+  top: 60px;
   right: 200px;
   position: absolute;
+  font-size: large;
+}
+
+.batch-email-button-leads {
+  z-index: 2;
+  top: 60px;
+  right: 165px;
+  position: absolute;
+  font-size: large;
 }

@@ -20,6 +20,14 @@ export default class LeadProfileHeader extends React.Component {
     newId: 0, //set after lead converts to account
   }
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   handleOpen = () => {
     if (this.props.leadStatus == "Contacted") {
       this.setState({ open:true });
@@ -52,12 +60,14 @@ export default class LeadProfileHeader extends React.Component {
       body: JSON.stringify(fields)
     });
 
-    if (response.ok) {
+    if (response.ok && this._isMounted) {
       this.setState({ open:false });
       this.setState({ submitted: true });
 
       response.text().then( text => {
-        this.setState({ newId: text });
+        if(this._isMounted) {
+          this.setState({ newId: text });
+        }
       });
     }
   };

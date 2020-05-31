@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -23,6 +23,12 @@ export default function OrdersDisplay (props) {
   const [open, setOpen] = useState(false);
   const [openSpinner, setOpenSpinner] = useState(false);
 
+  const _isMounted = useRef(true);
+  useEffect( () => {
+    return () => _isMounted.current = false;
+  }, []);
+  //isMounted is used to prevent rendering after unmount. Here, related to async calls.
+
   const handleOpen = () => {
     setOpen(true);
   }
@@ -40,8 +46,10 @@ export default function OrdersDisplay (props) {
     setOpenSpinner(true);
     fetch("/main/convert_finalized_orders")
     .then( () => {
-      setOpenSpinner(false);
-      props.fetchAccountDataAndOrdersAndActivities();
+      if (_isMounted.current) {
+        setOpenSpinner(false);
+        props.fetchAccountDataAndOrdersAndActivities();
+      }
     });  
   }
 
@@ -55,11 +63,15 @@ export default function OrdersDisplay (props) {
       </span>
       {/* button opens the below dialogbox */}
 
+
+      
+
       <Dialog
         open={open}
         onClose={handleClose}
       >
         
+
         <DialogTitle id="form-dialog-title">
           View all orders 
           <span style={{ right: 5 }}> 
@@ -76,10 +88,6 @@ export default function OrdersDisplay (props) {
           
         <DialogContent>
           <div className="orders-container">
-            <Backdrop className="spinner-backdrop" open={openSpinner}>
-              <CircularProgress color="inherit" />
-            </Backdrop>
-
             <List>
 
               {/* Display non-archived orders here */}
@@ -163,6 +171,11 @@ export default function OrdersDisplay (props) {
             </List>
           </div>  
         </DialogContent>
+
+        <Backdrop className="spinner-backdrop" open={openSpinner}>
+          <CircularProgress color="inherit"/>
+        </Backdrop> 
+        
       </Dialog>
     </>
   );

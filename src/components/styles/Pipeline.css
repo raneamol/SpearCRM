@@ -1,3 +1,9 @@
+body {
+  overflow-y: scroll !important;
+  padding-right: 0px !important;
+}
+/* prevents page from jumping when dialog box opens up */
+
 .add-order-button {
   z-index: 2;
   top: 60px;
@@ -26,7 +32,7 @@
 }
 
 .spinner-backdrop {
-  z-index: 5;
+  z-index: 5 !important;
   position: absolute;
   color: 'blue';
 }

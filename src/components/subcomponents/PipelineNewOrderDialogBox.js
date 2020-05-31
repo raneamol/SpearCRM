@@ -30,9 +30,10 @@ export default class PipelineNewOrderDialogBox extends React.Component{
 
     fetch("/main/get_all_account_names").then(response =>
       response.json().then(data => {
-        let menuItems = [<MenuItem value=""> <em>None</em> </MenuItem>] ;
-        data.forEach( (entry) => {
-          menuItems.push(<MenuItem value={entry._id}> {entry.name} </MenuItem>);
+        let menuItems = [<MenuItem value="" key={0}> <em>None</em> </MenuItem>] ;
+        data.forEach( (entry, i) => {
+          menuItems.push(<MenuItem value={entry._id} key={i+1}> {entry.name} </MenuItem>);
+        //existing None MenuItem has key=0, these entries have key=i+1
         });
         
         if (this._isMounted) {

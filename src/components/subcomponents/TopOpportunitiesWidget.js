@@ -48,7 +48,7 @@ export default function TopOpportunitiesWidget(props) {
           {alignment === "leads" &&
             props.topLeads.map( (element,i) => {
               return(
-                <div key={element.id}>
+                <div key={i}>
                   <ListItem>
                     <ListItemAvatar>
                       <Avatar>

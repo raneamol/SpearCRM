@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import '../styles/ActivityTracker.css'
 import ManualLogger from './ManualLogger.js'
 import NextSteps from './NextSteps'
@@ -12,6 +12,12 @@ export default function ActivityTracker(props) {
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date());
   
+  const _isMounted = useRef(true);
+  useEffect( () => {
+    return () => _isMounted.current = false;
+  }, []);
+  //isMounted is used to prevent memory leaks related to async state updates
+
   const handleActivityType = (event, newActivityType) => {
     if (newActivityType !== null) {
       setActivityType(newActivityType);
@@ -32,14 +38,14 @@ export default function ActivityTracker(props) {
 
   const postNewActivity = async () => {
     let today = new Date();
-
-    if( activityType === "future" && activityDate.getDate() <= today.getDate() 
-        || activityType === "past"   && activityDate.getDate() > today.getDate() 
+    console.log("entered");
+    //erroneous and disallowed inputs specified in the below if condition
+    if( activityType === "future" && activityDate.getTime() <= today.getTime()
+        || activityType === "past"   && activityDate.getTime() > today.getTime() 
         || activityTitle === ""
     ){
       return null;
     }
-    //date validation against type of activity
 
     const newActivity = {
       "user_id": props._id,
@@ -56,7 +62,7 @@ export default function ActivityTracker(props) {
       body: JSON.stringify(newActivity)
     });
     
-    if (response.ok) {
+    if (response.ok && _isMounted.current) {
       setActivityBody("");
       setActivityTitle("");
       props.fetchActivities();

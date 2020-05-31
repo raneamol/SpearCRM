@@ -5,6 +5,7 @@ import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
+import EmailIcon from '@material-ui/icons/Email';
 
 import {
   BrowserRouter as Router,
@@ -39,6 +40,7 @@ export default class Leads extends React.Component {
     searchText: '',
     searchedColumn: '',
     fetchedData: [],
+    selectedRowEmails: [],
   };
 
   componentDidMount() {
@@ -132,7 +134,48 @@ export default class Leads extends React.Component {
     this.setState({ searchText: '' });
   };
 
+  getSelectedEmails = (selectedRowKeys, selectedRows) => {
+    let emails = [];
+
+    selectedRows.forEach( record => {
+      emails.push(record.email);
+    })
+
+    if (this._isMounted) {
+      this.setState({ selectedRowEmails: emails });
+    }
+  }
+  
+  componentDidUpdate() {
+    console.log(this.state);
+  }
+
+
   render() {
+    //conditional rendering of batch emailer component(button)
+    let emailHref = "https://mail.google.com/mail?view=cm&fs=1&bcc=";
+    let batchEmailComp = null;
+
+    if (this.state.selectedRowEmails.length === 0)  {
+      batchEmailComp = null;
+    }
+    else {
+      this.state.selectedRowEmails.forEach( email => {
+        emailHref += email + ","
+      });
+
+      batchEmailComp = (
+        <div className='batch-email-button-leads'>
+          <a 
+            href={emailHref}
+            target="_blank" 
+          >
+            <EmailIcon/>
+          </a>
+        </div>
+      );
+    }
+
     const columns = [
       {
         title: 'Name',
@@ -240,12 +283,20 @@ export default class Leads extends React.Component {
         <Table 
           columns={columns}
           dataSource={this.state.fetchedData}
-          rowSelection={{type: "checkbox", ...rowSelection,}}
+          rowSelection={{
+            type: "checkbox", 
+            onChange: this.getSelectedEmails,
+          }}
           title={() => 'Leads'}
           onChange={onChange}
           rowKey="_id" 
         />
-        <div className="add-profile-button"> <NewLeadDialogBox updateLeads={this.updateLeadsAPICall}/> </div>
+
+        {batchEmailComp}
+
+        <div className="add-profile-button"> 
+          <NewLeadDialogBox updateLeads={this.updateLeadsAPICall}/> 
+        </div>
       </>
     );
   }

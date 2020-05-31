@@ -8,7 +8,6 @@ import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import EmailIcon from '@material-ui/icons/Email';
 
-
 import {
   BrowserRouter as Router,
   Switch,
@@ -150,6 +149,30 @@ export default class Accounts extends React.Component {
   }
 
   render() {
+    //conditional rendering of batch emailer component(button)
+    let emailHref = "https://mail.google.com/mail?view=cm&fs=1&bcc=";
+    let batchEmailComp = null;
+
+    if (this.state.selectedRowEmails.length === 0)  {
+      batchEmailComp = null;
+    }
+    else {
+      this.state.selectedRowEmails.forEach( email => {
+        emailHref += email + ","
+      });
+
+      batchEmailComp = (
+        <div className='batch-email-button-accounts'>
+          <a 
+            href={emailHref}
+            target="_blank" 
+          >
+            <EmailIcon />
+          </a>
+        </div>
+      );
+    }
+
     const columns = [
       {
         title: 'Name',
@@ -266,7 +289,7 @@ export default class Accounts extends React.Component {
         rowKey="_id" 
       />
 
-      <BatchEmailer selectedEmails = {this.state.selectedRowEmails}/>
+      {batchEmailComp}
 
       <div className="add-profile-button"> 
         <NewAccountDialogBox updateAccounts={this.updateAccountsAPICall}/> 
@@ -275,28 +298,3 @@ export default class Accounts extends React.Component {
     ); 
   }
 };
-
-class BatchEmailer extends React.Component {
-  render() {
-    let emailHref = "https://mail.google.com/mail?view=cm&fs=1&bcc=";
-
-    if (this.props.selectedEmails === [])  {
-      return null;
-    }
-
-    this.props.selectedEmails.forEach( email => {
-      emailHref += email + ","
-    });
-
-    return (
-      <div className='batch-email-button'>
-        <a 
-          href={emailHref}
-          target="_blank" 
-        >
-          <EmailIcon />
-        </a>
-      </div>
-    );
-  }
-}

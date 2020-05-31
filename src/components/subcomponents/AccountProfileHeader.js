@@ -11,9 +11,9 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 
 export default class AccountProfileHeader extends React.Component {
   state = {
-    openDialog : 0 
+    openDialog : false
     //determines whether success window is being displayed. 
-    //Set to 1 when account does markToBeTransactedOrdersAsTransacted successfully
+    //Set to true when account does markToBeTransactedOrdersAsTransacted successfully
   };
 
   componentDidMount() {
@@ -41,7 +41,7 @@ export default class AccountProfileHeader extends React.Component {
     if (response.ok) {
       this.props.fetchAccountDataAndOrdersAndActivities();
       if(this._isMounted) {
-        this.setState({ openDialog: 1});
+        this.setState({ openDialog: true});
       }
     }
   }
@@ -75,7 +75,7 @@ export default class AccountProfileHeader extends React.Component {
 
         <Dialog
           open={this.state.openDialog}
-          onClose={ () => this.setState({openDialog: 0}) }
+          onClose={ () => this.setState({openDialog: false}) }
         >
           <DialogTitle> Success </DialogTitle>
           <DialogContent>
@@ -84,7 +84,7 @@ export default class AccountProfileHeader extends React.Component {
             </DialogContentText>
           </DialogContent>
           <DialogActions>
-            <Button onClick={ () => this.setState({openDialog: 0}) } color="primary" autoFocus>
+            <Button onClick={ () => this.setState({openDialog: false}) } color="primary" autoFocus>
               Close
             </Button>
           </DialogActions>
