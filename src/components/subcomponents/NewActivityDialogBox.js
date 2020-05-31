@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Button from "@material-ui/core/Button";
 import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
@@ -32,6 +32,64 @@ export default function NewActivityDialogBox(props) {
   const [leadSelectOptions, setLeadSelectOptions] = useState([]);
   const [accountSelectOptions, setAccountSelectOptions] = useState([]);
 
+  const isMounted = useRef(false);
+
+  useEffect( () => {
+    isMounted.current = true;
+
+    Promise.all( [fetch(`/main/get_all_account_names`), fetch(`/main/get_all_lead_names`)] )
+    .then(values => {
+      if (isMounted.current) {
+        let leadsMenuItems = [<MenuItem value=""> <em>None</em> </MenuItem>];
+        let accountsMenuItems = [<MenuItem value=""> <em>None</em> </MenuItem>];
+
+        //sort and format account names
+        values[0].json().then(accounts => {
+          accounts = accounts.sort(function(a,b){ 
+            var x = a.name < b.name? -1:1; 
+            return x; 
+          });
+
+          accounts.forEach( (account) => {
+            accountsMenuItems.push([<MenuItem value={account._id}> {account.name} </MenuItem>])
+          });
+        });
+
+        //sort and format lead names
+        values[1].json().then(leads => {
+          leads = leads.sort(function(a,b){ 
+            var x = a.name < b.name? -1:1; 
+            return x; 
+          });
+
+          leads.forEach( (lead) => {
+            leadsMenuItems.push([<MenuItem value={lead._id}> {lead.name} </MenuItem>])
+          });
+        });
+
+        //checking a second time. if component unmounts between outer if block executing
+        //and this if block being entered, this inner if block will prevent state change
+        if (isMounted.current) {
+          setLeadSelectOptions(leadsMenuItems);
+          setAccountSelectOptions(accountsMenuItems);
+        }
+      }
+
+      return () => {
+        isMounted.current = false;
+      }
+    });
+  }, []);
+
+  useEffect( () => {
+    let d = new Date();
+    d.setDate(d.getDate() + 1)
+    if (isMounted.current) {
+      setActivityDate(d);
+    }
+  }, []);
+  //updates date to a permissible value (tomorrow onwards)
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -39,48 +97,6 @@ export default function NewActivityDialogBox(props) {
   const handleClose = () => {
     setOpen(false);
   };
-
-  useEffect( () => {
-    Promise.all( [fetch(`/main/get_all_account_names`), fetch(`/main/get_all_lead_names`)] )
-    .then(values => {
-      let leadsMenuItems = [<MenuItem value=""> <em>None</em> </MenuItem>];
-      let accountsMenuItems = [<MenuItem value=""> <em>None</em> </MenuItem>];
-
-      //sort and format account names
-      values[0].json().then(accounts => {
-        accounts = accounts.sort(function(a,b){ 
-          var x = a.name < b.name? -1:1; 
-          return x; 
-        });
-
-        accounts.forEach( (account) => {
-          accountsMenuItems.push([<MenuItem value={account._id}> {account.name} </MenuItem>])
-        });
-      });
-
-      //sort and format lead names
-      values[1].json().then(leads => {
-        leads = leads.sort(function(a,b){ 
-          var x = a.name < b.name? -1:1; 
-          return x; 
-        });
-
-        leads.forEach( (lead) => {
-          leadsMenuItems.push([<MenuItem value={lead._id}> {lead.name} </MenuItem>])
-        });
-      });
-
-      setLeadSelectOptions(leadsMenuItems);
-      setAccountSelectOptions(accountsMenuItems);
-    });
-  }, []);
-
-  useEffect( () => {
-    let d = new Date();
-    d.setDate(d.getDate() + 1)
-    setActivityDate(d);
-  }, []);
-  //updates date to a permissible value (tomorrow onwards)
 
   const postNewActivity = async () => {
     const newActivity = {
@@ -98,7 +114,7 @@ export default function NewActivityDialogBox(props) {
       body: JSON.stringify(newActivity)
     });
     
-    if (response.ok) {
+    if (response.ok && isMounted.current) {
       setActivityBody("");
       setActivityTitle("");
       props.updateDashboard();

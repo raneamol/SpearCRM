@@ -10,12 +10,33 @@ import spacy
 from spacy import displacy
 from collections import Counter
 import en_core_web_sm
-nlp = en_core_web_sm.load()
+
+from pprint import pprint
+import os
+
+basedir=os.path.dirname(os.path.abspath(__file__))
+nlp_model = os.path.join(basedir, 'data/nlp_model')
 
 
 
-
-
+'''
+def check_spacy_model():
+    nlp = spacy.load('/nlp_model')
+    nlp1 = spacy.load('en_core_web_sm')
+    doc = nlp('Buy 5 INFY shares if the price is below 60 rs.')
+    doc1 = nlp1('Buy 5 INFY shares if the price is below 60 rs.')
+    pprint([(X.text, X.label_) for X in doc.ents])
+    pprint([(X.text, X.label_) for X in doc1.ents])
+    
+    for X in doc.ents:
+            if X.label_=='CARDINAL':
+                no_of_shares = X.text
+    for X in doc1.ents:        
+            if X.label_=='MONEY':
+                amount = X.text
+                print(amount)
+check_spacy_model()
+'''
 def split_into_sentence(body):
     body = html2text.html2text(body)
     sent_list = sent_tokenize(body)
@@ -24,8 +45,10 @@ def split_into_sentence(body):
 
 def check_nlp(sent):
     #nltk part to get action and company
-    ignorewords= ['dear', 'sir','stockbroker','mr','mr.','respected','price','cost','please','help','company','id.','id','\n','\r']
+    ignorewords= ['dear', 'sir','stockbroker','mr','mr.','respected','price','cost','please','help','company','id.','id','\n','\r','rs','rupees','inr','rs.']
     question = ['?','is it possible',"how","what","why"]
+    spacy_sent = sent
+    spacy_sent = spacy_sent.lower()
     sentence = sent
     sentence = sentence.lower()
     
@@ -53,14 +76,18 @@ def check_nlp(sent):
                 company = value[0]
 
         #spacy part to get amount and numvber of shares
-        nlp = en_core_web_sm.load()
-        doc = nlp(sent)
+        nlp = spacy.load(nlp_model)
+        doc = nlp(spacy_sent)
+        nlp1 = spacy.load('en_core_web_sm')
+        doc1 = nlp1(spacy_sent)
         amount = ''
-        for X in doc.ents:
+        for X in doc1.ents:
             if X.label_=='CARDINAL':
                 no_of_shares = X.text
-            elif X.label_=='MONEY':
+        for X in doc.ents:
+            if X.label_=='MONEY':
                 amount = X.text
+                print(amount)
         try:
             final_json = {
             "company":company,
@@ -72,14 +99,19 @@ def check_nlp(sent):
         except:
             return 0
 
+
+
 def get_cost_from_text(s1):
     sentence1 = word_tokenize(s1)
     pos = pos_tag(sentence1)
+    cost_of_share = ''
     if pos == []:
         cost_of_share = "undefined"
     for value in pos:
         if value[1] == 'CD':
             cost_of_share = int(value[0])
+    if cost_of_share =='':
+        cost_of_share = "undefined"
     return cost_of_share
 
 

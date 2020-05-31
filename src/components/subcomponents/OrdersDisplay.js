@@ -90,7 +90,7 @@ export default function OrdersDisplay (props) {
                   let orderLane = (
                     order.stage === 3 ? "To-be-transacted" :
                     order.stage === 2 ? "Finalized" : 
-                    order.stage === 1 ? "Initiated" : ""
+                    order.stage === 1 ? "Received" : ""
                   );
 
                   return(

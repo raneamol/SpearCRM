@@ -16,6 +16,14 @@ export default class AccountProfileHeader extends React.Component {
     //Set to 1 when account does markToBeTransactedOrdersAsTransacted successfully
   };
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   markToBeTransactedOrdersAsTransacted = async () => {
     if (this.props.furthestStage != 3) {
       return null;
@@ -32,7 +40,9 @@ export default class AccountProfileHeader extends React.Component {
     
     if (response.ok) {
       this.props.fetchAccountDataAndOrdersAndActivities();
-      this.setState({ openDialog: 1})
+      if(this._isMounted) {
+        this.setState({ openDialog: 1});
+      }
     }
   }
 
@@ -42,8 +52,8 @@ export default class AccountProfileHeader extends React.Component {
       <>
         <span className="profile-name"> {this.props.name} </span>
         <span className="stage-indicator">
-          <span className="initiated" style={ n>1 ? {backgroundColor:"green"} : n===1 ? {backgroundColor:"blue"} : {backgroundColor:"gray"}}>
-            <span className="stage-name"> &nbsp; &nbsp; &nbsp; Initiated &nbsp; &nbsp; &nbsp; </span>
+          <span className="received" style={ n>1 ? {backgroundColor:"green"} : n===1 ? {backgroundColor:"blue"} : {backgroundColor:"gray"}}>
+            <span className="stage-name"> &nbsp; &nbsp; &nbsp; Received &nbsp; &nbsp; &nbsp; </span>
           </span>  
 
           <span className="finalized" style={ n>2 ? {backgroundColor:"green"} : n===2 ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }> 

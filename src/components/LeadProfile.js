@@ -13,21 +13,31 @@ export default class LeadProfile extends React.Component {
   };
 
   componentDidMount() {
+    this._isMounted = true;
     const { cid } = this.props.location.state;
 
     Promise.all([
       fetch(`/main/display_lead/${cid}`), 
-      fetch(`/main/show_user_activities/${cid}`),])
+      fetch(`/main/show_user_activities/${cid}`)
+    ])
     .then(responses => {
-      responses[0].json().then( data => this.setState({ leadData: data }));
-      responses[1].json().then( data => this.setState({ activitiesList: data }));
+      if (this._isMounted) {
+        responses[0].json().then( data => this.setState({ leadData: data }));
+        responses[1].json().then( data => this.setState({ activitiesList: data }));
+      }
     })
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   fetchLeadDataAPICall = () => {
     fetch(`/main/display_lead/${this.state.leadData._id}`).then(response =>
       response.json().then(data => {
-        this.setState({ leadData: data });
+        if (this._isMounted) {
+          this.setState({ leadData: data });
+        }
       })
     );
   }
@@ -35,7 +45,9 @@ export default class LeadProfile extends React.Component {
   fetchActivitiesAPICall = () => {
     fetch(`/main/show_user_activities/${this.state.leadData._id}`).then(response =>
       response.json().then(data => {
-        this.setState({ activitiesList: data });
+        if (this._isMounted) {
+          this.setState({ activitiesList: data });
+        }
       })
     );
   }

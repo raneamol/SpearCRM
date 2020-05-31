@@ -21,7 +21,7 @@ def create_app(config_file='settings.py'):
    
     #register blueprints
     app.register_blueprint(main,url_prefix='/')
-#    app.register_blueprint(api,url_prefix='/api')
+#   app.register_blueprint(api,url_prefix='/api')
     app.register_blueprint(accounts,url_prefix='/main')
     app.register_blueprint(leads,url_prefix='/main')
 

@@ -21,6 +21,14 @@ export default class NewOrderDialogBox extends React.Component{
     cost_of_share: "",
   };
 
+  componentDidMount() {
+    this._isMounted = true;
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
+  }
+
   handleOpen = () => {
     this.setState({ open:true });
   };
@@ -54,7 +62,9 @@ export default class NewOrderDialogBox extends React.Component{
     });
     
     if (response.ok) {
-      this.setState({ open:false });
+      if (this._isMounted) {
+        this.setState({ open:false });
+      }
       this.props.fetchAccountDataAndOrders();
     }
   }

@@ -22,18 +22,28 @@ export default class Pipeline extends React.Component {
   };
 
   componentDidMount() {
+    this._isMounted = true;
+
     fetch("/main/show_all_orders").then(response =>
       response.json().then(data => {
-        this.setState({ fetchedOrders: data });
+        if (this._isMounted) {
+          this.setState({ fetchedOrders: data });
+        }
       })
     );
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   updatePipelineAPICall = () => {
     console.log("Update triggered");
     fetch("/main/show_all_orders").then(response =>
       response.json().then(data => {
-        this.setState({ fetchedOrders: data });
+        if (this._isMounted) {
+          this.setState({ fetchedOrders: data });
+        }
       })
     );
   }
@@ -43,7 +53,7 @@ export default class Pipeline extends React.Component {
       lanes: [
         {
           id: 1,
-          title: 'Order Initiated',
+          title: 'Order Received',
           label: '',
           cards: []
         },
@@ -79,7 +89,7 @@ export default class Pipeline extends React.Component {
       else {
         entry.description = `Buy stocks for ${entry.name}`;
       }
-      entry.label = `${entry.no_of_shares} X $${entry.cost_of_share}`;
+      entry.label = `${entry.no_of_shares} X ${entry.cost_of_share}`;
       entry.metadata = {account_id: entry.account_id}
     });
 
@@ -114,12 +124,12 @@ export default class Pipeline extends React.Component {
       if (response.ok) {
         this.updatePipelineAPICall();
       } 
-      else if(response.ok === false) {
+      else if(response.ok === false && this._isMounted) {
         this.forceUpdate();
         alert("Server error encountered");
       }
     }
-    else {
+    else if(this._isMounted) {
       this.forceUpdate();
       alert("This kind of drag-and-drop is not allowed.")
     }
@@ -140,7 +150,9 @@ export default class Pipeline extends React.Component {
     this.setState({ openSpinner: true});
     fetch("/main/complete_all_orders")
     .then( () => {
-      this.setState({ openSpinner: false});
+      if(this._isMounted) {
+        this.setState({ openSpinner: false});
+      }
       this.updatePipelineAPICall();     
     });
   }
@@ -151,7 +163,9 @@ export default class Pipeline extends React.Component {
     this.setState({ openSpinner: true});
     fetch("/main/convert_finalized_orders")
     .then( () => {
-      this.setState({ openSpinner: false});
+      if(this._isMounted) {
+        this.setState({ openSpinner: false});
+      }
       this.updatePipelineAPICall(); 
     });  
   }
@@ -196,6 +210,8 @@ export default class Pipeline extends React.Component {
             <CircularProgress color="inherit" />
           </Backdrop>
         </div>
+
+
       </>
     );
   }

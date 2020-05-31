@@ -7,7 +7,7 @@
   right: 20px;
 }
 
-.initiated{
+.received{
   clip-path: polygon(75% 25%, 95% 50%, 75% 75%, 0 75%, 0 50%, 0 25%);
   padding-left: 15px;
   padding-top: 40px;

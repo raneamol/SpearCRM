@@ -14,6 +14,7 @@ export default class AccountProfile extends React.Component {
   };
 
   componentDidMount() {
+    this._isMounted = true;
     const { cid } = this.props.location.state;
 
     Promise.all([
@@ -23,11 +24,17 @@ export default class AccountProfile extends React.Component {
       fetch(`/main/get_account_turnover/${cid}`)
     ])
     .then(responses => {
-      responses[0].json().then( data => this.setState({ accountData: data }));
-      responses[1].json().then( data => this.setState({ activitiesList: data }));
-      responses[2].json().then( data => this.setState({ ordersList: data }));
-      responses[3].json().then( data => this.setState({ accountTurnover: data }));
+      if(this._isMounted) {
+        responses[0].json().then( data => this.setState({ accountData: data }));
+        responses[1].json().then( data => this.setState({ activitiesList: data }));
+        responses[2].json().then( data => this.setState({ ordersList: data }));
+        responses[3].json().then( data => this.setState({ accountTurnover: data }));
+      }
     })
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   //function used by OrdersDisplay and NextSteps in ActivityTracker
@@ -40,10 +47,12 @@ export default class AccountProfile extends React.Component {
       fetch(`/main/get_account_turnover/${this.state.accountData._id}`)
     ])
     .then(responses => {
-      responses[0].json().then( data => this.setState({ accountData: data }));
-      responses[1].json().then( data => this.setState({ activitiesList: data }));
-      responses[2].json().then( data => this.setState({ ordersList: data }));
-      responses[3].json().then( data => this.setState({ accountTurnover: data }));
+      if(this._isMounted) {
+        responses[0].json().then( data => this.setState({ accountData: data }));
+        responses[1].json().then( data => this.setState({ activitiesList: data }));
+        responses[2].json().then( data => this.setState({ ordersList: data }));
+        responses[3].json().then( data => this.setState({ accountTurnover: data }));
+      }
     })
   }
 
@@ -54,8 +63,10 @@ export default class AccountProfile extends React.Component {
       fetch(`/main/display_account_orders/${this.state.accountData._id}`)
     ])
     .then(responses => {
-      responses[0].json().then( data => this.setState({ accountData: data }));
-      responses[1].json().then( data => this.setState({ ordersList: data }));
+      if(this._isMounted) {
+        responses[0].json().then( data => this.setState({ accountData: data }));
+        responses[1].json().then( data => this.setState({ ordersList: data }));
+      }
     })
   }
 
@@ -63,7 +74,9 @@ export default class AccountProfile extends React.Component {
   fetchAccountDataAPICall = () => {
     fetch(`/main/display_account/${this.state.accountData._id}`).then(response =>
       response.json().then(data => {
-        this.setState({ accountData: data });
+        if(this._isMounted) {
+          this.setState({ accountData: data });
+        }
       })
     );
   }
@@ -72,7 +85,9 @@ export default class AccountProfile extends React.Component {
   fetchActivitiesAPICall = () => {
     fetch(`/main/show_user_activities/${this.state.accountData._id}`).then(response =>
       response.json().then(data => {
-        this.setState({ activitiesList: data });
+        if(this._isMounted) {
+          this.setState({ activitiesList: data });
+        }
       })
     );
   }

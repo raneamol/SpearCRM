@@ -26,15 +26,24 @@ export default class PipelineNewOrderDialogBox extends React.Component{
   };
 
   componentDidMount() {
+    this._isMounted = true;
+
     fetch("/main/get_all_account_names").then(response =>
       response.json().then(data => {
         let menuItems = [<MenuItem value=""> <em>None</em> </MenuItem>] ;
         data.forEach( (entry) => {
           menuItems.push(<MenuItem value={entry._id}> {entry.name} </MenuItem>);
         });
-        this.setState({ selectOptions: menuItems });
+        
+        if (this._isMounted) {
+          this.setState({ selectOptions: menuItems });
+        }
       })
     );
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   handleOpen = () => {
@@ -68,9 +77,8 @@ export default class PipelineNewOrderDialogBox extends React.Component{
       body: JSON.stringify(newOrder)
     });
     
-    if (response.ok) {
+    if (response.ok && this._isMounted) {
       this.setState({ open:false });
-
       this.props.updatePipeline();
     }
   }

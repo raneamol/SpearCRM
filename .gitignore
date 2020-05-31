@@ -21,3 +21,19 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+# flask
+#config file
+/crm_app/app/settings.py
+
+#virtual environment
+/crm_app/env
+
+#flask environment
+/crm_app/.flaskenv
+/crm_app/.env
+
+#spacy trained model
+/crm_app/app/main/data/nlp_model
+

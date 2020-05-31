@@ -3,6 +3,9 @@ import 'antd/dist/antd.css';
 import { Table, Radio, Divider, Input, Button } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
+import OpenInNewIcon from "@material-ui/icons/OpenInNew";
+import MailOutlineIcon from '@material-ui/icons/MailOutline';
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -39,17 +42,27 @@ export default class Leads extends React.Component {
   };
 
   componentDidMount() {
+    this._isMounted = true;
+
     fetch("/main/show_all_leads").then(response =>
       response.json().then(data => {
-        this.setState({ fetchedData: data });
+        if (this._isMounted) {
+          this.setState({ fetchedData: data });
+        }
       })
     );
+  }
+
+  componentWillUnmount() {
+    this._isMounted = false;
   }
 
   updateLeadsAPICall = () => {
     fetch("/main/show_all_leads").then(response =>
       response.json().then(data => {
-        this.setState({ fetchedData: data });
+        if (this._isMounted) {
+          this.setState({ fetchedData: data });
+        }
       })
     );
   }
@@ -126,73 +139,99 @@ export default class Leads extends React.Component {
         dataIndex: 'name',
         render: text => <a>{text}</a>,
         key: 'name',
+        width: '12.5%',
         ...this.getColumnSearchProps('name'),
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortDirections: ['descend'],
       },
       {
         title: 'Profile Page',
         dataIndex: '_id',
         key: '_id',
-        render: (text,key) => <Link to={{pathname: "/leadprofile", state: {cid: key._id} }}> Profile </Link>
+        width: '10%',
+        render: (text,key) => <Link to={{pathname: "/leadprofile", state: {cid: key._id} }}> <OpenInNewIcon /> </Link>
       },
       {
         title: 'Company',
         dataIndex: 'company',
         key: 'company',
+        width: '17.5%',
         ...this.getColumnSearchProps('company'),
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortDirections: ['descend'],
       },
       {
         title: 'City',
         dataIndex: 'city',
         key: 'city',
+        width: '15%',
         ...this.getColumnSearchProps('city'),
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortDirections: ['descend'],
       },
       {
         title: 'Job Type',
         dataIndex: 'job_type',
         key: 'job_type',
-        // filters: [
-        //   {
-        //     text: 'Individual',
-        //     value: 'Individual',
-        //   },
-        //   {
-        //     text: 'Small Business',
-        //     value: 'Small Business',
-        //   },
-        //   {
-        //     text: 'Mid-market',
-        //     value: 'Mid-market',
-        //   },
-        //   {
-        //     text: 'Enterprise',
-        //     value: 'Enterprise',
-        //   },
-        // ],
-        // onFilter: (value, record) => record.name.indexOf(value) === 0,
+        width: '10%',
+        filters: [
+          {
+            text: 'Blue Collar',
+            value: 'blue-collar',
+          },
+          {
+            text: 'Technician',
+            value: 'technician',
+          },
+          {
+            text: 'Services',
+            value: 'services',
+          },
+          {
+            text: 'Student',
+            value: 'student',
+          },
+          {
+            text: 'Unemployed',
+            value: 'unemployed',
+          },
+          {
+            text: 'Self-employed',
+            value: 'self-employed',
+          },
+          {
+            text: 'Retired',
+            value: 'retired',
+          },
+          {
+            text: 'Entrepreneur',
+            value: 'entrepreneur',
+          },
+          {
+            text: 'Housemaid',
+            value: 'housemaid',
+          },
+          {
+            text: 'Management',
+            value: 'management',
+          },
+          {
+            text: 'None',
+            value: 'None',
+          },
+        ],
+        filterMultiple: false,
+        onFilter: (value, record) => record.job_type.indexOf(value) === 0,
       },
       {
         title: 'Email',
         dataIndex: 'email',
+        width: '25%',
         render: text => <a target="_blank" href={`https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${text}`}>
                           {text} 
-                          <span style={{fontSize:20, float:'right'}}>&#9993;</span> 
+                          <span style={{fontSize:20, float:'right'}}><MailOutlineIcon /></span> 
                         </a>,
         key: 'email',
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortDirections: ['descend'],
       },
       {
         title: 'Phone No.',
         dataIndex: 'phone_number',
         key: 'phone_number',
-        sorter: (a, b) => a.name.length - b.name.length,
-        sortDirections: ['descend'],
+        width: '10%',
       },
     ];
 
@@ -204,6 +243,7 @@ export default class Leads extends React.Component {
           rowSelection={{type: "checkbox", ...rowSelection,}}
           title={() => 'Leads'}
           onChange={onChange}
+          rowKey="_id" 
         />
         <div className="add-profile-button"> <NewLeadDialogBox updateLeads={this.updateLeadsAPICall}/> </div>
       </>

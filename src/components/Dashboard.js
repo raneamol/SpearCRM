@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import './styles/Dashboard.css';
 import Chart from 'react-google-charts';
 import CanvasJSReact from './Other/canvasjs.react';
@@ -13,8 +13,10 @@ export default function Dashboard() {
 	const [pieChartData, setPieChartData] = useState([]);
 	const [lineChartData, setLineChartData] = useState([]);
 
-
+  const isMounted = useRef(false);
 	useEffect( () => {
+    isMounted.current = true;
+
 		Promise.all([
       fetch("/main/top_leads"),
       fetch("/main/top_accounts"),
@@ -23,12 +25,18 @@ export default function Dashboard() {
       fetch("/main/get_pie_chart_data")
     ])
 		.then(responses => {
-			responses[0].json().then( data => setTopLeads(data) );
-      responses[1].json().then( data => setTopAccounts(data));
-      responses[2].json().then( data => setAllActivities(data) );
-      responses[3].json().then( data => setLineChartData(data) );
-			responses[4].json().then( data => setPieChartData(data) );
-		})
+      if (isMounted.current) {
+        responses[0].json().then( data => setTopLeads(data) );
+        responses[1].json().then( data => setTopAccounts(data));
+        responses[2].json().then( data => setAllActivities(data) );
+        responses[3].json().then( data => setLineChartData(data) );
+        responses[4].json().then( data => setPieChartData(data) );
+      }
+    })
+    
+    return () => {
+      isMounted.current = false;
+    }
 	}, []);
 
 	const updateDashboardAPICall = () => {
@@ -40,11 +48,13 @@ export default function Dashboard() {
       fetch("/main/get_pie_chart_data")
     ])
 		.then(responses => {
-			responses[0].json().then( data => setTopLeads(data) );
-      responses[1].json().then( data => setTopAccounts(data));
-      responses[2].json().then( data => setAllActivities(data) );
-      responses[3].json().then( data => setLineChartData(data) );
-			responses[4].json().then( data => setPieChartData(data) );
+			if (isMounted.current) {
+        responses[0].json().then( data => setTopLeads(data) );
+        responses[1].json().then( data => setTopAccounts(data));
+        responses[2].json().then( data => setAllActivities(data) );
+        responses[3].json().then( data => setLineChartData(data) );
+        responses[4].json().then( data => setPieChartData(data) );
+      }
 		})
 	}
 
@@ -112,7 +122,7 @@ class PieChart extends React.Component {
   transformOrdersToDataPoints = (orders) => {
     let dataPoints = [
       ['Stage', 'Volume'],
-      ['Initiated', 0],
+      ['Received', 0],
       ['Finalized', 0],
       ['To-be-transacted', 0],
       ['Transacted', 0],
@@ -143,7 +153,7 @@ class PieChart extends React.Component {
           
           // [
 					// 	['Stage', 'Volume'],
-					//   ['Initiated', 5],
+					//   ['Received', 5],
 					//   ['Finalized', 29],
 					//   ['To-be-transacted', 56],
 					// 	 ['Transacted', 8],
