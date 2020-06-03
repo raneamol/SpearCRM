@@ -1,0 +1,50 @@
+.flex-container {
+  display: flex;
+  flex-flow: row wrap;
+  justify-content: space-around;
+}
+
+.eventsWidget {
+	border: 1px solid black;
+	border-radius:5px;
+	width:40%;
+	height:40%;
+}
+
+#topHeader {
+	background-color: #33C1FF;
+}
+
+.eventsScroller {
+	overflow:auto;
+	height:400px;
+	border: 1px solid black;
+}
+
+.eventDate {
+	border-bottom: 1px solid black;
+	font-style:italic;
+	list-style: none
+}
+
+.event{
+	font-family:Times New Roman;
+	font-size:24px;
+	cursor: pointer;
+}
+
+li {
+	margin-bottom: 5px;
+}
+
+.piechart{
+	border: 1px solid black;
+}
+
+.funnelchartContainer{
+	border: 1px solid black;
+}
+
+.linechartContainer{
+	border: 1px solid black;
+}

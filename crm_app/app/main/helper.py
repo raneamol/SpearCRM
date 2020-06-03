@@ -11,7 +11,8 @@ from spacy import displacy
 from collections import Counter
 import en_core_web_sm
 
-from pprint import pprint
+from ..extensions import mongo
+
 import os
 
 basedir=os.path.dirname(os.path.abspath(__file__))
@@ -87,7 +88,7 @@ def check_nlp(sent):
         for X in doc.ents:
             if X.label_=='MONEY':
                 amount = X.text
-                print(amount)
+                #print(amount)
         try:
             final_json = {
             "company":company,
@@ -118,20 +119,28 @@ def get_cost_from_text(s1):
 def fetch_order():
     order_list=[]
     inbox = get_email()
+    accounts = mongo.db.Accounts
+    emails = accounts.find({},{"_id":0, "email" : 1})
+    emails = list(emails)
+    emails = [ i["email"] for i in emails ] 
+    #emails = emails.values
+    emails = set(emails)
+
     for i in inbox:
         sent_list = split_into_sentence(i["Body"])
-        for j in sent_list:
-            final =check_nlp(j)
-            if final == 0:
-                continue
-            else:
-                break
-        
-        if final != 0:
-            email_id = (i["From"])
-            final["From"] = email_id
+        if i["From"] in emails:
+            for j in sent_list:
+                final =check_nlp(j)
+                if final == 0:
+                    continue
+                else:
+                    break
+            
+            if final != 0:
+                email_id = (i["From"])
+                final["From"] = email_id
 
-            order_list.append(final)
-    
+                order_list.append(final)
+
     return order_list
 

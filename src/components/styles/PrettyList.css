@@ -18,8 +18,8 @@ ul.experiences li {
 }
 
 .where {
-  font-size: 1.2857em; /* 18/16 -> 18px */
-  font-weight: 400;
+  font-size: 1em; /* 18/16 -> 18px */
+  font-weight: 500;
   display: inline;
   margin-right: 0.5em;
   margin-left: 0.5em;
@@ -53,7 +53,7 @@ ul.experiences li {
 }
 .when {
   font-style:italic;
-	font-size: 16px;
+	font-size: 0.9375em;
   margin-left: 5px;
 }
 
@@ -68,6 +68,7 @@ ul.experiences li {
 
 .description {
   display: block;
+  font-size: 0.875em;
   margin-top: 0.5em;
   margin-left: 2em;
 }
@@ -76,7 +77,13 @@ input.largerCheckbox {
 	transform : scale(1.25); 
 } 
 
+.ai-tag {
+	color: #dc004e;
+}
 
+.ai-tag-star-icon {
+	vertical-align: middle;
+}
 /* BORDERS AND BULLETS */
 
 p {

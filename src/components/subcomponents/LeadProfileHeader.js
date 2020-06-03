@@ -87,7 +87,7 @@ export default class LeadProfileHeader extends React.Component {
            className="stage1" 
            onClick={this.props.onDivClick} 
            id="Uncontacted"
-           style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"forestgreen"} : {backgroundColor:"blue"} }
+           style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"#4caf50"} : {backgroundColor:"#1976d2"} }
           >
             <span id="Uncontacted" className="stage-name"> Uncontacted </span>
           </span>  
@@ -96,7 +96,7 @@ export default class LeadProfileHeader extends React.Component {
            className="stage2" 
            onClick={this.props.onDivClick} 
            id="Contacted"
-           style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }
+           style={ this.props.leadStatus==="Contacted" ? {backgroundColor:"#1976d2"} : {backgroundColor:"gray"} }
           > 
             <span id="Contacted" className="stage-name"> Contacted </span>
           </span>  

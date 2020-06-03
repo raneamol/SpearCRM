@@ -16,6 +16,10 @@
 	/* padding-top:70px; */
 }
 
+.pieChartContainer > * {
+	margin-top: 10px;
+}
+
 .upcoming-tasks-widget {
 	/* border: 1px solid black;
 	border-radius:5px; 
@@ -41,7 +45,7 @@
 
 .task-date {
 	font-style:italic;
-	font-size: 16px;
+	font-size: 1em;
 	margin-left: 5px;
 	color: rgba(0, 0, 0, 0.60)
 }
@@ -50,18 +54,14 @@
 	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 	list-style: none;
 	margin-left: 5px;
+	font-size: 1em;
 }
 
 .task-title{
 	font-family:'Times New Roman';
-	font-size:24px;
+	font-size: 1.4em; /* 18/16 -> 18px */
+  	font-weight: 500;
 	cursor: pointer;
-}
-
-.cross {
-  color: black;
-  float: right;
-  cursor: pointer;
 }
 
 li {
@@ -76,6 +76,7 @@ li {
 	list-style-type: none;
 	padding-left: 0;
 }
+/* task list items are given padding inline */
 
 .new-task-button{
 	float:right;
@@ -87,5 +88,18 @@ input.largerCheckbox {
 } 
 
 .ai-tag {
+	color: #dc004e;
+}
+
+.ai-tag-star-icon {
 	vertical-align: middle;
+}
+
+.cross {transform : scale(0.875); 
+	color: black;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding-top: 5px;
+	float: right;
+	cursor: pointer;
 }

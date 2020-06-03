@@ -17,7 +17,7 @@ export default function PastActivity(props) {
             return (
               <li className="blue" key={i}>
                 <div className="where"> {cross} {element.title} </div>
-                <div className="when"> {convertIsoDateToDateString(element.date)} </div>
+                <span className="when"> {convertIsoDateToDateString(element.date)} </span>
                 <p className="description"> {element.body} </p>
              </li>
             );

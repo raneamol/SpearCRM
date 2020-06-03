@@ -52,17 +52,19 @@ export default function TopOpportunitiesWidget(props) {
                   <ListItem>
                     <ListItemAvatar>
                       <Avatar>
-                        <div> {i+1} </div>
+                        {i+1}
                       </Avatar>
                     </ListItemAvatar>
 
                     <ListItemText
                       primary={element.name}
-                      secondary={`Prospects: ${(element.lead_score) > 90 ? "Excellent " : "Very good"}` +
-                      ` Score:${roundToTwo(element.lead_score)}`}
+                      secondary={`Prospects: ${(element.lead_score) > 90 ? "Excellent " : "Very good"}`}
                     />
                     
                     <ListItemSecondaryAction>
+                      <span>
+                      {`Score: ${roundToTwo(element.lead_score)}`}
+                      </span>
                       <IconButton edge="end" aria-label="delete">
                         <Link to={{ pathname: '/leadprofile', state:{cid:element._id} }}>
                             <OpenInNewIcon/>
@@ -85,7 +87,7 @@ export default function TopOpportunitiesWidget(props) {
                 <ListItem>
                   <ListItemAvatar>
                     <Avatar>
-                      <div> {i+1} </div>
+                      {i+1}
                     </Avatar>
                   </ListItemAvatar>
 

@@ -8,6 +8,8 @@ from email.header import decode_header
 import html2text
 from app.settings import user, password
 
+from os import environ
+
 basedir=os.path.dirname(os.path.abspath(__file__))
 gmail_time = os.path.join(basedir, 'data/gmail_time.txt')
 gmail_mail = os.path.join(basedir, 'data/gmail_mail.txt')
@@ -65,11 +67,14 @@ def get_email():
 
                     raw =  email.message_from_bytes(response_part[1])
                     date = raw['Date']
+                    print(date)
                     d = dt.datetime.strptime(t, '%a, %d %b %Y %H:%M:%S %z')
+                
                     try:
                         date1 = dt.datetime.strptime(date, '%a, %d %b %Y %H:%M:%S %z')
                     except:
-                        pass
+                        #if date is in different format, ignore the mail
+                        date1 = d
                     if (d<date1):
                         
                         sender = raw['From']

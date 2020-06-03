@@ -52,15 +52,15 @@ export default class AccountProfileHeader extends React.Component {
       <>
         <span className="profile-name"> {this.props.name} </span>
         <span className="stage-indicator">
-          <span className="received" style={ n>1 ? {backgroundColor:"green"} : n===1 ? {backgroundColor:"blue"} : {backgroundColor:"gray"}}>
+          <span className="received" style={ n>1 ? {backgroundColor:"#4caf50"} : n===1 ? {backgroundColor:"#1976d2"} : {backgroundColor:"gray"}}>
             <span className="stage-name"> &nbsp; &nbsp; &nbsp; Received &nbsp; &nbsp; &nbsp; </span>
           </span>  
 
-          <span className="finalized" style={ n>2 ? {backgroundColor:"green"} : n===2 ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }> 
+          <span className="finalized" style={ n>2 ? {backgroundColor:"#4caf50"} : n===2 ? {backgroundColor:"#1976d2"} : {backgroundColor:"gray"} }> 
             <span className="stage-name"> &nbsp; &nbsp; Finalized &nbsp; &nbsp;  </span>
           </span>  
 
-          <span className="to-be-transacted" style={ (n===3) ? {backgroundColor:"blue"} : {backgroundColor:"gray"} }>
+          <span className="to-be-transacted" style={ (n===3) ? {backgroundColor:"#4caf50"} : {backgroundColor:"gray"} }>
             <span className="stage-name"> To-be-transacted </span>
           </span>  
 

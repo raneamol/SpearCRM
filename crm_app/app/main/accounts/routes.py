@@ -340,6 +340,7 @@ def show_all_orders():
 	all_orders = orders.find()
 
 	all_orders = list(all_orders)
+	#names of accounts
 	for i in all_orders:
 		account_name = accounts.find_one({"_id":ObjectId(i["account_id"])},{"name" :1})
 		i["name"] = account_name["name"]
@@ -706,8 +707,11 @@ def get_account_turnover(usr_id):
 	order = orders.aggregate([{"$match": {"stage": 0, "account_id": usr_id}},{"$group":{"_id": "$account_id",\
 	"turnover": { "$sum": {"$multiply": ["$no_of_shares", "$cost_of_share"] }}}}])
 	order = list(order)
-	order[0].pop('_id',None)
-
+	print(order)
+	try:
+		order[0].pop('_id',None)
+	except:
+		order = [{"turnover":0}]
 	order = json.dumps(order[0], default = myconverter)
 	return order
 	

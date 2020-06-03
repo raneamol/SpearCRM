@@ -50,6 +50,7 @@ export default function NextSteps(props) {
 
   return(
     <> 
+      {console.log(props.activitiesList)}
       <h2> Next Steps </h2>
       <div className="pretty-list">
         
@@ -59,15 +60,16 @@ export default function NextSteps(props) {
               <li className="blue" key={i}>
 
                 {element.ai_activity ?
-                  <div style={{color: "#1976d2" }}>
-                    <span className='ai-tag'> 
+                  <div className='ai-tag'>
+                    <span className='ai-tag-star-icon'> 
                       <StarRateIcon />   
                     </span>
                     <span>
                       AI Generated
                     </span>
                   </div>
-                  : null
+                  :
+                  null
                 }
 
                 <input 

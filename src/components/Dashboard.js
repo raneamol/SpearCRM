@@ -6,6 +6,8 @@ import TopOpportunitiesWidget from './subcomponents/TopOpportunitiesWidget.js'
 import NewActivityDialogBox from './subcomponents/NewActivityDialogBox';
 import { Link } from 'react-router-dom';
 import StarRateIcon from '@material-ui/icons/StarRate';
+import CloseIcon from '@material-ui/icons/Close';
+
 
 export default function Dashboard() {
 	const [topLeads, setTopLeads] = useState([]);
@@ -111,6 +113,7 @@ const pieOptions = {
   },
   fontName: "Roboto"
 };
+
 class PieChart extends React.Component {
   state = {
     chartImageURI: ""
@@ -155,16 +158,16 @@ class PieChart extends React.Component {
           data = {this.transformOrdersToDataPoints(this.props.pieChartData)}
           
           // [
-					// 	['Stage', 'Volume'],
-					//   ['Received', 5],
-					//   ['Finalized', 29],
-					//   ['To-be-transacted', 56],
-					// 	 ['Transacted', 8],
-					// ]
+          // 	['Stage', 'Volume'],
+          //   ['Received', 5],
+          //   ['Finalized', 29],
+          //   ['To-be-transacted', 56],
+          // 	 ['Transacted', 8],
+          // ]
           options = {pieOptions}
           graph_id = "Distribution of orders currently"
-          width = {"100%"}
-          height = {"100%"}
+          width = {"95%"}
+          height = {"95%"}
           legend_toggle
         />
       </div>
@@ -277,15 +280,21 @@ class UpcomingTasksWidget extends React.Component {
 						{
 							this.props.activitiesList.map( (element,i) => {
 								return(							
-									<div key={i}>
-										<div style={{color: "grey" }}>
-                      <span className='ai-tag'> 
-                        <StarRateIcon />   
-                      </span>
-                      <span>
-                        AI Generated
-                      </span>
-                    </div>
+									<div key={i} >
+										
+                    
+                    {element.ai_activity ? 
+                      <div className='ai-tag'>
+                        <span className='ai-tag-star-icon'> 
+                          <StarRateIcon />   
+                        </span>
+                        <span>
+                          AI Generated
+                        </span>
+                      </div>
+                      :
+                      <p> &nbsp; </p>
+                    }
 
 										<li>
                       &nbsp; 
@@ -303,7 +312,7 @@ class UpcomingTasksWidget extends React.Component {
                       </Link>  
 
                       <span className="task-date">  {convertIsoDateToDateString(element.date)} </span> 
-                      <span className="cross" onClick={() => {this.deleteActivity(element._id)}}> &times; </span>
+                      <span className="cross" onClick={() => {this.deleteActivity(element._id)}}> <CloseIcon /> </span>
 										</li>
 
 										<li className="task-body"> &nbsp; &nbsp; &nbsp; &nbsp;{element.body} </li>

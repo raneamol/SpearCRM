@@ -99,7 +99,16 @@ export default function OrdersDisplay (props) {
               {
                 props.ordersList.filter( (order) => order.stage !== 0 ).map( (order, i) => {
                   
-                  let iconContent = ( (order.trans_type).toLowerCase() === "buy" ? "B" : "S" );
+                  let iconAvatar = ( 
+                    (order.trans_type).toLowerCase() === "buy" ? 
+                      <Avatar style={{backgroundColor: "#1976d2"}}>
+                        B
+                      </Avatar> 
+                    :
+                      <Avatar style={{backgroundColor: "#dc004e"}}>
+                        S
+                      </Avatar>
+                  );
                   let orderLane = (
                     order.stage === 3 ? "To-be-transacted" :
                     order.stage === 2 ? "Finalized" : 
@@ -111,9 +120,7 @@ export default function OrdersDisplay (props) {
                       <ListItem>
 
                         <ListItemAvatar>
-                          <Avatar>
-                            <div> {iconContent} </div>
-                          </Avatar>
+                          {iconAvatar}
                         </ListItemAvatar>  
                       
                         <ListItemText
@@ -122,9 +129,9 @@ export default function OrdersDisplay (props) {
                         />
 
                         <ListItemSecondaryAction>
-                          <div style={{ right:5 }}>
+                          <span style={{ right:5 }}>
                             {orderLane}
-                          </div>
+                          </span>
 
                           <IconButton 
                             edge="end"

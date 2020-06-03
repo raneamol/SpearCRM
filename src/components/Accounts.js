@@ -4,11 +4,9 @@ import 'antd/dist/antd.css';
 import { Table, Input, Button } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
-import { TransitionGroup } from 'react-transition-group';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import EmailIcon from '@material-ui/icons/Email';
-
 import { Link } from "react-router-dom";
 import './styles/Accounts.css'
 import NewAccountDialogBox from './subcomponents/NewAccountDialogBox'
@@ -295,9 +293,7 @@ export default class Accounts extends React.Component {
         rowKey="_id" 
       />
 
-      <TransitionGroup transitionName={"fade"}>
-        {batchEmailComp}
-      </TransitionGroup>
+      {batchEmailComp}
 
       <div className="add-profile-button"> 
         <NewAccountDialogBox updateAccounts={this.updateAccountsAPICall}/> 
