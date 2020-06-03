@@ -25,7 +25,7 @@ export default class AccountProfileHeader extends React.Component {
   }
 
   markToBeTransactedOrdersAsTransacted = async () => {
-    if (this.props.furthestStage != 3) {
+    if (this.props.furthestStage !== 3) {
       return null;
     }
 
@@ -39,7 +39,7 @@ export default class AccountProfileHeader extends React.Component {
     });
     
     if (response.ok) {
-      this.props.fetchAccountDataAndOrdersAndActivities();
+      this.props.updateAccountDataAndOrdersAndActivities();
       if(this._isMounted) {
         this.setState({ openDialog: true});
       }
@@ -65,7 +65,7 @@ export default class AccountProfileHeader extends React.Component {
           </span>  
 
           <span style={{ verticalAlign: "middle" }}>
-            <Tooltip title="Successful transaction">
+            <Tooltip title="Mark To-be-transacted orders as Transacted">
               <CheckCircleIcon 
                 onClick={this.markToBeTransactedOrdersAsTransacted}
               />

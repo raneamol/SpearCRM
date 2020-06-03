@@ -1,7 +1,8 @@
-import React, {useEffect} from 'react'
+import React from 'react'
 import '../styles/PrettyList.css'
 import {convertIsoDateToDateString} from "../Dashboard.js"
-
+import CloseIcon from '@material-ui/icons/Close';
+import StarRateIcon from '@material-ui/icons/StarRate';
 
 export default function NextSteps(props) {
 
@@ -21,13 +22,13 @@ export default function NextSteps(props) {
 
     if (response.ok) {
       if (isAiActivity && props.lead === 0) {
-        props.fetchAccountDataAndOrdersAndActivities();
+        props.updateAccountDataAndOrdersAndActivities();
       }
       //isAiActivity is 1 for activities generated through automation. 
       //Deleting an AI generated activity might involve deletion of corresponding order and updating activity data
       //props.lead indicates the grandparent page. prop.lead===0 being true means AccountProfile is the grandparent.
       else {
-        props.fetchActivities();
+        props.updateActivities();
       }
       //User generated activities can be deleted without updating orders and activities.
       //an AI generated activity can cause wider changes than user generated activity upon transition.
@@ -38,11 +39,11 @@ export default function NextSteps(props) {
 		fetch(`/main/delete_activity/${activityId}`)
 		.then( () => {
       if (isAiActivity) {
-        props.fetchAccountDataAndOrdersAndActivities();
+        props.updateAccountDataAndOrdersAndActivities();
       }
       //isAiActivity is 1 for activities generated through automation
       else {
-        props.fetchActivities();
+        props.updateActivities();
       }
     });
 	}
@@ -56,6 +57,19 @@ export default function NextSteps(props) {
           {props.activitiesList.map( (element, i) => {
             return (
               <li className="blue" key={i}>
+
+                {element.ai_activity ?
+                  <div style={{color: "#1976d2" }}>
+                    <span className='ai-tag'> 
+                      <StarRateIcon />   
+                    </span>
+                    <span>
+                      AI Generated
+                    </span>
+                  </div>
+                  : null
+                }
+
                 <input 
                   className="largerCheckbox" 
                   type="checkbox" 
@@ -67,11 +81,11 @@ export default function NextSteps(props) {
                   {element.title} 
                 </div>
 
-                <span onClick={() => {deleteActivity(element._id, element.ai_activity)}}> &times; </span>
-
-                <div className="when"> 
+                <span className="when"> 
                   {convertIsoDateToDateString(element.date)} 
-                </div>
+                </span>
+
+                <span  className="cross" onClick={() => {deleteActivity(element._id, element.ai_activity)}}> <CloseIcon /> </span>
 
                 <p className="description"> 
                   {element.body} 

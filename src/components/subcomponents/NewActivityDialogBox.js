@@ -5,7 +5,6 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import Autocomplete from "@material-ui/lab/Autocomplete";
 import 'date-fns';
 import DateFnsUtils from '@date-io/date-fns';
 import {
@@ -210,7 +209,6 @@ function MaterialUIPickers(props) {
           variant="inline"
           format="MM/dd/yyyy"
           id="date"
-          label="Birth date"
           value={props.date}
           onChange={props.handleChangeInDate}
           KeyboardButtonProps={{

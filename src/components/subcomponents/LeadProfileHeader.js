@@ -29,7 +29,7 @@ export default class LeadProfileHeader extends React.Component {
   }
 
   handleOpen = () => {
-    if (this.props.leadStatus == "Contacted") {
+    if (this.props.leadStatus === "Contacted") {
       this.setState({ open:true });
     }
   };

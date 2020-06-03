@@ -39,7 +39,7 @@ export default class AccountProfile extends React.Component {
 
   //function used by OrdersDisplay and NextSteps in ActivityTracker
   //and also used by markToBeTransactedOrdersAsTransacted in AccountProfileHeader
-  fetchAccountDataAndOrdersAndActivitiesAPICall = () => {
+  updateAccountDataAndOrdersAndActivitiesAPICall = () => {
     Promise.all([
       fetch(`/main/display_account/${this.state.accountData._id}`), 
       fetch(`/main/show_user_activities/${this.state.accountData._id}`),
@@ -57,7 +57,7 @@ export default class AccountProfile extends React.Component {
   }
 
   //function used by NewOrderDialogBox after POSTing new order
-  fetchAccountDataAndOrdersAPICall = () => {
+  updateAccountDataAndOrdersAPICall = () => {
     Promise.all([
       fetch(`/main/display_account/${this.state.accountData._id}`), 
       fetch(`/main/display_account_orders/${this.state.accountData._id}`)
@@ -71,7 +71,7 @@ export default class AccountProfile extends React.Component {
   }
 
   //function used by FieldContainer1 and FieldContainer2 after POSTing new fields
-  fetchAccountDataAPICall = () => {
+  updateAccountDataAPICall = () => {
     fetch(`/main/display_account/${this.state.accountData._id}`).then(response =>
       response.json().then(data => {
         if(this._isMounted) {
@@ -82,7 +82,7 @@ export default class AccountProfile extends React.Component {
   }
 
   //function used by ManualLogger after POSTing new order
-  fetchActivitiesAPICall = () => {
+  updateActivitiesAPICall = () => {
     fetch(`/main/show_user_activities/${this.state.accountData._id}`).then(response =>
       response.json().then(data => {
         if(this._isMounted) {
@@ -130,7 +130,7 @@ export default class AccountProfile extends React.Component {
     });
     
     if (response.ok) {
-      this.fetchAccountDataAPICall();
+      this.updateAccountDataAPICall();
     }
   }
 
@@ -141,7 +141,7 @@ export default class AccountProfile extends React.Component {
           <AccountProfileHeader 
             name = {this.state.accountData.name} 
             furthestStage = {this.state.accountData.latest_order_stage} 
-            fetchAccountDataAndOrdersAndActivities = {this.fetchAccountDataAndOrdersAndActivitiesAPICall}
+            updateAccountDataAndOrdersAndActivities = {this.updateAccountDataAndOrdersAndActivitiesAPICall}
             _id = {this.state.accountData._id}
           />
         </div>
@@ -160,12 +160,13 @@ export default class AccountProfile extends React.Component {
         />
         <ActivityTracker 
           _id = {this.state.accountData._id}
+          email = {this.state.accountData.email}
           ordersList = {this.state.ordersList}
           activitiesList = {this.state.activitiesList}
-          fetchAccountDataAndOrdersAndActivities = {this.fetchAccountDataAndOrdersAndActivitiesAPICall}
-          fetchAccountDataAndOrders = {this.fetchAccountDataAndOrdersAPICall}
-          fetchAccountData = {this.fetchAccountDataAPICall}
-          fetchActivities = {this.fetchActivitiesAPICall}
+          updateAccountDataAndOrdersAndActivities = {this.updateAccountDataAndOrdersAndActivitiesAPICall}
+          updateAccountDataAndOrders = {this.updateAccountDataAndOrdersAPICall}
+          updateAccountData = {this.updateAccountDataAPICall}
+          updateActivities = {this.updateActivitiesAPICall}
           lead = {0}
         />
         {/* 'lead = 0' communicates that the parent component is AccountProfile */}

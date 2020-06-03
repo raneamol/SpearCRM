@@ -8,13 +8,13 @@ import Avatar from "@material-ui/core/Avatar";
 import Divider from '@material-ui/core/Divider';
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import IconButton from '@material-ui/core/IconButton';
 import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import ListIcon from '@material-ui/icons/List';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import '../styles/OrdersDisplay.css'
@@ -39,7 +39,7 @@ export default function OrdersDisplay (props) {
 
   const deleteOrder = (orderId) => {
     fetch(`main/delete_order/${orderId}`)
-    .then( () => props.fetchAccountDataAndOrdersAndActivities() );
+    .then( () => props.updateAccountDataAndOrdersAndActivities() );
   }
 
   const priceCheckFinalizedOrders = () => {
@@ -48,17 +48,18 @@ export default function OrdersDisplay (props) {
     .then( () => {
       if (_isMounted.current) {
         setOpenSpinner(false);
-        props.fetchAccountDataAndOrdersAndActivities();
+        props.updateAccountDataAndOrdersAndActivities();
       }
     });  
   }
 
   return (
     <>
-      <span className="view-orders-button">
+      <span>
         {/* TODO: Make this width percentage based */}
-        <Button style ={{ width:290 }}variant="outlined" color="secondary" onClick={handleOpen}>
-          View all orders
+        <Button className="add-new-order-button" variant="outlined" color="primary" onClick={handleOpen}>
+          <ListIcon />
+          <span style={{ marginLeft: 2 }}> View all orders </span>
         </Button>
       </span>
       {/* button opens the below dialogbox */}
@@ -69,21 +70,25 @@ export default function OrdersDisplay (props) {
       <Dialog
         open={open}
         onClose={handleClose}
+        fullWidth
+        maxWidth={"md"}
       >
         
 
         <DialogTitle id="form-dialog-title">
-          View all orders 
-          <span style={{ right: 5 }}> 
-            <IconButton aria-label="close" onClick={handleClose}>
-              <CloseIcon />
-            </IconButton>  
 
+          <span> View all orders </span>
+
+          <span style={{ float: "right" }}> 
             <IconButton aria-label="close" onClick={priceCheckFinalizedOrders}>
               <RefreshIcon />
             </IconButton> 
-            
+
+            <IconButton aria-label="close" onClick={handleClose}>
+              <CloseIcon />
+            </IconButton>  
           </span>
+
         </DialogTitle>
           
         <DialogContent>

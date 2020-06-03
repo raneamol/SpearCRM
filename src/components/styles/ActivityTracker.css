@@ -1,3 +1,14 @@
 .activity-tracker-container > *{
   margin: 2px;
 }
+
+.orders-components-container {
+  display:inline-block;
+  width: 100%;
+}
+
+.email-button {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+}

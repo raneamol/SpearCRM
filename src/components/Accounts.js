@@ -1,36 +1,32 @@
 
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Table, Radio, Divider, Input, Button } from 'antd';
+import { Table, Input, Button } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
+import { TransitionGroup } from 'react-transition-group';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import EmailIcon from '@material-ui/icons/Email';
 
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import { Link } from "react-router-dom";
 import './styles/Accounts.css'
 import NewAccountDialogBox from './subcomponents/NewAccountDialogBox'
 
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  getCheckboxProps: record => ({
-    disabled: record.name === 'Disabled User',
-    // Column configuration not to be checked
-    name: record.name,
-  }),
-};
+// const rowSelection = {
+//   onChange: (selectedRowKeys, selectedRows) => {
+//     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+//   },
+//   getCheckboxProps: record => ({
+//     disabled: record.name === 'Disabled User',
+//     // Column configuration not to be checked
+//     name: record.name,
+//   }),
+// };
 
-function onChange(pagination, filters, sorter, extra) {
-  console.log('params', pagination, filters, sorter, extra);
-}
+// function onChange(pagination, filters, sorter, extra) {
+//   console.log('params', pagination, filters, sorter, extra);
+// }
 
 export default class Accounts extends React.Component {
   state = {
@@ -162,10 +158,14 @@ export default class Accounts extends React.Component {
       });
 
       batchEmailComp = (
-        <div className='batch-email-button-accounts'>
+        <div 
+          className='batch-email-button-accounts'
+          key={0}
+        >
           <a 
             href={emailHref}
             target="_blank" 
+            rel="noopener noreferrer"
           >
             <EmailIcon />
           </a>
@@ -177,7 +177,7 @@ export default class Accounts extends React.Component {
       {
         title: 'Name',
         dataIndex: 'name',
-        render: text => <a>{text}</a>,
+        //render: text => <a>{text}</a>,
         key: 'name',
         width: '12.5%',
         ...this.getColumnSearchProps('name'),
@@ -261,9 +261,15 @@ export default class Accounts extends React.Component {
         title: 'Email',
         dataIndex: 'email',
         width: '25%',
-        render: text => <a target="_blank" href={`https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${text}`}>
+        render: text => <a 
+                          target="_blank" 
+                          href={`https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${text}`}
+                          rel="noopener noreferrer"
+                        >
                           {text} 
-                          <span style={{fontSize:20, float:'right'}}><MailOutlineIcon /></span> 
+                          <span style={{fontSize:20, float:'right'}}>
+                            <MailOutlineIcon />
+                          </span> 
                         </a>,
         key: 'email',
       },
@@ -285,11 +291,13 @@ export default class Accounts extends React.Component {
           onChange: this.getSelectedEmails,
         }}
         title={() => 'Accounts'}
-        onChange={onChange}
+        //onChange={onChange}
         rowKey="_id" 
       />
 
-      {batchEmailComp}
+      <TransitionGroup transitionName={"fade"}>
+        {batchEmailComp}
+      </TransitionGroup>
 
       <div className="add-profile-button"> 
         <NewAccountDialogBox updateAccounts={this.updateAccountsAPICall}/> 

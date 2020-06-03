@@ -65,7 +65,7 @@ export default class NewOrderDialogBox extends React.Component{
       if (this._isMounted) {
         this.setState({ open:false });
       }
-      this.props.fetchAccountDataAndOrders();
+      this.props.updateAccountDataAndOrders();
     }
   }
   
@@ -93,10 +93,14 @@ export default class NewOrderDialogBox extends React.Component{
               type="text"
               fullWidth
               onChange={this.handleChange}
+              variant="outlined"
               helperText="Enter valid security ID or symbol of the company."
             />
 
-            <FormControl variant="outlined" fullWidth>
+            <FormControl 
+              variant="outlined" 
+              fullWidth
+            >
               <InputLabel>Transaction Type</InputLabel>
               <Select
                 value={this.state.trans_type}
@@ -118,6 +122,7 @@ export default class NewOrderDialogBox extends React.Component{
               type="number"
               fullWidth
               onChange={this.handleChange}
+              variant="outlined"
             />
 
             <TextField
@@ -129,6 +134,7 @@ export default class NewOrderDialogBox extends React.Component{
               type="text"
               fullWidth
               onChange={this.handleChange}
+              variant="outlined"
             />
 
           </DialogContent>

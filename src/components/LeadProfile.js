@@ -32,7 +32,7 @@ export default class LeadProfile extends React.Component {
     this._isMounted = false;
   }
 
-  fetchLeadDataAPICall = () => {
+  updateLeadDataAPICall = () => {
     fetch(`/main/display_lead/${this.state.leadData._id}`).then(response =>
       response.json().then(data => {
         if (this._isMounted) {
@@ -42,7 +42,7 @@ export default class LeadProfile extends React.Component {
     );
   }
 
-  fetchActivitiesAPICall = () => {
+  updateActivitiesAPICall = () => {
     fetch(`/main/show_user_activities/${this.state.leadData._id}`).then(response =>
       response.json().then(data => {
         if (this._isMounted) {
@@ -93,7 +93,7 @@ export default class LeadProfile extends React.Component {
     });
     
     if (response.ok) {
-      this.fetchLeadDataAPICall();
+      this.updateLeadDataAPICall();
     }
   }
 
@@ -106,7 +106,7 @@ export default class LeadProfile extends React.Component {
             name = {this.state.leadData.name}
             leadStatus = {this.state.leadData.status}
             _id = {this.state.leadData._id}
-            fetchLeadData = {this.fetchLeadDataAPICall}
+            updateLeadData = {this.updateLeadDataAPICall}
           />
         </div>
         <FieldsContainer1 
@@ -124,7 +124,7 @@ export default class LeadProfile extends React.Component {
         <ActivityTracker 
           _id = {this.props.location.state.cid}
           lead = {1}
-          fetchActivities = {this.fetchActivitiesAPICall}
+          updateActivities = {this.updateActivitiesAPICall}
           activitiesList = {this.state.activitiesList}
         />
 {/* 'lead = 1' communicates that the parent component is LeadProfile */}

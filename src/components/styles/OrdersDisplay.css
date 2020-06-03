@@ -1,7 +1,12 @@
 .orders-container {
   overflow: auto;
   height: 300px;
-  width: 400px;
+  /* width: 400px; */
+}
+
+.view-orders-button {
+  /* float: right; */
+  width: 100%;
 }
 
 .spinner-backdrop {

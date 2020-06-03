@@ -1,12 +1,5 @@
 import React from 'react'
 import Board from 'react-trello/dist'
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link,
-  withRouter
-} from "react-router-dom";
 import PipelineNewOrderDialogBox from './subcomponents/PipelineNewOrderDialogBox.js';
 import SendIcon from '@material-ui/icons/Send';
 import ShowChartIcon from '@material-ui/icons/ShowChart';
@@ -81,9 +74,8 @@ export default class Pipeline extends React.Component {
     // formatting attributes to make a suitable input for Board component
     orders.forEach( (entry) => {
       entry.id = entry["_id"];
-      entry.stage = entry["stage"];
       entry.title = entry["company"];
-      if ( (entry.trans_type).toLowerCase() == "sell" ) {
+      if ( (entry.trans_type).toLowerCase() === "sell" ) {
         entry.description = `Sell stocks for ${entry.name}`;
       }
       else {
@@ -105,9 +97,11 @@ export default class Pipeline extends React.Component {
     if (fromLaneId === toLaneId){
       return null;
     }
-    else if(     fromLaneId === 1 && toLaneId === 2
-              || fromLaneId === 2 && toLaneId === 3
-              || fromLaneId === 3 && toLaneId === 0){
+    else if(     
+         (fromLaneId === 1 && toLaneId === 2)
+      || (fromLaneId === 2 && toLaneId === 3)
+      || (fromLaneId === 3 && toLaneId === 0)
+    ){
       const newCardStage = {
         "_id" : cardId,
         "stage" : toLaneId
@@ -182,7 +176,9 @@ export default class Pipeline extends React.Component {
         />
         
         <div className="add-order-button"> 
-          <PipelineNewOrderDialogBox updatePipeline={this.updatePipelineAPICall} /> 
+          <PipelineNewOrderDialogBox 
+            updatePipeline={this.updatePipelineAPICall} 
+          /> 
         </div>
 
         <div className="complete-orders-button">
@@ -191,6 +187,7 @@ export default class Pipeline extends React.Component {
             color="primary"
             onClick={this.markToBeTransactedOrdersAsTransacted}
             startIcon={<SendIcon />}
+            fullWidth
           >
             Mark Orders as transacted
           </Button>
@@ -202,16 +199,15 @@ export default class Pipeline extends React.Component {
             color="primary"
             onClick={this.priceCheckFinalizedOrders}
             startIcon={<ShowChartIcon />}
+            fullWidth
           >
             Check share price & update
           </Button>
-
-          <Backdrop className="spinner-backdrop" open={this.state.openSpinner}>
-            <CircularProgress color="inherit" />
-          </Backdrop>
         </div>
 
-
+        <Backdrop className="spinner-backdrop" open={this.state.openSpinner}>
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </>
     );
   }

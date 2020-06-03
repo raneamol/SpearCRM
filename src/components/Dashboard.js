@@ -4,7 +4,8 @@ import Chart from 'react-google-charts';
 import CanvasJSReact from './Other/canvasjs.react';
 import TopOpportunitiesWidget from './subcomponents/TopOpportunitiesWidget.js'
 import NewActivityDialogBox from './subcomponents/NewActivityDialogBox';
-import {Link} from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import StarRateIcon from '@material-ui/icons/StarRate';
 
 export default function Dashboard() {
 	const [topLeads, setTopLeads] = useState([]);
@@ -138,6 +139,8 @@ class PieChart extends React.Component {
         case 0:
           dataPoints[4][1] = dataPoints[4][1] + 1;
           break;
+        default:
+          break;
       }
     });
 
@@ -233,49 +236,6 @@ class LineChart extends React.Component {
 	}
 } 
 
-class FunnelChart extends React.Component {
-	render() {
-		var dataPoint;
-		var total;
-		const funnelOptions = {
-			animationEnabled: true,
-			title:{
-				text: "Sales Analysis"
-			},
-			data: [{
-				type: "funnel",
-				toolTipContent: "<b>{label}</b>: {y} <b>({percentage}%)</b>",
-				indexLabelPlacement: "inside",
-				indexLabel: "{label} ({percentage}%)",
-				dataPoints: [
-					{ y: 5, label: "Leads and Accounts Contacted" },
-					{ y: 3, label: "Customers interested" },
-					{ y: 2,  label: "Customers who transacted" },
-					{ y: 1, label: "Payment" }
-				]
-			}]
-		}
-		//calculate percentage
-		dataPoint = funnelOptions.data[0].dataPoints;
-		total = dataPoint[0].y;
-		for(var i = 0; i < dataPoint.length; i++) {
-			if(i == 0) {
-				funnelOptions.data[0].dataPoints[i].percentage = 100;
-			} else {
-				funnelOptions.data[0].dataPoints[i].percentage = ((dataPoint[i].y / total) * 100).toFixed(2);
-			}
-		}
-		return (
-			<div>
-				<CanvasJSChart options = {funnelOptions}
-					 onRef={ref => this.chart = ref}
-				/>
-				{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
-			</div>
-		);
-	}
-}
-
 class UpcomingTasksWidget extends React.Component {
 	transitionActivity = async (activityId) => {
 		const activityToTransition = {
@@ -312,16 +272,22 @@ class UpcomingTasksWidget extends React.Component {
 					</span> 
 				</div>
 
-        <hr />
-
     		<div className="tasks-scroller-container">
     			<ul className="tasks-list">
 						{
 							this.props.activitiesList.map( (element,i) => {
 								return(							
 									<div key={i}>
-										
-										<li className="task-title">
+										<div style={{color: "grey" }}>
+                      <span className='ai-tag'> 
+                        <StarRateIcon />   
+                      </span>
+                      <span>
+                        AI Generated
+                      </span>
+                    </div>
+
+										<li>
                       &nbsp; 
                       <input 
                         type="checkbox" 
@@ -330,17 +296,17 @@ class UpcomingTasksWidget extends React.Component {
                         onClick={() => {this.transitionActivity(element._id)}} 
                       />
 
-                      <Link 
-                        to={{ pathname: '/accountprofile', state:{cid: element.user_id} }}
-                      >
-                        &nbsp; {element.title}                      
-                      </Link>
+                      <Link to={ {pathname: "/accountprofile", state: {cid: element.user_id}} } >
+                        <span className="task-title">
+                          &nbsp; {element.title}                      
+                        </span>
+                      </Link>  
 
                       <span className="task-date">  {convertIsoDateToDateString(element.date)} </span> 
-                      <span onClick={() => {this.deleteActivity(element._id)}}> &times; </span>
+                      <span className="cross" onClick={() => {this.deleteActivity(element._id)}}> &times; </span>
 										</li>
 
-										<li className="task-body"> &nbsp; {element.body} </li>
+										<li className="task-body"> &nbsp; &nbsp; &nbsp; &nbsp;{element.body} </li>
 									</div>
 								);
 							})

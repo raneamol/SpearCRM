@@ -2,32 +2,36 @@
   display: grid;
 	grid-template-rows: 1fr 1fr;
 	grid-template-columns: 1fr 1fr;
-	gap: 50px 50px;
+	gap: 10px 10px;
+	padding:5px;
 }
 
 .grid-container > * {
-  height: 90%;
-	width: 90%;
+  /* height: 90%;
+	width: 90%; */
+	border: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .pieChartContainer{
-	padding-top:70px;
+	/* padding-top:70px; */
 }
 
 .upcoming-tasks-widget {
-	border: 1px solid black;
-	border-radius:5px;
+	/* border: 1px solid black;
+	border-radius:5px; 
 	height: 100%;
-	width: 95%;
+	width: 95%;*/
 }
 
 .tasks-widget-title {
 	text-align: center;
 	font-weight: 800;
 	font-size: 32px;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 }
 
 .tasks-scroller-container {
+	/* margin-top:5px; */
 	overflow:auto;
 	height:350px;
 	margin-right:0;
@@ -37,21 +41,27 @@
 
 .task-date {
 	font-style:italic;
-	float: right;
-	font-size: 18px;
-	margin-right: 5px;
+	font-size: 16px;
+	margin-left: 5px;
+	color: rgba(0, 0, 0, 0.60)
 }
 
 .task-body {
-	border-bottom: 1px solid black;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
 	list-style: none;
+	margin-left: 5px;
 }
 
 .task-title{
 	font-family:'Times New Roman';
 	font-size:24px;
 	cursor: pointer;
+}
 
+.cross {
+  color: black;
+  float: right;
+  cursor: pointer;
 }
 
 li {
@@ -59,7 +69,7 @@ li {
 }
 
 .line-chart-container {
-	width:95%;
+	/* width:95%; */
 }
 
 .tasks-list{
@@ -75,3 +85,7 @@ li {
 input.largerCheckbox { 
 	transform : scale(1.25); 
 } 
+
+.ai-tag {
+	vertical-align: middle;
+}

@@ -1,18 +1,13 @@
 import React from 'react';
 import 'antd/dist/antd.css';
-import { Table, Radio, Divider, Input, Button } from 'antd';
+import { Table, Input, Button } from 'antd';
 import Highlighter from 'react-highlight-words';
 import { SearchOutlined } from '@ant-design/icons';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import EmailIcon from '@material-ui/icons/Email';
 
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
+import {Link} from "react-router-dom";
 import NewLeadDialogBox from './subcomponents/NewLeadDialogBox'
 import './styles/Accounts.css' //both Accounts and Leads pages have the same styling
 
@@ -20,20 +15,20 @@ import './styles/Accounts.css' //both Accounts and Leads pages have the same sty
 
 // rowSelection object indicates the need for row selection
 
-const rowSelection = {
-  onChange: (selectedRowKeys, selectedRows) => {
-    console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-  },
-  getCheckboxProps: record => ({
-    disabled: record.name === 'Disabled User',
-    // Column configuration not to be checked
-    name: record.name,
-  }),
-};
+// const rowSelection = {
+//   onChange: (selectedRowKeys, selectedRows) => {
+//     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+//   },
+//   getCheckboxProps: record => ({
+//     disabled: record.name === 'Disabled User',
+//     // Column configuration not to be checked
+//     name: record.name,
+//   }),
+// };
 
-function onChange(pagination, filters, sorter, extra) {
-  console.log('params', pagination, filters, sorter, extra);
-}
+// function onChange(pagination, filters, sorter, extra) {
+//   console.log('params', pagination, filters, sorter, extra);
+// }
 
 export default class Leads extends React.Component {
   state = {
@@ -169,6 +164,7 @@ export default class Leads extends React.Component {
           <a 
             href={emailHref}
             target="_blank" 
+            rel="noopener noreferrer"
           >
             <EmailIcon/>
           </a>
@@ -180,7 +176,7 @@ export default class Leads extends React.Component {
       {
         title: 'Name',
         dataIndex: 'name',
-        render: text => <a>{text}</a>,
+        //render: text => <a href="#">{text}</a>,
         key: 'name',
         width: '12.5%',
         ...this.getColumnSearchProps('name'),
@@ -264,7 +260,10 @@ export default class Leads extends React.Component {
         title: 'Email',
         dataIndex: 'email',
         width: '25%',
-        render: text => <a target="_blank" href={`https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${text}`}>
+        render: text => <a target="_blank" 
+                          href={`https://mail.google.com/mail/u/0/?view=cm&fs=1&to=${text}`}
+                          rel="noopener noreferrer"
+                        >
                           {text} 
                           <span style={{fontSize:20, float:'right'}}><MailOutlineIcon /></span> 
                         </a>,
@@ -288,7 +287,7 @@ export default class Leads extends React.Component {
             onChange: this.getSelectedEmails,
           }}
           title={() => 'Leads'}
-          onChange={onChange}
+          // onChange={onChange}
           rowKey="_id" 
         />
 

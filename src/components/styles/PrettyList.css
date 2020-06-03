@@ -19,9 +19,10 @@ ul.experiences li {
 
 .where {
   font-size: 1.2857em; /* 18/16 -> 18px */
-  font-weight: 300;
+  font-weight: 400;
   display: inline;
   margin-right: 0.5em;
+  margin-left: 0.5em;
 }
 .what {
   font-size: 0.75em; /* 12/16 -> 12px */
@@ -45,14 +46,30 @@ ul.experiences li {
 .what.pink {
   background-color: #f06eaa;
 }
-.when {
-  float: right;
-  color: #b9b9b9;
-  font-style: italic;
+
+.blue{
+  /* background-color: gold; */
+  margin-bottom: 1px;
 }
+.when {
+  font-style:italic;
+	font-size: 16px;
+  margin-left: 5px;
+}
+
+.cross {
+  color: black;
+  margin-left: 5px;
+  margin-right: 5px;
+  padding-top: 5px;
+  float: right;
+  cursor: pointer;
+}
+
 .description {
   display: block;
   margin-top: 0.5em;
+  margin-left: 2em;
 }
 
 input.largerCheckbox { 

@@ -5,6 +5,10 @@ import NextSteps from './NextSteps'
 import PastActivity from './PastActivity'
 import NewOrderDialogBox from './NewOrderDialogBox'
 import OrdersDisplay from './OrdersDisplay'
+import Button from "@material-ui/core/Button";
+import EmailIcon from '@material-ui/icons/Email';
+
+
 
 export default function ActivityTracker(props) {
   const [activityType, setActivityType] = useState("past"); //past or future
@@ -40,9 +44,9 @@ export default function ActivityTracker(props) {
     let today = new Date();
     console.log("entered");
     //erroneous and disallowed inputs specified in the below if condition
-    if( activityType === "future" && activityDate.getTime() <= today.getTime()
-        || activityType === "past"   && activityDate.getTime() > today.getTime() 
-        || activityTitle === ""
+    if(    ( activityType === "future" && activityDate.getTime() <= today.getTime() )
+        || ( activityType === "past"   && activityDate.getTime() > today.getTime() ) 
+        || ( activityTitle === "" )
     ){
       return null;
     }
@@ -65,24 +69,27 @@ export default function ActivityTracker(props) {
     if (response.ok && _isMounted.current) {
       setActivityBody("");
       setActivityTitle("");
-      props.fetchActivities();
+      props.updateActivities();
     }
   }
 
   let ordersComponents = null;
   if (!props.lead) {
     ordersComponents = (
-      <div className="orders-components-container">
+      // <div className="orders-components-container">
+      <>
         <NewOrderDialogBox 
           account_id={props._id} 
-          fetchAccountDataAndOrders = {props.fetchAccountDataAndOrders}
+          updateAccountDataAndOrders = {props.updateAccountDataAndOrders}
         />
 
         <OrdersDisplay 
           ordersList={props.ordersList} 
-          fetchAccountDataAndOrdersAndActivities = {props.fetchAccountDataAndOrdersAndActivities}
+          updateAccountDataAndOrdersAndActivities = {props.updateAccountDataAndOrdersAndActivities}
         />
-      </div>
+      </>
+
+      // </div>
     );
   }
   //orders components shouldn't render for a lead
@@ -90,8 +97,9 @@ export default function ActivityTracker(props) {
   return(
     <div className="activity-tracker-container">
       <h2 style={{ textAlign: "center"}}> Activity Tracker</h2>
+      
+      <EmailComposer email={props.email} /> 
       {ordersComponents}
-      <EmailAutomator />
       <ManualLogger 
         draftType={activityType} 
         draftTitle={activityTitle}
@@ -102,12 +110,12 @@ export default function ActivityTracker(props) {
         handleChangeInTitle={handleChangeInTitle}
         handleChangeInDate={handleChangeInDate}
         postNewActivity={postNewActivity}
-        fetchActivities={props.fetchActivities}
+        updateActivities={props.updateActivities}
       />
       <NextSteps 
         activitiesList={props.activitiesList.filter(activity => activity["activity_type"] === "future")} 
-        fetchAccountDataAndOrdersAndActivities = {props.fetchAccountDataAndOrdersAndActivities}
-        fetchActivities = {props.fetchActivities}
+        updateAccountDataAndOrdersAndActivities = {props.updateAccountDataAndOrdersAndActivities}
+        updateActivities = {props.updateActivities}
         lead = {props.lead}
       />
       <PastActivity
@@ -117,23 +125,17 @@ export default function ActivityTracker(props) {
   ); 
 }
 
-class EmailAutomator extends React.Component {
-  render() {
-    let emailTo = "testing@gmail.com";
-    let emailSubject = "Stock prospects";
-    let emailBody = "MSFT stocks are being retailed at an all time low. Do call back if you're interested."
-    let emailHref = ("https://mail.google.com/mail?view=cm&fs=1" +
-      (emailTo ? ("&to=" + encodeURIComponent(emailTo)) : "") +
-      (emailSubject ? ("&su=" + encodeURIComponent(emailSubject)) : "") +
-      (emailBody ? ("&body=" + encodeURIComponent(emailBody)) : ""));
-    //cc and bcc are parameters that are also available
-    return(
-      <>
-        <div> 
-          <a style={{fontSize:20}} href={emailHref} target="_blank"> &#9993; Draft automated email  
-          </a>
-        </div>
-      </>
-    );
-  }
+function EmailComposer(props) {
+  return(
+    <a 
+      href={`https://mail.google.com/mail?view=cm&fs=1&to=${props.email}`}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <Button  variant="outlined" color="secondary" className="email-button">
+        <EmailIcon/> 
+        <span> &nbsp; Compose an email </span>
+      </Button>
+    </a>
+  );
 }
