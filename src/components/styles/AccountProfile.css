@@ -21,3 +21,8 @@ body {
   padding-right: 0px !important;
 }
 /* prevents page from jumping when dialog box opens up */
+
+.spinner-backdrop {
+  z-index: 20 !important;
+  position: absolute;
+}

@@ -67,7 +67,7 @@ export default function TopOpportunitiesWidget(props) {
                       </span>
                       <IconButton edge="end" aria-label="delete">
                         <Link to={{ pathname: '/leadprofile', state:{cid:element._id} }}>
-                            <OpenInNewIcon/>
+                          <OpenInNewIcon/>
                         </Link>
                       </IconButton>
                     </ListItemSecondaryAction>
@@ -99,7 +99,7 @@ export default function TopOpportunitiesWidget(props) {
                   <ListItemSecondaryAction>
                     <IconButton edge="end" aria-label="delete">
                       <Link to={{ pathname: '/accountprofile', state:{cid:element._id} }}>
-                          <OpenInNewIcon/>
+                        <OpenInNewIcon/>
                       </Link>
                     </IconButton>
                   </ListItemSecondaryAction>

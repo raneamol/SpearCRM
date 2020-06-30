@@ -8,6 +8,9 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import AuthContext from '../Other/AuthContext.js';
+
+const API = process.env.REACT_APP_API;
 
 export default class AccountProfileHeader extends React.Component {
   state = {
@@ -16,6 +19,8 @@ export default class AccountProfileHeader extends React.Component {
     //Set to true when account does markToBeTransactedOrdersAsTransacted successfully
   };
 
+  static contextType = AuthContext;
+  
   componentDidMount() {
     this._isMounted = true;
   }
@@ -29,21 +34,50 @@ export default class AccountProfileHeader extends React.Component {
       return null;
     }
 
-    console.log("Completion triggered");
-    const response = await fetch("/main/complete_account_orders", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({"account_id": this.props._id})
-    });
+    this.props.updateSpinner(true);
+
+    let postContents = {"account_id": this.props._id, "company": this.props.cache};
     
-    if (response.ok) {
-      this.props.updateAccountDataAndOrdersAndActivities();
-      if(this._isMounted) {
-        this.setState({ openDialog: true});
+    fetch(`${API}/main/complete_account_orders`, {
+      method: "POST",
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
+      body: JSON.stringify(postContents)
+    })
+    .then( response => {
+      if (response.ok) {
+        response.text().then( data => {
+          let str1 = "No companies to be transacted";
+          let str2 = "Send correct company";
+
+          if(data === str1) {
+            throw new Error("No companies to be transacted");
+          }
+          else if (data === str2) {
+            throw new Error("Send correct company");
+          }
+          else {
+            fetch(`${API}/main/send_email_after_transaction`, {
+              method: "POST",
+              withCredentials: true,
+              headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
+              body: data
+            })
+            .then(() => 
+              this.props.updateAccountDataAndOrdersAndActivities()
+            )
+            .then(() => {
+              if(this._isMounted) { this.setState({ openDialog: true}) }
+            });
+          }
+        })
       }
-    }
+      else {
+        throw new Error("Something went wrong");
+      }
+    })
+    .catch( error => console.log(error))
+    .then( () => {if (this._isMounted) {this.props.updateSpinner(false)}});
   }
 
   render() {
@@ -64,8 +98,8 @@ export default class AccountProfileHeader extends React.Component {
             <span className="stage-name"> To-be-transacted </span>
           </span>  
 
-          <span style={{ verticalAlign: "middle" }}>
-            <Tooltip title="Mark To-be-transacted orders as Transacted">
+          <span style={{ verticalAlign: "middle", cursor: "pointer" }}>
+            <Tooltip title="Mark To-be-transacted orders as Transacted" arrow>
               <CheckCircleIcon 
                 onClick={this.markToBeTransactedOrdersAsTransacted}
               />

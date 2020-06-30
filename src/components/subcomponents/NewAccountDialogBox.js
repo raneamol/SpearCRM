@@ -15,7 +15,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import InputLabel from '@material-ui/core/InputLabel';
+import AuthContext from '../Other/AuthContext.js';
 
+const API = process.env.REACT_APP_API;
 
 export default class NewAccountDialogBox extends React.Component{
   state = {
@@ -37,6 +39,8 @@ export default class NewAccountDialogBox extends React.Component{
     trading_accno: 0,
     contact_comm_type : "Email",
   }
+
+  static contextType = AuthContext;
 
   componentDidMount() {
     this._isMounted = true;
@@ -74,18 +78,18 @@ export default class NewAccountDialogBox extends React.Component{
     //date and last_contact are sent as date objects
     //all other fields are sent as strings
 
-    const response = await fetch("/main/create_account", {
+    fetch(`${API}/main/create_account`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
       body: JSON.stringify(newProfile)
-    });
-    
-    if (response.ok && this._isMounted) {
-      this.setState({ open:false });
-      this.props.updateAccounts();
-    }
+    })
+    .then( response => {
+      if (response.ok && this._isMounted) {
+        this.setState({ open:false });
+        this.props.updateAccounts();
+      }
+    })
   }
 
   render() {
@@ -190,8 +194,9 @@ export default class NewAccountDialogBox extends React.Component{
                   name="education"
                 >
                   <MenuItem value=""> <em>None</em> </MenuItem>
-                  <MenuItem value={"high school"}>High school</MenuItem>
-                  <MenuItem value={"college"}>College</MenuItem>
+                  <MenuItem value={"high school"}>High School</MenuItem>
+                  <MenuItem value={"University"}>University</MenuItem>
+                  <MenuItem value={"Professional Course"}>Professional Course</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -206,8 +211,13 @@ export default class NewAccountDialogBox extends React.Component{
                   name="job_type"
                 >
                   <MenuItem value=""> <em>None</em> </MenuItem>
-                  <MenuItem value={"services"}>Services</MenuItem>
-                  <MenuItem value={"other"}>Other</MenuItem>
+                  <MenuItem value={"Services"}>Services</MenuItem>
+                  <MenuItem value={"Self-Employed"}>Self-employed</MenuItem>
+                  <MenuItem value={"Student"}>Student</MenuItem>
+                  <MenuItem value={"Retired"}>Retired</MenuItem>
+                  <MenuItem value={"Entrepreneur"}>Entrepreneur</MenuItem>
+                  <MenuItem value={"Blue-collar"}>Blue-collar</MenuItem>
+                  <MenuItem value={"Management"}>Management</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -278,6 +288,7 @@ function MaterialUIPickers(props) {
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
+          fullWidth
         />
     </MuiPickersUtilsProvider>
   );

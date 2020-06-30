@@ -1,0 +1,9 @@
+#Virtual Environment
+/env
+
+#environment variables
+/.env
+/.flaskenv
+
+#config file
+/app/settings.py

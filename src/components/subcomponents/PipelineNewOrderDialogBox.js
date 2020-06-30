@@ -10,9 +10,11 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import AddIcon from '@material-ui/icons/Add';
+import '../styles/NewOrderDialogBox.css';
+import AuthContext from '../Other/AuthContext.js';
+import { prepareGETOptions } from '../Other/helper.js';
 
-import '../styles/NewOrderDialogBox.css'
-
+const API = process.env.REACT_APP_API;
 
 export default class PipelineNewOrderDialogBox extends React.Component{
   state = {
@@ -21,14 +23,20 @@ export default class PipelineNewOrderDialogBox extends React.Component{
     trans_type: "",
     no_of_shares: 0,
     cost_of_share: 0,
-    selectOptions : [], //value is only set on first load
     account_id : 0,
   };
+
+  static contextType = AuthContext;
+
+  //value is only set on first load
+  //is made a class property due to bug where selectOptions alone is deleted after successful order addition
+  selectOptions = [];
 
   componentDidMount() {
     this._isMounted = true;
 
-    fetch("/main/get_all_account_names").then(response =>
+    fetch(`${API}/main/get_all_account_names`, prepareGETOptions(this.context) )
+    .then(response =>
       response.json().then(data => {
         let menuItems = [<MenuItem value="" key={0}> <em>None</em> </MenuItem>] ;
         data.forEach( (entry, i) => {
@@ -37,7 +45,7 @@ export default class PipelineNewOrderDialogBox extends React.Component{
         });
         
         if (this._isMounted) {
-          this.setState({ selectOptions: menuItems });
+          this.selectOptions = menuItems;
         }
       })
     );
@@ -65,23 +73,36 @@ export default class PipelineNewOrderDialogBox extends React.Component{
   }
 
   postNewOrder = async () => {
+    this.props.updateSpinner(true);
+
     const newOrder = this.state;
     newOrder.stage = 2;
     newOrder.no_of_shares = parseInt(this.state.no_of_shares);
     delete newOrder.open;
-    delete newOrder.selectOptions;
-    const response = await fetch("/main/create_order", {
+    this.setState({ account_id: 0});
+    this.setState({ trans_type: ""});
+
+    fetch(`${API}/main/create_order`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
       body: JSON.stringify(newOrder)
+    })
+    .then(response => {
+      if (response.ok && this._isMounted) {
+        this.props.updatePipeline();          
+      }
+      else {
+        throw new Error("Something went wrong");
+      }
+    })
+    .catch( error => console.log(error))
+    .then( () => {
+      if (this._isMounted) {
+        this.setState({ open:false }); 
+        this.props.updateSpinner(false); 
+      }
     });
-    
-    if (response.ok && this._isMounted) {
-      this.setState({ open:false });
-      this.props.updatePipeline();
-    }
   }
   
   render() {
@@ -107,7 +128,11 @@ export default class PipelineNewOrderDialogBox extends React.Component{
           <DialogContent>
 
 
-            <FormControl variant="outlined" fullWidth>
+            <FormControl 
+              variant="outlined" 
+              style={{ marginBottom: 10 }}  
+              fullWidth
+            >
               <InputLabel>Account</InputLabel>
               <Select
                 value={this.state.account_id}
@@ -115,7 +140,7 @@ export default class PipelineNewOrderDialogBox extends React.Component{
                 label="Account"
                 name="account_id"
               >
-                {this.state.selectOptions}
+                {this.selectOptions}
               </Select>
             </FormControl>
 
@@ -142,6 +167,7 @@ export default class PipelineNewOrderDialogBox extends React.Component{
               fullWidth
               onChange={this.handleChange}
               helperText="Enter valid security ID or symbol of the company."
+              variant="outlined"
             />
 
             <TextField
@@ -152,17 +178,19 @@ export default class PipelineNewOrderDialogBox extends React.Component{
               type="number"
               fullWidth
               onChange={this.handleChange}
+              variant="outlined"
             />
 
             <TextField
               autoFocus
               margin="dense"
               id="cost_of_share"
-              label="Cost of one share"
+              label="Desired Price"
               helperText="Leave this empty if you wish to transact regardless of the stock price."
               type="text"
               fullWidth
               onChange={this.handleChange}
+              variant="outlined"
             />
 
           </DialogContent>

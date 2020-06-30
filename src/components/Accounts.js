@@ -10,21 +10,10 @@ import EmailIcon from '@material-ui/icons/Email';
 import { Link } from "react-router-dom";
 import './styles/Accounts.css'
 import NewAccountDialogBox from './subcomponents/NewAccountDialogBox'
+import AuthContext from './Other/AuthContext.js';
+import { prepareGETOptions } from './Other/helper.js';
 
-// const rowSelection = {
-//   onChange: (selectedRowKeys, selectedRows) => {
-//     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-//   },
-//   getCheckboxProps: record => ({
-//     disabled: record.name === 'Disabled User',
-//     // Column configuration not to be checked
-//     name: record.name,
-//   }),
-// };
-
-// function onChange(pagination, filters, sorter, extra) {
-//   console.log('params', pagination, filters, sorter, extra);
-// }
+const API = process.env.REACT_APP_API;
 
 export default class Accounts extends React.Component {
   state = {
@@ -33,13 +22,14 @@ export default class Accounts extends React.Component {
     fetchedData: [],
     selectedRowEmails: [],
   };
-
-//Searching logic
+  
+  static contextType = AuthContext;
 
   componentDidMount() {
     this._isMounted = true;
 
-    fetch("/main/show_all_accounts").then(response =>
+    fetch(`${API}/main/show_all_accounts`, prepareGETOptions(this.context))
+    .then(response =>
       response.json().then(data => {
         if (this._isMounted) {
           this.setState({ fetchedData: data });
@@ -53,7 +43,8 @@ export default class Accounts extends React.Component {
   }
 
   updateAccountsAPICall = () => {
-    fetch("/main/show_all_accounts").then(response =>
+    fetch(`${API}/main/show_all_accounts`, prepareGETOptions(this.context))
+    .then(response =>
       response.json().then(data => {
         if (this._isMounted) {
           this.setState({ fetchedData: data });
@@ -138,10 +129,6 @@ export default class Accounts extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    console.log(this.state);
-  }
-
   render() {
     //conditional rendering of batch emailer component(button)
     let emailHref = "https://mail.google.com/mail?view=cm&fs=1&bcc=";
@@ -165,7 +152,7 @@ export default class Accounts extends React.Component {
             target="_blank" 
             rel="noopener noreferrer"
           >
-            <EmailIcon />
+            <EmailIcon fontSize="large"/>
           </a>
         </div>
       );

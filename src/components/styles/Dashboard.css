@@ -7,99 +7,18 @@
 }
 
 .grid-container > * {
-  /* height: 90%;
-	width: 90%; */
 	border: 1px solid rgba(0, 0, 0, 0.12);
-}
-
-.pieChartContainer{
-	/* padding-top:70px; */
+	height: 45vh;
 }
 
 .pieChartContainer > * {
-	margin-top: 10px;
+	padding-top: 10px;
 }
 
-.upcoming-tasks-widget {
-	/* border: 1px solid black;
-	border-radius:5px; 
-	height: 100%;
-	width: 95%;*/
+.spinner-backdrop {
+  z-index: 5 !important;
+	position: absolute;
+	height: 100vh;
 }
 
-.tasks-widget-title {
-	text-align: center;
-	font-weight: 800;
-	font-size: 32px;
-	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-}
-
-.tasks-scroller-container {
-	/* margin-top:5px; */
-	overflow:auto;
-	height:350px;
-	margin-right:0;
-}
-
-/* ------------- */
-
-.task-date {
-	font-style:italic;
-	font-size: 1em;
-	margin-left: 5px;
-	color: rgba(0, 0, 0, 0.60)
-}
-
-.task-body {
-	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-	list-style: none;
-	margin-left: 5px;
-	font-size: 1em;
-}
-
-.task-title{
-	font-family:'Times New Roman';
-	font-size: 1.4em; /* 18/16 -> 18px */
-  	font-weight: 500;
-	cursor: pointer;
-}
-
-li {
-	margin-bottom: 5px;
-}
-
-.line-chart-container {
-	/* width:95%; */
-}
-
-.tasks-list{
-	list-style-type: none;
-	padding-left: 0;
-}
-/* task list items are given padding inline */
-
-.new-task-button{
-	float:right;
-	padding-right: 10px;
-}
-
-input.largerCheckbox { 
-	transform : scale(1.25); 
-} 
-
-.ai-tag {
-	color: #dc004e;
-}
-
-.ai-tag-star-icon {
-	vertical-align: middle;
-}
-
-.cross {transform : scale(0.875); 
-	color: black;
-	margin-left: 5px;
-	margin-right: 5px;
-	padding-top: 5px;
-	float: right;
-	cursor: pointer;
-}
+/* styling to piechart title applied inline */

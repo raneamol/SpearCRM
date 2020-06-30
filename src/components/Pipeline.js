@@ -6,7 +6,11 @@ import ShowChartIcon from '@material-ui/icons/ShowChart';
 import Button from "@material-ui/core/Button";
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import AuthContext from './Other/AuthContext.js';
+import { prepareGETOptions } from './Other/helper.js';
 import './styles/Pipeline.css';
+
+const API = process.env.REACT_APP_API;
 
 export default class Pipeline extends React.Component {
   state = {
@@ -14,10 +18,13 @@ export default class Pipeline extends React.Component {
     openSpinner : false,
   };
 
+  static contextType = AuthContext;
+
   componentDidMount() {
     this._isMounted = true;
-
-    fetch("/main/show_all_orders").then(response =>
+    
+    fetch(`${API}/main/show_all_orders`, prepareGETOptions(this.context))
+    .then(response =>
       response.json().then(data => {
         if (this._isMounted) {
           this.setState({ fetchedOrders: data });
@@ -30,9 +37,9 @@ export default class Pipeline extends React.Component {
     this._isMounted = false;
   }
 
-  updatePipelineAPICall = () => {
-    console.log("Update triggered");
-    fetch("/main/show_all_orders").then(response =>
+  updatePipelineAPICall = async () => {
+    fetch(`${API}/main/show_all_orders`, prepareGETOptions(this.context))
+    .then(response =>
       response.json().then(data => {
         if (this._isMounted) {
           this.setState({ fetchedOrders: data });
@@ -41,7 +48,24 @@ export default class Pipeline extends React.Component {
     );
   }
 
-  transformOrdersToBoardData = (orders) => {
+  updateSpinnerInPipeline = (bool) => {
+    //we introduce delay when turning off spinner, but not when turning it on
+    if (bool) {
+      this.setState({ openSpinner: bool });
+    } else {
+      setTimeout(() => {
+        if (this._isMounted) {
+          this.setState({ openSpinner: bool });
+        }
+      }, 1000)
+    }
+  }
+
+  //prepares the input for Board component
+  //AND passes possibly new (uncached) company names to App.js
+  transformOrdersToBoardData = () => {
+    let orders = this.state.fetchedOrders;
+
     const board = {
       lanes: [
         {
@@ -81,7 +105,13 @@ export default class Pipeline extends React.Component {
       else {
         entry.description = `Buy stocks for ${entry.name}`;
       }
-      entry.label = `${entry.no_of_shares} X ${entry.cost_of_share}`;
+      
+      if (entry.stage === 0) {
+        entry.label = `${entry.no_of_shares} X Rs. ${entry.cost_of_share}`;
+      }
+      else {
+        entry.label = `${entry.no_of_shares} X ${entry.cost_of_share}`;
+      }
       entry.metadata = {account_id: entry.account_id}
     });
 
@@ -89,39 +119,67 @@ export default class Pipeline extends React.Component {
       Lane.cards = orders.filter(entry => entry.stage === Lane.id);
     });
 
+    
+    let laneOneAndTwoCompanies = [];
+    for (let i = 0; i < board.lanes.length; i++) {
+      let Lane = board.lanes[i];
+      Lane.cards = orders.filter(entry => entry.stage === Lane.id);
+
+      //obtain names of companies in lane one and two.
+      if (Lane.id === 1 || 2) {
+        Lane.cards.forEach( card => {
+          laneOneAndTwoCompanies.push(card.company);
+        })
+      }
+    }
+
+    //send company names to App.js, to cache their stockprice
+    //only lanes one and two can have new orders
+    this.props.receiveCompanyNamesDuringRuntime(laneOneAndTwoCompanies);
+
     return board;
   }
 
   updateCardStage = async (fromLaneId, toLaneId, cardId, index) => {
-    //these are the only permissible drag-and-drop transitions
     if (fromLaneId === toLaneId){
       return null;
     }
     else if(     
+      //these are the only permissible drag-and-drop transitions
          (fromLaneId === 1 && toLaneId === 2)
       || (fromLaneId === 2 && toLaneId === 3)
       || (fromLaneId === 3 && toLaneId === 0)
     ){
+
+      this.updateSpinnerInPipeline(true);
+
       const newCardStage = {
         "_id" : cardId,
-        "stage" : toLaneId
+        "stage" : toLaneId,
+        "company" : this.props.cache,
       };
 
-      const response = await fetch("/main/order_stage_change", {
+      // third attribute company (actually means price)
+      fetch(`${API}/main/order_stage_change`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        withCredentials: true,
+        headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
         body: JSON.stringify(newCardStage)
-      });
-      
-      if (response.ok) {
-        this.updatePipelineAPICall();
-      } 
-      else if(response.ok === false && this._isMounted) {
-        this.forceUpdate();
-        alert("Server error encountered");
-      }
+      })
+      .then(response => {
+        if (response.ok) {
+          this.updatePipelineAPICall();
+        }
+        else if(response.ok === false && this._isMounted) {
+          this.forceUpdate();
+          throw new Error("Server error encountered");
+        }
+        else {
+          throw new Error("Something went wrong");
+        }
+      })
+      .catch( error => console.log(error) )
+      .then( () => {if(this._isMounted) {this.updateSpinnerInPipeline(false)}})
     }
     else if(this._isMounted) {
       this.forceUpdate();
@@ -130,7 +188,14 @@ export default class Pipeline extends React.Component {
   }
 
   deleteCard = (cardId, laneId) => {
-    fetch(`main/delete_order/${cardId}`).then( () => {this.updatePipelineAPICall()} );
+    this.updateSpinnerInPipeline(true);
+    fetch(`${API}/main/delete_order/${cardId}`, prepareGETOptions(this.context))
+    .then( () => this.updatePipelineAPICall() )
+    .then( () => {
+      if(this._isMounted) {
+        this.updateSpinnerInPipeline(false)
+      }
+    });
   }
 
   linkToAccountProfile = (cardId, metadata, laneId) => {
@@ -140,35 +205,82 @@ export default class Pipeline extends React.Component {
     });
   }
 
-  markToBeTransactedOrdersAsTransacted = () => {
-    this.setState({ openSpinner: true});
-    fetch("/main/complete_all_orders")
-    .then( () => {
-      if(this._isMounted) {
-        this.setState({ openSpinner: false});
+  markToBeTransactedOrdersAsTransacted = async () => {
+    this.updateSpinnerInPipeline(true);
+
+    let companyPrices = {company: this.props.cache};
+
+    //POST the prices along with the request. The backend will use the stockprice data
+    fetch(`${API}/main/complete_all_orders`, {
+      method: "POST",
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
+      body: JSON.stringify(companyPrices)
+    })
+    .then( response => {
+      if(response.ok) {
+        response.text().then( data => {
+
+          let str1 = "No companies to be transacted";
+          let str2 = "Send correct company";
+
+          if(data === str1) {
+            throw new Error('No companies to be transacted');
+          }
+          else if (data === str2) {
+            throw new Error('Send correct company');
+          }
+          else {
+            fetch(`${API}/main/send_email_after_transaction`, {
+              method: "POST",
+              withCredentials: true,
+              headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
+              body: data
+            })
+            .then(() => this.updatePipelineAPICall())
+          }
+        })
       }
-      this.updatePipelineAPICall();     
-    });
+      else {
+        throw new Error('Something went wrong');
+      }
+    })
+    .catch( error => console.log(error))
+    .then( () => {if (this._isMounted) {this.updateSpinnerInPipeline(false)}})
   }
 
-  //compares price constraint of order in finalized stage against actual current stock price
-  //may move an order to to-be-transacted stage accordingly
-  priceCheckFinalizedOrders = () => {
-    this.setState({ openSpinner: true});
-    fetch("/main/convert_finalized_orders")
-    .then( () => {
-      if(this._isMounted) {
-        this.setState({ openSpinner: false});
+  //POSTs the stock prices of all companies to backend
+  //backend then sees if the prices meet the conditions specified in the order price
+  //if yes, it moves order from finalized to to-be-transacted
+  //if no, it does not
+  //if a to-be-transacted order NO LONGER meets the criteria, backend DOES NOT move it back to finalized
+  convertEligibleFinalizedOrders = async () => {
+    this.updateSpinnerInPipeline(true);
+
+    let companyPrices = {company: this.props.cache};
+    fetch(`${API}/main/convert_finalized_orders`, {
+      method: "POST",
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
+      body: JSON.stringify(companyPrices)
+    })
+    .then(response => {
+      if(response.ok) {
+        this.updatePipelineAPICall();
       }
-      this.updatePipelineAPICall(); 
-    });  
+      else {
+        throw new Error("Something went wrong");
+      }
+    })
+    .catch( error => console.log(error))
+    .then( () => { if(this._isMounted) {this.updateSpinnerInPipeline(false)} });
   }
-  
+
   render() {
     return(
       <>
         <Board
-          data={this.transformOrdersToBoardData(this.state.fetchedOrders)}
+          data={this.transformOrdersToBoardData()}
           onCardDelete={this.deleteCard}
           onCardMoveAcrossLanes={this.updateCardStage}
           onCardClick={this.linkToAccountProfile}
@@ -178,6 +290,7 @@ export default class Pipeline extends React.Component {
         <div className="add-order-button"> 
           <PipelineNewOrderDialogBox 
             updatePipeline={this.updatePipelineAPICall} 
+            updateSpinner = {this.updateSpinnerInPipeline}
           /> 
         </div>
 
@@ -197,7 +310,7 @@ export default class Pipeline extends React.Component {
           <Button
             variant="contained"
             color="primary"
-            onClick={this.priceCheckFinalizedOrders}
+            onClick={this.convertEligibleFinalizedOrders}
             startIcon={<ShowChartIcon />}
             fullWidth
           >
@@ -206,7 +319,7 @@ export default class Pipeline extends React.Component {
         </div>
 
         <Backdrop className="spinner-backdrop" open={this.state.openSpinner}>
-          <CircularProgress color="inherit" />
+          <CircularProgress color="primary" />
         </Backdrop>
       </>
     );

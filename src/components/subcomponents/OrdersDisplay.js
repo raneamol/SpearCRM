@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useContext} from 'react';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from "@material-ui/core/ListItemAvatar";
@@ -15,13 +15,17 @@ import CloseIcon from '@material-ui/icons/Close';
 import DeleteIcon from '@material-ui/icons/Delete';
 import RefreshIcon from '@material-ui/icons/Refresh';
 import ListIcon from '@material-ui/icons/List';
-import Backdrop from '@material-ui/core/Backdrop';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { Tooltip } from '@material-ui/core';
 import '../styles/OrdersDisplay.css'
+import AuthContext from '../Other/AuthContext.js';
+import { prepareGETOptions } from '../Other/helper.js';
+
+const API = process.env.REACT_APP_API;
 
 export default function OrdersDisplay (props) {
   const [open, setOpen] = useState(false);
-  const [openSpinner, setOpenSpinner] = useState(false);
+
+  const authToken = useContext(AuthContext);
 
   const _isMounted = useRef(true);
   useEffect( () => {
@@ -38,19 +42,33 @@ export default function OrdersDisplay (props) {
   }
 
   const deleteOrder = (orderId) => {
-    fetch(`main/delete_order/${orderId}`)
-    .then( () => props.updateAccountDataAndOrdersAndActivities() );
+    props.updateSpinner(true);
+    fetch(`${API}/main/delete_order/${orderId}`, prepareGETOptions(authToken))
+    .then( () => props.updateAccountDataAndOrdersAndActivities() )
+    .then( () => props.updateSpinner(false));
   }
 
-  const priceCheckFinalizedOrders = () => {
-    setOpenSpinner(true);
-    fetch("/main/convert_finalized_orders")
-    .then( () => {
-      if (_isMounted.current) {
-        setOpenSpinner(false);
-        props.updateAccountDataAndOrdersAndActivities();
+  const convertEligibleFinalizedOrders = async () => {
+    props.updateSpinner(true);
+
+    let companyPrices = {company: props.cache};
+
+    fetch(`${API}/main/convert_finalized_orders`, {
+      method: "POST",
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + authToken, 'Content-Type': 'application/json'},
+      body: JSON.stringify(companyPrices)
+    })
+    .then(response => {
+      if (response.ok && _isMounted) {
+        props.updateAccountDataAndOrdersAndActivities()
       }
-    });  
+      else {
+        throw new Error("Something went wrong");
+      }
+    })
+    .catch( error => console.log(error))
+    .then( () => {if (_isMounted) {props.updateSpinner(false)}} );
   }
 
   return (
@@ -72,6 +90,7 @@ export default function OrdersDisplay (props) {
         onClose={handleClose}
         fullWidth
         maxWidth={"md"}
+        className="orders-display-dialog-box"
       >
         
 
@@ -80,8 +99,10 @@ export default function OrdersDisplay (props) {
           <span> View all orders </span>
 
           <span style={{ float: "right" }}> 
-            <IconButton aria-label="close" onClick={priceCheckFinalizedOrders}>
-              <RefreshIcon />
+            <IconButton aria-label="close" onClick={convertEligibleFinalizedOrders}>
+              <Tooltip title="Check share price and update">
+                <RefreshIcon />
+              </Tooltip>
             </IconButton> 
 
             <IconButton aria-label="close" onClick={handleClose}>
@@ -109,11 +130,18 @@ export default function OrdersDisplay (props) {
                         S
                       </Avatar>
                   );
+
                   let orderLane = (
                     order.stage === 3 ? "To-be-transacted" :
                     order.stage === 2 ? "Finalized" : 
                     order.stage === 1 ? "Received" : ""
                   );
+
+                  let costProduct = (
+                    isNaN(order.cost_of_share*order.no_of_shares) ?
+                    `${order.no_of_shares} X ${order.cost_of_share}`:
+                    `${Math.floor( order.cost_of_share*order.no_of_shares )} (${order.no_of_shares} X ${order.cost_of_share})`
+                  )
 
                   return(
                     <div key={i}>
@@ -124,8 +152,8 @@ export default function OrdersDisplay (props) {
                         </ListItemAvatar>  
                       
                         <ListItemText
-                          primary={order.company}
-                          secondary={order.cost_of_share*order.no_of_shares+" ("+order.no_of_shares+"X"+order.cost_of_share+")"}
+                          primary = {order.company}
+                          secondary = {costProduct}
                         />
 
                         <ListItemSecondaryAction>
@@ -152,20 +180,34 @@ export default function OrdersDisplay (props) {
               {/* Display archived orders here */}
               {
                 props.ordersList.filter( (order) => order.stage === 0 ).map( (order, i) => {
-                  let iconContent = ( (order.trans_type).toLowerCase() === "buy" ? "B" : "S" );
+                  let iconAvatar = ( 
+                    (order.trans_type).toLowerCase() === "buy" ? 
+                      <Avatar style={{backgroundColor: "#1976d2"}}>
+                        B
+                      </Avatar> 
+                    :
+                      <Avatar style={{backgroundColor: "#dc004e"}}>
+                        S
+                      </Avatar>
+                  );
+
+                  let costProduct = (
+                    isNaN(order.cost_of_share*order.no_of_shares) ?
+                    `${order.no_of_shares} X Rs. ${order.cost_of_share}`:
+                    `${Math.floor( order.cost_of_share*order.no_of_shares )} (${order.no_of_shares} X Rs. ${order.cost_of_share})`
+                  )
+                  
                   return(
                     <div key={i}>
                       <ListItem>
 
                         <ListItemAvatar>
-                          <Avatar>
-                            <div> {iconContent} </div>
-                          </Avatar>
+                          {iconAvatar}
                         </ListItemAvatar>  
                       
                         <ListItemText
                           primary={order.company}
-                          secondary={order.cost_of_share*order.no_of_shares+" ("+order.no_of_shares+"X"+order.cost_of_share+")"}
+                          secondary={costProduct}
                         />
 
                         <ListItemSecondaryAction>
@@ -183,11 +225,6 @@ export default function OrdersDisplay (props) {
             </List>
           </div>  
         </DialogContent>
-
-        <Backdrop className="spinner-backdrop" open={openSpinner}>
-          <CircularProgress color="inherit"/>
-        </Backdrop> 
-        
       </Dialog>
     </>
   );

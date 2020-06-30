@@ -1,0 +1,88 @@
+
+.tasks-widget-title {
+	text-align: center;
+	font-weight: 600;
+	font-size: 28px;
+	font-family: "Helvetica";
+	min-height: 43px;
+	height: 10%;
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+	color: rgba(0,0,0,0.8);
+}
+
+.tasks-scroller-container {
+	overflow-y:auto;
+	height: 85%;
+	width: 100%;
+	margin-right:0;
+}
+
+/* ------------- */
+
+.tasks-list{
+	list-style-type: none;
+	padding-left: 0;
+	margin-bottom: 0px;
+}
+/* task list items are given padding inline */
+
+.task-title{
+	font-family:'Helvetica';
+	font-size: 1.4em; /* 18/16 -> 18px */
+	font-weight: 500;
+	cursor: pointer;
+}
+
+.task-body {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+	list-style: none;
+	margin-left: 5px;
+	font-size: 1em;
+}
+
+.task-date {
+	font-style:italic;
+	font-size: 1em;
+	margin-left: 5px;
+	color: rgba(0, 0, 0, 0.60)
+}
+
+
+li {
+	margin-bottom: 5px;
+}
+
+li:last-child {
+	margin-bottom: 0px;
+}
+
+
+.new-task-button{
+	float:right;
+	padding-right: 10px;
+	top:-5px;
+	position: relative;
+}
+
+input.largerCheckbox { 
+	transform : scale(1.25); 
+	padding-left: 5px;
+} 
+
+.ai-tag {
+	color: #dc004e;
+}
+
+.ai-tag-star-icon {
+	vertical-align: middle;
+}
+
+.delete-icon {
+	transform : scale(0.875); 
+	color: black;
+	margin-left: 5px;
+	margin-right: 5px;
+	padding-top: 5px;
+	float: right;
+	cursor: pointer;
+}

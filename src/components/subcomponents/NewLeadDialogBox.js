@@ -21,6 +21,9 @@ import FormHelperText from '@material-ui/core/FormHelperText';
 import FormGroup from '@material-ui/core/FormGroup';
 import Switch from '@material-ui/core/Switch';
 import Checkbox from '@material-ui/core/Checkbox';
+import AuthContext from '../Other/AuthContext.js';
+
+const API = process.env.REACT_APP_API
 
 export default class NewLeadDialogBox extends React.Component{
   state = {
@@ -50,6 +53,8 @@ export default class NewLeadDialogBox extends React.Component{
     ml_leadQualityUncertainty : 0,
     ml_poorLeadQuality : 0,
   }
+
+  static contextType = AuthContext;
 
   componentDidMount() {
     this._isMounted = true;
@@ -91,18 +96,20 @@ export default class NewLeadDialogBox extends React.Component{
     const newLead = this.state;
     delete newLead.open;
     delete newLead.showMlFields;
-    const response = await fetch("/main/create_lead", {
+
+    fetch(`${API}/main/create_lead`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
       body: JSON.stringify(newLead)
-    });
-    
-    if (response.ok && this._isMounted) {
-      this.setState({ open:false });
-      this.props.updateLeads();
-    }
+    })
+    .then(response => {
+      if (response.ok && this._isMounted) {
+        this.setState({ open:false });
+        this.props.updateLeads();
+      }
+    })
+    .catch( error => console.log(error))
   }
 
   render() {
@@ -208,7 +215,8 @@ export default class NewLeadDialogBox extends React.Component{
                 >
                   <MenuItem value=""> <em>None</em> </MenuItem>
                   <MenuItem value={"high school"}>High school</MenuItem>
-                  <MenuItem value={"college"}>College</MenuItem>
+                  <MenuItem value={"University"}>University</MenuItem>
+                  <MenuItem value={"Professional Course"}>Professional Course</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -223,8 +231,13 @@ export default class NewLeadDialogBox extends React.Component{
                   name="job_type"
                 >
                   <MenuItem value=""> <em>None</em> </MenuItem>
-                  <MenuItem value={"services"}>Services</MenuItem>
-                  <MenuItem value={"other"}>Other</MenuItem>
+                  <MenuItem value={"Services"}>Services</MenuItem>
+                  <MenuItem value={"Self-Employed"}>Self-employed</MenuItem>
+                  <MenuItem value={"Student"}>Student</MenuItem>
+                  <MenuItem value={"Retired"}>Retired</MenuItem>
+                  <MenuItem value={"Entrepreneur"}>Entrepreneur</MenuItem>
+                  <MenuItem value={"Blue-collar"}>Blue-collar</MenuItem>
+                  <MenuItem value={"Management"}>Management</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -241,6 +254,7 @@ export default class NewLeadDialogBox extends React.Component{
                   <MenuItem value=""> <em>None</em> </MenuItem>
                   <MenuItem value={"Married"}>Married</MenuItem>
                   <MenuItem value={"Unmarried"}>Unmarried</MenuItem>
+                  <MenuItem value={"Divorced"}>Divorced</MenuItem>
                 </Select>
               </FormControl>
             </div>
@@ -355,6 +369,7 @@ function MaterialUIPickers(props) {
           KeyboardButtonProps={{
             'aria-label': 'change date',
           }}
+          fullWidth
         />
     </MuiPickersUtilsProvider>
   );

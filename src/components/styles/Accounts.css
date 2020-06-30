@@ -7,16 +7,14 @@
 
 .batch-email-button-accounts {
   z-index: 2;
-  top: 60px;
+  top: 55px;
   right: 200px;
   position: absolute;
-  font-size: large;
 }
 
 .batch-email-button-leads {
   z-index: 2;
-  top: 60px;
+  top: 55px;
   right: 165px;
   position: absolute;
-  font-size: large;
 }

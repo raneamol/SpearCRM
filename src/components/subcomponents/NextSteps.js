@@ -1,61 +1,76 @@
-import React from 'react'
+import React, {useContext} from 'react'
 import '../styles/PrettyList.css'
-import {convertIsoDateToDateString} from "../Dashboard.js"
-import CloseIcon from '@material-ui/icons/Close';
+import {convertIsoDateToDateString} from "../Other/helper.js"
 import StarRateIcon from '@material-ui/icons/StarRate';
+import CancelIcon from '@material-ui/icons/Cancel';
+import AuthContext from '../Other/AuthContext.js';
+import { prepareGETOptions } from '../Other/helper.js';
+
+const API = process.env.REACT_APP_API;
 
 export default function NextSteps(props) {
+  const authToken = useContext(AuthContext);
 
   const transitionActivity = async (activityId, isAiActivity) => {
+    props.updateSpinner(true);
     const activityToTransition = {
       "_id" : activityId,
-      "activity_type" : "past"
+      "activity_type" : "past",
+      "company" : props.cache,
     };
 
-    const response = await fetch("/main/change_activity_type", {
+    fetch(`${API}/main/change_activity_type`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + authToken, 'Content-Type': 'application/json'},
       body: JSON.stringify(activityToTransition)
-    });
-
-    if (response.ok) {
-      if (isAiActivity && props.lead === 0) {
-        props.updateAccountDataAndOrdersAndActivities();
+    })
+    .then(response => {
+      if(response.ok) {
+        if (isAiActivity && props.lead === 0) {
+          props.updateAccountDataAndOrdersAndActivities()
+        }
+        //isAiActivity is 1 for activities generated through automation. 
+        //Deleting an AI generated activity might involve deletion of corresponding order and updating activity data
+        //props.lead indicates the grandparent page. prop.lead===0 being true means AccountProfile is the grandparent.
+        else {
+          props.updateActivities()
+        }
+        //User generated activities can be deleted without updating orders and activities.
+        //an AI generated activity can cause wider changes than user generated activity upon transition.
       }
-      //isAiActivity is 1 for activities generated through automation. 
-      //Deleting an AI generated activity might involve deletion of corresponding order and updating activity data
-      //props.lead indicates the grandparent page. prop.lead===0 being true means AccountProfile is the grandparent.
       else {
-        props.updateActivities();
+        throw new Error("Something went wrong");
       }
-      //User generated activities can be deleted without updating orders and activities.
-      //an AI generated activity can cause wider changes than user generated activity upon transition.
-    }
+    })
+    .catch( error => console.log(error))
+    .then(() => props.updateSpinner(false));
   }
 
   const deleteActivity = (activityId, isAiActivity) => {
-		fetch(`/main/delete_activity/${activityId}`)
+    props.updateSpinner(true);
+		fetch(`${API}/main/delete_activity/${activityId}`, prepareGETOptions(authToken))
 		.then( () => {
       if (isAiActivity) {
-        props.updateAccountDataAndOrdersAndActivities();
+        props.updateAccountDataAndOrdersAndActivities()
+        .then( () => props.updateSpinner(false));
       }
       //isAiActivity is 1 for activities generated through automation
       else {
-        props.updateActivities();
+        props.updateActivities()
+        .then( () => props.updateSpinner(false));
       }
     });
 	}
 
   return(
     <> 
-      {console.log(props.activitiesList)}
       <h2> Next Steps </h2>
       <div className="pretty-list">
         
         <ul className="experiences">
-          {props.activitiesList.map( (element, i) => {
+          {props.activitiesList.sort( (a,b) => new Date(b.date) - new Date(a.date) ) //sort by most recent
+          .map( (element, i) => {
             return (
               <li className="blue" key={i}>
 
@@ -87,7 +102,7 @@ export default function NextSteps(props) {
                   {convertIsoDateToDateString(element.date)} 
                 </span>
 
-                <span  className="cross" onClick={() => {deleteActivity(element._id, element.ai_activity)}}> <CloseIcon /> </span>
+                <span className="delete-icon" onClick={() => {deleteActivity(element._id, element.ai_activity)}}> <CancelIcon /> </span>
 
                 <p className="description"> 
                   {element.body} 

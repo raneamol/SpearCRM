@@ -19,7 +19,7 @@ ul.experiences li {
 
 .where {
   font-size: 1em; /* 18/16 -> 18px */
-  font-weight: 500;
+  font-weight: 600;
   display: inline;
   margin-right: 0.5em;
   margin-left: 0.5em;
@@ -57,13 +57,18 @@ ul.experiences li {
   margin-left: 5px;
 }
 
-.cross {
+.delete-icon {
   color: black;
   margin-left: 5px;
   margin-right: 5px;
   padding-top: 5px;
   float: right;
   cursor: pointer;
+}
+
+.activity-failed-cross {
+  position: relative;
+  top:6px;
 }
 
 .description {
@@ -100,7 +105,7 @@ ul.experiences li {
 
 ul.experiences li:after {
   /* bullets */
-  content: url('http://upload.wikimedia.org/wikipedia/commons/thumb/3/30/RedDisc.svg/20px-RedDisc.svg.png');
+  content: url('https://upload.wikimedia.org/wikipedia/commons/thumb/3/30/RedDisc.svg/20px-RedDisc.svg.png');
   position: absolute;
   left: -10px; /*adjust manually*/
   top: 0px;

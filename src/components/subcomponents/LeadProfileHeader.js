@@ -10,6 +10,9 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import {Link} from 'react-router-dom';
+import AuthContext from '../Other/AuthContext.js';
+
+const API = process.env.REACT_APP_API;
 
 export default class LeadProfileHeader extends React.Component {
   state = {
@@ -19,6 +22,8 @@ export default class LeadProfileHeader extends React.Component {
     trading_accno: 0,
     newId: 0, //set after lead converts to account
   }
+
+  static contextType = AuthContext;
 
   componentDidMount() {
     this._isMounted = true;
@@ -52,24 +57,23 @@ export default class LeadProfileHeader extends React.Component {
       last_contact: new Date(),
     }
 
-    const response = await fetch("/main/convert_lead_to_account", {
+    fetch(`${API}/main/convert_lead_to_account`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
       body: JSON.stringify(fields)
-    });
-
-    if (response.ok && this._isMounted) {
-      this.setState({ open:false });
-      this.setState({ submitted: true });
-
-      response.text().then( text => {
-        if(this._isMounted) {
-          this.setState({ newId: text });
-        }
-      });
-    }
+    })
+    .then( response => {
+      if (response.ok && this._isMounted) {
+        this.setState({ open:false });
+        this.setState({ submitted: true });
+        response.text().then( text => this.setState({ newId: text }) )
+      }
+      else {
+        throw new Error("Something went wrong");
+      }
+    })
+    .catch( error => console.log(error))    
   };
 
   handleChange = (event) => {
@@ -101,8 +105,8 @@ export default class LeadProfileHeader extends React.Component {
             <span id="Contacted" className="stage-name"> Contacted </span>
           </span>  
 
-          <span style={{ verticalAlign: "middle" }}>
-            <Tooltip title="Lead created account">
+          <span style={{ verticalAlign: "middle" , cursor: "pointer"}}>
+            <Tooltip title="Lead created account" arrow>
               <CheckCircleIcon onClick={this.handleOpen} />
             </Tooltip>
           </span>

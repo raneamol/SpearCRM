@@ -6,29 +6,14 @@ import { SearchOutlined } from '@ant-design/icons';
 import OpenInNewIcon from "@material-ui/icons/OpenInNew";
 import MailOutlineIcon from '@material-ui/icons/MailOutline';
 import EmailIcon from '@material-ui/icons/Email';
-
+import AuthContext from './Other/AuthContext.js';
+import { prepareGETOptions } from './Other/helper.js';
 import {Link} from "react-router-dom";
 import NewLeadDialogBox from './subcomponents/NewLeadDialogBox'
 import './styles/Accounts.css' //both Accounts and Leads pages have the same styling
 
 
-
-// rowSelection object indicates the need for row selection
-
-// const rowSelection = {
-//   onChange: (selectedRowKeys, selectedRows) => {
-//     console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
-//   },
-//   getCheckboxProps: record => ({
-//     disabled: record.name === 'Disabled User',
-//     // Column configuration not to be checked
-//     name: record.name,
-//   }),
-// };
-
-// function onChange(pagination, filters, sorter, extra) {
-//   console.log('params', pagination, filters, sorter, extra);
-// }
+const API = process.env.REACT_APP_API;
 
 export default class Leads extends React.Component {
   state = {
@@ -38,10 +23,13 @@ export default class Leads extends React.Component {
     selectedRowEmails: [],
   };
 
+  static contextType = AuthContext;
+
   componentDidMount() {
     this._isMounted = true;
 
-    fetch("/main/show_all_leads").then(response =>
+    fetch(`${API}/main/show_all_leads`, prepareGETOptions(this.context))
+    .then(response =>
       response.json().then(data => {
         if (this._isMounted) {
           this.setState({ fetchedData: data });
@@ -55,7 +43,8 @@ export default class Leads extends React.Component {
   }
 
   updateLeadsAPICall = () => {
-    fetch("/main/show_all_leads").then(response =>
+    fetch(`${API}/main/show_all_leads`, prepareGETOptions(this.context))
+    .then(response =>
       response.json().then(data => {
         if (this._isMounted) {
           this.setState({ fetchedData: data });
@@ -140,11 +129,6 @@ export default class Leads extends React.Component {
       this.setState({ selectedRowEmails: emails });
     }
   }
-  
-  componentDidUpdate() {
-    console.log(this.state);
-  }
-
 
   render() {
     //conditional rendering of batch emailer component(button)
@@ -166,7 +150,7 @@ export default class Leads extends React.Component {
             target="_blank" 
             rel="noopener noreferrer"
           >
-            <EmailIcon/>
+            <EmailIcon fontSize="large"/>
           </a>
         </div>
       );

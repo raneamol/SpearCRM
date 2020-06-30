@@ -10,7 +10,9 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import '../styles/NewOrderDialogBox.css'
+import AuthContext from '../Other/AuthContext.js';
 
+const API = process.env.REACT_APP_API;
 
 export default class NewOrderDialogBox extends React.Component{
   state = {
@@ -20,6 +22,8 @@ export default class NewOrderDialogBox extends React.Component{
     no_of_shares: 0,
     cost_of_share: "",
   };
+
+  static contextType = AuthContext;
 
   componentDidMount() {
     this._isMounted = true;
@@ -53,20 +57,19 @@ export default class NewOrderDialogBox extends React.Component{
     newOrder.no_of_shares = parseInt(this.state.no_of_shares);
     delete newOrder.open;
 
-    const response = await fetch("/main/create_order", {
+    fetch(`${API}/main/create_order`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + this.context, 'Content-Type': 'application/json'},
       body: JSON.stringify(newOrder)
-    });
-    
-    if (response.ok) {
-      if (this._isMounted) {
-        this.setState({ open:false });
+    })
+    .then(response => {
+      if (response.ok) {
+        if (this._isMounted) { this.setState({ open:false }) }
+        this.props.updateAccountDataAndOrders();
       }
-      this.props.updateAccountDataAndOrders();
-    }
+    })
+    .catch( error => console.log(error));
   }
   
   render() {
@@ -99,6 +102,7 @@ export default class NewOrderDialogBox extends React.Component{
 
             <FormControl 
               variant="outlined" 
+              style= {{ marginTop: 5}}
               fullWidth
             >
               <InputLabel>Transaction Type</InputLabel>
@@ -129,7 +133,7 @@ export default class NewOrderDialogBox extends React.Component{
               autoFocus
               margin="dense"
               id="cost_of_share"
-              label="Cost of one share"
+              label="Desired Price"
               helperText="Leave this empty if you wish to transact regardless of the stock price."
               type="text"
               fullWidth

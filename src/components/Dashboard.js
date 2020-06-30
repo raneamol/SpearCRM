@@ -1,29 +1,34 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, useContext} from 'react';
 import './styles/Dashboard.css';
 import Chart from 'react-google-charts';
 import CanvasJSReact from './Other/canvasjs.react';
-import TopOpportunitiesWidget from './subcomponents/TopOpportunitiesWidget.js'
-import NewActivityDialogBox from './subcomponents/NewActivityDialogBox';
-import { Link } from 'react-router-dom';
-import StarRateIcon from '@material-ui/icons/StarRate';
-import CloseIcon from '@material-ui/icons/Close';
+import TopOpportunitiesWidget from './subcomponents/TopOpportunitiesWidget.js';
+import UpcomingTasksWidget from './subcomponents/UpcomingTasksWidget.js';
+import AuthContext from './Other/AuthContext.js';
+import Backdrop from '@material-ui/core/Backdrop';
+import CircularProgress from '@material-ui/core/CircularProgress';
+import { prepareGETOptions } from './Other/helper.js';
 
+const API = process.env.REACT_APP_API;
 
-export default function Dashboard() {
+export default function Dashboard(props) {
 	const [topLeads, setTopLeads] = useState([]);
 	const [topAccounts, setTopAccounts] = useState([]);
 	const [allActivities, setAllActivities] = useState([]);
 	const [pieChartData, setPieChartData] = useState([]);
 	const [lineChartData, setLineChartData] = useState([]);
+  const [openSpinner, setOpenSpinner] = useState(false);
+
+  const authToken = useContext(AuthContext);
 
   const _isMounted = useRef(true);
 	useEffect( () => {
 		Promise.all([
-      fetch("/main/top_leads"),
-      fetch("/main/top_accounts"),
-      fetch("/main/show_all_activities"),
-      fetch("/main/get_line_graph_data"),
-      fetch("/main/get_pie_chart_data")
+      fetch(`${API}/main/top_leads`, prepareGETOptions(authToken)),
+      fetch(`${API}/main/top_accounts`, prepareGETOptions(authToken)),
+      fetch(`${API}/main/show_all_activities`, prepareGETOptions(authToken)),
+      fetch(`${API}/main/get_line_graph_data`, prepareGETOptions(authToken)),
+      fetch(`${API}/main/get_pie_chart_data`, prepareGETOptions(authToken))
     ])
 		.then(responses => {
       if (_isMounted.current) {
@@ -36,15 +41,15 @@ export default function Dashboard() {
     })
     
     return () => _isMounted.current = false;
-	}, []);
+	}, [authToken]);
 
-	const updateDashboardAPICall = () => {
+	const updateDashboardAPICall = async () => {
 		Promise.all([
-      fetch("/main/top_leads"),
-      fetch("/main/top_accounts"),
-      fetch("/main/show_all_activities"),
-      fetch("/main/get_line_graph_data"),
-      fetch("/main/get_pie_chart_data")
+      fetch(`${API}/main/top_leads`, prepareGETOptions(authToken)),
+      fetch(`${API}/main/top_accounts`, prepareGETOptions(authToken)),
+      fetch(`${API}/main/show_all_activities`, prepareGETOptions(authToken)),
+      fetch(`${API}/main/get_line_graph_data`, prepareGETOptions(authToken)),
+      fetch(`${API}/main/get_pie_chart_data`, prepareGETOptions(authToken))
     ])
 		.then(responses => {
 			if (_isMounted.current) {
@@ -55,7 +60,20 @@ export default function Dashboard() {
         responses[4].json().then( data => setPieChartData(data) );
       }
 		})
-	}
+  }
+  
+  const setOpenSpinnerInDashboard = bool => {
+    //we introduce delay when turning off spinner, but not when turning it on
+    if (bool) {
+      setOpenSpinner(bool);
+    } else {
+      setTimeout(() => {
+        if (_isMounted.current) {
+          setOpenSpinner(bool);
+        }
+      }, 1500)
+    }
+  }
 
 	return(
     <div className="grid-container">
@@ -63,16 +81,25 @@ export default function Dashboard() {
 				topLeads = {topLeads} 
 				topAccounts = {topAccounts}
 			/>
+      
       <LineChart 
         lineChartData = {lineChartData}
       />
+      
       <PieChart 
         pieChartData = {pieChartData}
       />
-			<UpcomingTasksWidget 
+			
+      <UpcomingTasksWidget 
 				updateDashboard = {updateDashboardAPICall}
-				activitiesList = {allActivities.filter( activity => activity["activity_type"] === "future" )}
+        activitiesList = {allActivities.filter( activity => activity["activity_type"] === "future" )}
+        cache = {props.cache}
+        setOpenSpinnerInDashboard = {setOpenSpinnerInDashboard}
 			/>
+
+      <Backdrop className="spinner-backdrop" open={openSpinner}>
+        <CircularProgress />
+      </Backdrop>
     </div>
 	); 
 } 
@@ -153,21 +180,28 @@ class PieChart extends React.Component {
   render() {
     return (
       <div className="pieChartContainer">
+        <div 
+          style={{ 
+            margin: "auto", 
+            fontSize: 28, 
+            fontWeight:600, 
+            textAlign: "center", 
+            fontFamily:'Helvetica', 
+            paddingTop: 0, 
+            color: "rgba(0,0,0,0.8)",
+            height: "10%"
+          }}
+        >
+          Snapshot of Pipeline orders
+        </div>
+
         <Chart
           chartType = "PieChart"
           data = {this.transformOrdersToDataPoints(this.props.pieChartData)}
-          
-          // [
-          // 	['Stage', 'Volume'],
-          //   ['Received', 5],
-          //   ['Finalized', 29],
-          //   ['To-be-transacted', 56],
-          // 	 ['Transacted', 8],
-          // ]
           options = {pieOptions}
           graph_id = "Distribution of orders currently"
-          width = {"95%"}
-          height = {"95%"}
+          height = {"90%"}
+          width = {"99%"} //sizing errors occur at 100%
           legend_toggle
         />
       </div>
@@ -208,9 +242,12 @@ class LineChart extends React.Component {
 		const lineOptions = {
 			animationEnabled: true,
 			exportEnabled: true,
-			theme: "light2", // "light1", "dark1", "dark2"
+			theme: "light2",
 			title:{
-				text: "Revenue generated"
+        text: "Revenue generated",
+        fontSize: 28,
+        fontFamily: "Helvetica",
+        color: "rgba(0,0,0,0.8)"
 			},
 			axisY: {
 				title: "Revenue (in Rs.)",
@@ -224,110 +261,15 @@ class LineChart extends React.Component {
 			},
 			data: [{
 				type: "line",
-				toolTipContent: "Week {x}: Rs. {y}",
+				toolTipContent: "Month {x}: {y}",
 				dataPoints: this.transformOrdersToDataPoints(this.props.lineChartData)
 			}]
 		}
 		return (
 		<div className="line-chart-container">
 			<CanvasJSChart options = {lineOptions}
-				/* onRef={ref => this.chart = ref} */
 			/>
-			{/*You can get reference to the chart instance as shown above using onRef. This allows you to access all chart properties and methods*/}
 		</div>
 		);
 	}
 } 
-
-class UpcomingTasksWidget extends React.Component {
-	transitionActivity = async (activityId) => {
-		const activityToTransition = {
-      "_id" : activityId,
-      "activity_type" : "past",
-		};
-
-		const response = await fetch("/main/change_activity_type", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(activityToTransition)
-		});
-
-		if (response.ok) {
-      this.props.updateDashboard();
-		}
-	}
-	
-	deleteActivity = (activityId) => {
-		fetch(`/main/delete_activity/${activityId}`)
-		.then( () => this.props.updateDashboard());
-	}
-
-  render() {
-    return(
-      <div className="upcoming-tasks-widget">
-
-        <div className='tasks-widget-title'> 
-					&nbsp; Upcoming Tasks 
-					<span className="new-task-button"> 
-						<NewActivityDialogBox updateDashboard = {this.props.updateDashboard} /> 
-					</span> 
-				</div>
-
-    		<div className="tasks-scroller-container">
-    			<ul className="tasks-list">
-						{
-							this.props.activitiesList.map( (element,i) => {
-								return(							
-									<div key={i} >
-										
-                    
-                    {element.ai_activity ? 
-                      <div className='ai-tag'>
-                        <span className='ai-tag-star-icon'> 
-                          <StarRateIcon />   
-                        </span>
-                        <span>
-                          AI Generated
-                        </span>
-                      </div>
-                      :
-                      <p> &nbsp; </p>
-                    }
-
-										<li>
-                      &nbsp; 
-                      <input 
-                        type="checkbox" 
-                        className="largerCheckbox" 
-                        checked={false}
-                        onClick={() => {this.transitionActivity(element._id)}} 
-                      />
-
-                      <Link to={ {pathname: "/accountprofile", state: {cid: element.user_id}} } >
-                        <span className="task-title">
-                          &nbsp; {element.title}                      
-                        </span>
-                      </Link>  
-
-                      <span className="task-date">  {convertIsoDateToDateString(element.date)} </span> 
-                      <span className="cross" onClick={() => {this.deleteActivity(element._id)}}> <CloseIcon /> </span>
-										</li>
-
-										<li className="task-body"> &nbsp; &nbsp; &nbsp; &nbsp;{element.body} </li>
-									</div>
-								);
-							})
-						}
-    			</ul>
-        </div>
-      </div>
-    );
-  }
-}
-
-export const convertIsoDateToDateString = (isoDate) => {
-	let tempDateObj = new Date(isoDate);
-	return tempDateObj.toDateString();
-};

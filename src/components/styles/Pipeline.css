@@ -16,7 +16,7 @@ body {
 
 .complete-orders-button {
   z-index: 2;
-  top: 105px;
+  top: 150px;
   right: 10px;
   position: absolute;
   padding: 0;
@@ -27,7 +27,7 @@ body {
 
 .pricecheck-orders-button {
   z-index: 2;
-  top: 150px;
+  top: 105px;
   right: 10px;
   position: absolute;
   padding: 0;
@@ -39,5 +39,4 @@ body {
 .spinner-backdrop {
   z-index: 5 !important;
   position: absolute;
-  color: 'blue';
 }

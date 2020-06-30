@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react'
+import React, {useEffect, useState, useRef, useContext} from 'react'
 import '../styles/ActivityTracker.css'
 import ManualLogger from './ManualLogger.js'
 import NextSteps from './NextSteps'
@@ -7,8 +7,9 @@ import NewOrderDialogBox from './NewOrderDialogBox'
 import OrdersDisplay from './OrdersDisplay'
 import Button from "@material-ui/core/Button";
 import EmailIcon from '@material-ui/icons/Email';
+import AuthContext from '../Other/AuthContext.js';
 
-
+const API = process.env.REACT_APP_API;
 
 export default function ActivityTracker(props) {
   const [activityType, setActivityType] = useState("past"); //past or future
@@ -16,6 +17,8 @@ export default function ActivityTracker(props) {
   const [activityBody, setActivityBody] = useState("");
   const [activityDate, setActivityDate] = useState(new Date());
   
+  const authToken = useContext(AuthContext);
+
   const _isMounted = useRef(true);
   useEffect( () => {
     return () => _isMounted.current = false;
@@ -42,15 +45,16 @@ export default function ActivityTracker(props) {
 
   const postNewActivity = async () => {
     let today = new Date();
-    console.log("entered");
     //erroneous and disallowed inputs specified in the below if condition
     if(    ( activityType === "future" && activityDate.getTime() <= today.getTime() )
-        || ( activityType === "past"   && activityDate.getTime() > today.getTime() ) 
-        || ( activityTitle === "" )
+    || ( activityType === "past"   && activityDate.getTime() > today.getTime() ) 
+    || ( activityTitle === "" )
     ){
       return null;
     }
 
+    props.updateSpinner(true);
+    
     const newActivity = {
       "user_id": props._id,
       "title": activityTitle,
@@ -58,19 +62,27 @@ export default function ActivityTracker(props) {
       "date": new Date( Date.parse(activityDate) ),
       "activity_type": activityType,
     };
-    const response = await fetch("/main/create_activity", {
+
+    fetch(`${API}/main/create_activity`, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      withCredentials: true,
+      headers: {'Authorization' : 'Bearer ' + authToken, 'Content-Type': 'application/json'},
       body: JSON.stringify(newActivity)
-    });
-    
-    if (response.ok && _isMounted.current) {
-      setActivityBody("");
-      setActivityTitle("");
-      props.updateActivities();
-    }
+    })
+    .then( response => {
+      if (response.ok) {
+        if(_isMounted.current) {
+          setActivityBody("");
+          setActivityTitle("");
+          props.updateActivities();
+        }
+      }
+      else {
+        throw new Error("Something went wrong");
+      }
+    })
+    .catch(error => console.log(error))
+    .then( () => {if(_isMounted.current) {props.updateSpinner(false)}}) 
   }
 
   let ordersComponents = null;
@@ -86,6 +98,8 @@ export default function ActivityTracker(props) {
         <OrdersDisplay 
           ordersList={props.ordersList} 
           updateAccountDataAndOrdersAndActivities = {props.updateAccountDataAndOrdersAndActivities}
+          updateSpinner = {props.updateSpinner}
+          cache = {props.cache}
         />
       </>
 
@@ -116,7 +130,9 @@ export default function ActivityTracker(props) {
         activitiesList={props.activitiesList.filter(activity => activity["activity_type"] === "future")} 
         updateAccountDataAndOrdersAndActivities = {props.updateAccountDataAndOrdersAndActivities}
         updateActivities = {props.updateActivities}
+        cache = {props.cache}
         lead = {props.lead}
+        updateSpinner = {props.updateSpinner}
       />
       <PastActivity
         activitiesList={props.activitiesList.filter(activity => activity["activity_type"] === "past")}

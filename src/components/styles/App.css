@@ -37,3 +37,21 @@ nav ul li a {
 nav ul li a:hover:not(.active) {
   background-color: #111;
 }
+
+.spinner-backdrop {
+  z-index: 5 !important;
+  position: absolute;
+}
+
+.logout-button {
+  position: absolute;
+  right: 7px;
+  top: 7px;
+}
+
+.user-icon {
+  position: absolute;
+  right: 125px;
+  top: 8px;
+  /* tooltip styles applied in App.js */
+}

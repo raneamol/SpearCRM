@@ -4,7 +4,6 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import Divider from '@material-ui/core/Divider';
 import '../styles/FieldsContainer.css'
-import {convertIsoDateToDateString} from "../Dashboard.js"
 
 export default class FieldsContainer2 extends React.Component {
   render() {
@@ -27,20 +26,26 @@ export default class FieldsContainer2 extends React.Component {
       fieldsBasedOnParentComponent = (
         <>
           <ListItem>
-            <div className="noneditable-field-component">
-              <p> Account turnover till date </p>
-              <div> Rs. {parseInt(this.props.accountTurnover.turnover)} </div>
-            </div>  
+            <EditableField 
+              name="demat_accno" 
+              fieldName="Demat Account Number" 
+              fieldData={this.props.fields.demat_accno} 
+              onChange={this.props.handleChange} 
+              onSubmit={this.props.onSubmit}
+            />
           </ListItem>
           <Divider />
-
-          {/* Last Contacted value is immutable */}
+          
           <ListItem>
-            <div className="noneditable-field-component">
-              <p> Last Contacted </p>
-              <div> {convertIsoDateToDateString(this.props.fields.last_contact)} </div>
-            </div>  
+            <EditableField 
+              name="trading_accno" 
+              fieldName="Trading Account Number" 
+              fieldData={this.props.fields.trading_accno} 
+              onChange={this.props.handleChange} 
+              onSubmit={this.props.onSubmit}
+            />
           </ListItem>
+          <Divider />
         </>
       );
     }

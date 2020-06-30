@@ -5,6 +5,8 @@ import {
   MuiPickersUtilsProvider,
   KeyboardDatePicker,
 } from '@material-ui/pickers';
+import EditIcon from '@material-ui/icons/Edit';
+import CheckIcon from '@material-ui/icons/Check';
 import '../styles/EditableField.css'
 
 export default class EditableField extends React.Component {
@@ -30,14 +32,14 @@ export default class EditableField extends React.Component {
 
   render() {
 
-    let fieldDataComponent = <div> {this.props.fieldData} </div>;
-    let editButton = <button className="DataEditButton" onClick={this.alternateViews}> &#9999; </button>;
+    let fieldDataComponent = <div style={{ paddingTop: 8 }}> {this.props.fieldData} </div>;
+    let editButton = <button className="DataEditButton" onClick={this.alternateViews}> <EditIcon /> </button>;
 
     // if field is a date field, it is dealt with differently than a text field.
     if (this.props.name === "dob"){
       let birthDate = new Date(this.props.fieldData);
       fieldDataComponent = (
-        <div> {birthDate.toDateString()} </div>
+        <div style={{ paddingTop: 8 }}> {birthDate.toDateString()} </div>
       );
     }
 
@@ -61,7 +63,7 @@ export default class EditableField extends React.Component {
         );
       }
 
-      editButton = <button className="DataEditButton" onClick={this.postFieldsAndAlternateViews} > &#10003; </button>;
+      editButton = <button className="DataEditButton" onClick={this.postFieldsAndAlternateViews} > <CheckIcon /> </button>;
     }
 
     return(

@@ -11,3 +11,7 @@
 .inline-section-editable-fields > * {
   display: inline;
 }
+
+.DataEditButton {
+  transform: scale(0.8);
+}

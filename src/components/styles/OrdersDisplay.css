@@ -9,9 +9,8 @@
   width: 100%;
 }
 
-.spinner-backdrop {
-  z-index: 5 !important;
-  color: '#fff';
-  position: absolute;
+.orders-display-dialog-box {
+  z-index: 2 !important;
 }
+
 /* view-orders-button is set to 290px width inline */
