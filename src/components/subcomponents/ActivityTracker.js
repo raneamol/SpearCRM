@@ -10,7 +10,6 @@ import EmailIcon from '@material-ui/icons/Email';
 import AuthContext from '../Other/AuthContext.js';
 
 const API = process.env.REACT_APP_API;
-
 export default function ActivityTracker(props) {
   const [activityType, setActivityType] = useState("past"); //past or future
   const [activityTitle, setActivityTitle] = useState("");

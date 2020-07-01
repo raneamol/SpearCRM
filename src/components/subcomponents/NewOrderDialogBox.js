@@ -13,7 +13,6 @@ import '../styles/NewOrderDialogBox.css'
 import AuthContext from '../Other/AuthContext.js';
 
 const API = process.env.REACT_APP_API;
-
 export default class NewOrderDialogBox extends React.Component{
   state = {
     open: false,

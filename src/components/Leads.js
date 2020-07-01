@@ -14,7 +14,6 @@ import './styles/Accounts.css' //both Accounts and Leads pages have the same sty
 
 
 const API = process.env.REACT_APP_API;
-
 export default class Leads extends React.Component {
   state = {
     searchText: '',

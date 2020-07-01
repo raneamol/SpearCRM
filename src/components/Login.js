@@ -64,7 +64,7 @@ export default function Login(props) {
 
   // if user is already logged in
   if (authToken) {
-    return <Redirect to="/dashboard" />
+    return <Redirect to="/home" />
   }
 
   return (

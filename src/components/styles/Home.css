@@ -1,0 +1,24 @@
+.grid-container {
+  display: grid;
+	grid-template-rows: 1fr 1fr;
+	grid-template-columns: 1fr 1fr;
+	gap: 10px 10px;
+	padding:5px;
+}
+
+.grid-container > * {
+	border: 1px solid rgba(0, 0, 0, 0.12);
+	height: 45vh;
+}
+
+.pieChartContainer > * {
+	padding-top: 10px;
+}
+
+.spinner-backdrop {
+  z-index: 5 !important;
+	position: absolute;
+	height: 100vh;
+}
+
+/* styling to piechart title applied inline */

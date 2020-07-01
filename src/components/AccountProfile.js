@@ -10,7 +10,6 @@ import AuthContext from './Other/AuthContext.js';
 import { prepareGETOptions } from './Other/helper.js';
 
 const API = process.env.REACT_APP_API;
-
 export default class AccountProfile extends React.Component {
   state = {
     accountData: {},

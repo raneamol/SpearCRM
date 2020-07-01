@@ -10,7 +10,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import '../styles/UpcomingTasksWidget.css'
 
 const API = process.env.REACT_APP_API;
-
 export default class UpcomingTasksWidget extends React.Component {
   state = {
     leadSelectOptions : [],
@@ -73,7 +72,7 @@ export default class UpcomingTasksWidget extends React.Component {
   }
 
 	transitionActivity = async (activityId) => {
-    this.props.setOpenSpinnerInDashboard(true);
+    this.props.setOpenSpinnerInHome(true);
     
     const activityToTransition = {
       "_id" : activityId,
@@ -89,22 +88,22 @@ export default class UpcomingTasksWidget extends React.Component {
 		})
     .then(response => {
       if (response.ok) {
-        this.props.updateDashboard();
+        this.props.updateHome();
       }
       else {
         throw new Error("Something went wrong");
       }
     })
     .catch( error => console.log(error))
-    .then( () => this.props.setOpenSpinnerInDashboard(false));
+    .then( () => this.props.setOpenSpinnerInHome(false));
 	}
 	
 	deleteActivity = (activityId) => {
-    this.props.setOpenSpinnerInDashboard(true);
+    this.props.setOpenSpinnerInHome(true);
 
 		fetch(`${API}/main/delete_activity/${activityId}`, prepareGETOptions(this.context))
-    .then( () => this.props.updateDashboard())
-    .then( () => this.props.setOpenSpinnerInDashboard(false))
+    .then( () => this.props.updateHome())
+    .then( () => this.props.setOpenSpinnerInHome(false))
 	}
 
   render() {
@@ -116,8 +115,8 @@ export default class UpcomingTasksWidget extends React.Component {
   					<span style={{ paddingLeft: 75 }}> Upcoming Tasks  </span>
   					<span className="new-task-button"> 
               <NewActivityDialogBox 
-                updateDashboard = {this.props.updateDashboard} 
-                setOpenSpinnerInDashboard = {this.props.setOpenSpinnerInDashboard}
+                updateHome = {this.props.updateHome} 
+                setOpenSpinnerInHome = {this.props.setOpenSpinnerInHome}
                 leadSelectOptions = {this.state.leadSelectOptions}
                 accountSelectOptions = {this.state.accountSelectOptions}
               /> 
@@ -139,7 +138,7 @@ export default class UpcomingTasksWidget extends React.Component {
                             <StarRateIcon />   
                           </span>
                           <span>
-                            AI Generated
+                            AI-Recommended
                           </span>
                         </div>
                         :

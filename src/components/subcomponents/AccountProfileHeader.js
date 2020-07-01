@@ -11,7 +11,6 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import AuthContext from '../Other/AuthContext.js';
 
 const API = process.env.REACT_APP_API;
-
 export default class AccountProfileHeader extends React.Component {
   state = {
     openDialog : false

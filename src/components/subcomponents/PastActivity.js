@@ -8,7 +8,7 @@ import StarRateIcon from '@material-ui/icons/StarRate';
 export default function PastActivity(props) {
   return(
     <> 
-      <h2> Past Activity</h2>
+      <h2> Previous Tasks</h2>
       <div className="pretty-list">
         <ul className="experiences">
           {props.activitiesList.sort( (a,b) => new Date(b.date) - new Date(a.date) ) //sort by most recent
@@ -25,7 +25,7 @@ export default function PastActivity(props) {
                     <StarRateIcon />   
                   </span>
                   <span>
-                    AI Generated
+                    AI-Recommended
                   </span>
                 </div>
               );

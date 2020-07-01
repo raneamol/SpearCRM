@@ -18,7 +18,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import AuthContext from '../Other/AuthContext.js';
 
 const API = process.env.REACT_APP_API;
-
 export default class NewAccountDialogBox extends React.Component{
   state = {
     open: false,

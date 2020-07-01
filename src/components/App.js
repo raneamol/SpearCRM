@@ -2,7 +2,7 @@ import React from 'react';
 import Backdrop from '@material-ui/core/Backdrop';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Pipeline from './Pipeline.js';
-import Dashboard from './Dashboard.js';
+import Home from './Home.js';
 import Accounts from './Accounts.js'; 
 import AccountProfile from './AccountProfile.js';
 import Leads from './Leads.js';
@@ -24,7 +24,6 @@ import jwtDecode from 'jwt-decode';
 import './styles/App.css';
 
 const API = process.env.REACT_APP_API;
-
 export default class App extends React.Component {
   state = {
     cache : {},
@@ -264,7 +263,8 @@ export default class App extends React.Component {
               <nav>
                 <ul>
                   <li>
-                    <Link to="/dashboard"> Dashboard </Link>
+                    {/* Home is replaced by the term Home only in the linking */}
+                    <Link to="/home"> Home </Link> 
                   </li>
                   <li>
                     <Link to="/accounts"> Accounts </Link>
@@ -312,8 +312,8 @@ export default class App extends React.Component {
               />
 
               <PrivateRoute 
-                path="/dashboard" 
-                component={Dashboard}
+                path="/home" 
+                component={Home}
                 cache = {this.state.cache}
               />
 

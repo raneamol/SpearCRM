@@ -13,7 +13,6 @@ import {Link} from 'react-router-dom';
 import AuthContext from '../Other/AuthContext.js';
 
 const API = process.env.REACT_APP_API;
-
 export default class LeadProfileHeader extends React.Component {
   state = {
     open: false,

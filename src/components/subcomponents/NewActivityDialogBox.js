@@ -21,7 +21,6 @@ import FormLabel from '@material-ui/core/FormLabel';
 import AuthContext from '../Other/AuthContext.js';
 
 const API = process.env.REACT_APP_API;
-
 export default function NewActivityDialogBox(props) {
   const [activityTitle, setActivityTitle] = useState("");
   const [activityBody, setActivityBody] = useState("");
@@ -49,7 +48,7 @@ export default function NewActivityDialogBox(props) {
   };
 
   const postNewActivity = async () => {
-    props.setOpenSpinnerInDashboard(true);
+    props.setOpenSpinnerInHome(true);
 
     const newActivity = {
       "user_id": selectedCustomerId,
@@ -69,14 +68,14 @@ export default function NewActivityDialogBox(props) {
       if (response.ok) {
         setActivityBody("");
         setActivityTitle("");
-        props.updateDashboard();
+        props.updateHome();
       }
       else {
         throw new Error("Something went wrong");
       }
     })
     .catch( error => console.log(error))
-    .then( () => props.setOpenSpinnerInDashboard(false))
+    .then( () => props.setOpenSpinnerInHome(false))
   }
 
   return (

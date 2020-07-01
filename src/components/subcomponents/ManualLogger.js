@@ -25,10 +25,10 @@ export default class ManualLogger extends React.Component {
             aria-label="toggling"
           >
             <ToggleButton value="past">
-              <div> &nbsp; Log past activity</div>
+              <div> &nbsp; Log past interactions</div>
             </ToggleButton>
             <ToggleButton value="future">
-              <div> &nbsp; Schedule future activity or TODO</div>
+              <div> &nbsp; Schedule future task or TODO</div>
             </ToggleButton>
           </ToggleButtonGroup>
         </div>

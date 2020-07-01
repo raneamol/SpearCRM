@@ -7,7 +7,6 @@ import AuthContext from '../Other/AuthContext.js';
 import { prepareGETOptions } from '../Other/helper.js';
 
 const API = process.env.REACT_APP_API;
-
 export default function NextSteps(props) {
   const authToken = useContext(AuthContext);
 
@@ -65,7 +64,7 @@ export default function NextSteps(props) {
 
   return(
     <> 
-      <h2> Next Steps </h2>
+      <h2> Upcoming Tasks </h2>
       <div className="pretty-list">
         
         <ul className="experiences">
@@ -80,7 +79,7 @@ export default function NextSteps(props) {
                       <StarRateIcon />   
                     </span>
                     <span>
-                      AI Generated
+                      AI-Recommended
                     </span>
                   </div>
                   :

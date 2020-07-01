@@ -11,7 +11,6 @@ import { prepareGETOptions } from './Other/helper.js';
 import './styles/Pipeline.css';
 
 const API = process.env.REACT_APP_API;
-
 export default class Pipeline extends React.Component {
   state = {
     fetchedOrders : [],
@@ -90,6 +89,7 @@ export default class Pipeline extends React.Component {
           id: 0,
           title: 'Order Transacted',
           label: '',
+          style: { backgroundColor: '#81c784' },
           cards: []
         }
       ]

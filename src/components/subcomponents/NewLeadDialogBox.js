@@ -23,7 +23,7 @@ import Switch from '@material-ui/core/Switch';
 import Checkbox from '@material-ui/core/Checkbox';
 import AuthContext from '../Other/AuthContext.js';
 
-const API = process.env.REACT_APP_API
+const API = process.env.REACT_APP_API;
 
 export default class NewLeadDialogBox extends React.Component{
   state = {
