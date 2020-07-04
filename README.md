@@ -29,6 +29,14 @@ Hence, SpearCRM condenses the most important features into a user-friendly inter
 
 ## Usage
 
+### Related material:
+Individual Frontend Repository: [https://github.com/VedantPimpley/stockbroker-crm-frontend](https://github.com/VedantPimpley/stockbroker-crm-frontend)
+
+Individual Backend Repository: [https://github.com/raneamol/stockbroker_crm_backend](https://github.com/raneamol/stockbroker_crm_backend)
+
+Extended video showcase: [Youtube]()
+
+
 ### Login Page
 
 Users can log in using their registered Email ID and password. Authorized login is in required to access the other pages.	
@@ -43,7 +51,11 @@ It presents a birds-eye-view of the data and serves as a diving-off point for th
 * Upcoming Tasks: Shows the future tasks for all customers. Tasks can be added, deleted, completed right then and there.
 
 ### Accounts Page
+<details>
+<summary> GIF of Accounts Page </summary>
+
 ![Accounts](https://user-images.githubusercontent.com/57246364/86516955-a09d3e00-be42-11ea-9d0c-a379193dd5f7.gif)
+</details>
 
 Central place to find, access and add accounts. An account refers to an account holder of a trading and demat account in the brokerage firm.
 
@@ -51,14 +63,22 @@ Central place to find, access and add accounts. An account refers to an account 
 * New Account Form: Quickly add an account to the system.
 
 ### Leads Page
+<details>
+<summary> GIF of Leads Page </summary>
+
 ![Leads](https://user-images.githubusercontent.com/57246364/86516962-a561f200-be42-11ea-98c8-0d00b23c3fb1.gif)
+</details>
 
 Central place to find, access, and add leads. Leads are prospective customers who do not yet have an account open with the firm.
 
 Similar to the Accounts page. Big difference is the choice of ML fields during New Lead addition which can create better insights about the user.
 
 ### Account Profile Page
+<details>
+<summary> GIF of Account Profile Page </summary>
+
 ![AccountProfile](https://user-images.githubusercontent.com/57246364/86516943-88c5ba00-be42-11ea-84fe-9def8d21692f.gif)
+</details>
 
 Contains all pertinent information about an account. 
 
@@ -67,7 +87,11 @@ Contains all pertinent information about an account.
 * Activity Tracker: Lists all the tasks, orders and possible actions associated with the account. User can compose emails, view, create and delete orders, view past and future tasks and add, delete or complete tasks. AI-Recommended tasks are system generated tasks that recommend the next course of action for an order depending on its stage. On completion of such a task, the corresponding order's stage is updated automatically.
 
 ### Lead Profile Page
+<details>
+<summary> GIF of Lead Profile Page </summary>
+
 ![LeadProfile](https://user-images.githubusercontent.com/57246364/86516961-a430c500-be42-11ea-95c3-8bea273271cc.gif)
+</details>
 
 Contains all pertinent information about a lead.
 * Editable Data fields: Personal data of the account can be viewed and edited here.
@@ -75,9 +99,11 @@ Contains all pertinent information about a lead.
 * Activity Tracker: Lists all the tasks and possible actions associated with the lead. User can compose emails, view past and future tasks and add, delete or complete tasks.
 
 ### Pipeline Page
+<details>
+<summary> GIF of Pipeline Page </summary>
+
 ![Pipeline](https://user-images.githubusercontent.com/57246364/86516964-a6931f00-be42-11ea-963b-95b53b361506.gif)
-
-
+</details>
 
 Central place to interact with all orders in the system in a streamlined fashion. Each order consists of a company name (listed on the NSE), order owner, type of transaction (buy/sell), number of shares and the desired price. 
 
@@ -88,16 +114,19 @@ The order lifecycle is split into 4 stages.
 4. Transacted: Contains orders which have been transacted on the stock exchange.
  
  ##### Receive Order from Email
+ <details>
+<summary> GIF of Receive Order from Email feature </summary>
+
 ![EmailOrders](https://user-images.githubusercontent.com/57246364/86516957-a1ce6b00-be42-11ea-9c17-f9df09147091.gif)
- 
+</details>
+
+
  **Features**:
 * Order drag and drop: Orders can be individually dragged and dropped from one stage to the next.
 * Order addition: Newly created orders are added to the Finalized stage. 
 * Order deletion: Orders can be deleted directly.
 * Convert Finalized orders: When this button is pressed, the desired price of all Finalized orders is compared with their real-time stock price. The orders in which desired price is met are moved to the next stage.
 * Mark orders as transacted: All Orders can be converted from to-be-transacted to transacted on a single button click. The desired price is replaced with the real-time price of the stock. 
-
-
 
 
 ## Technologies used
@@ -197,5 +226,4 @@ Vedant Y. Pimpley <vedantpimpley7@gmail.com> </br>
 Amol S. Rane <raneamol99@gmail.com>
 
 ## License
-(?) This is not an open source project.
-<Copyright>
+This project is licensed under AGPLv3.
