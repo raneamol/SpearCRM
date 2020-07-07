@@ -34,7 +34,7 @@ Individual Frontend Repository: [https://github.com/VedantPimpley/stockbroker-cr
 
 Individual Backend Repository: [https://github.com/raneamol/stockbroker_crm_backend](https://github.com/raneamol/stockbroker_crm_backend)
 
-Extended video showcase: [Youtube link](https://youtu.be/PNviqti7bls)
+Extended video showcase: [Youtube link](https://youtu.be/cxEaOhCAtX8)
 
 
 ### Login Page
