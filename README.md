@@ -24,8 +24,8 @@ Hence, SpearCRM condenses the most important features into a user-friendly inter
 * **Real-time Stock Price fetching**: The system automatically compares the real-time stock prices against the desired price, allowing the user to transact the order promptly when the price is right.
 * **Feature-rich customer tables**: A clear tabular view of Accounts and Leads with powerful features is provided.
 * **Comprehensive Profile page**: Interactive Customer profile management which displays all customer associated data.
-* Seamless lead to account conversion
-* Clean and responsive UI that stays user-friendly
+* **Seamless lead to account conversion**
+* **Clean and responsive UI that stays user-friendly**
 
 ## Usage
 
@@ -226,4 +226,4 @@ Vedant Y. Pimpley <vedantpimpley7@gmail.com> </br>
 Amol S. Rane <raneamol99@gmail.com>
 
 ## License
-This project is licensed under AGPLv3.
+This project is licensed under the AGPLv3 license.
