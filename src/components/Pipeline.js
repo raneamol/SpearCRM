@@ -1,3 +1,9 @@
+/* This software is called SpearCRM and it is a customer relationship management software for stockbrokers.
+Copyright (C) 2020  Amol Rane, Vedant Pimpley.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 import React from 'react'
 import Board from 'react-trello/dist'
 import PipelineNewOrderDialogBox from './subcomponents/PipelineNewOrderDialogBox.js';
@@ -144,6 +150,7 @@ export default class Pipeline extends React.Component {
     if (fromLaneId === toLaneId){
       return null;
     }
+
     else if(     
       //these are the only permissible drag-and-drop transitions
          (fromLaneId === 1 && toLaneId === 2)
@@ -181,6 +188,7 @@ export default class Pipeline extends React.Component {
       .catch( error => console.log(error) )
       .then( () => {if(this._isMounted) {this.updateSpinnerInPipeline(false)}})
     }
+    
     else if(this._isMounted) {
       this.forceUpdate();
       alert("This kind of drag-and-drop is not allowed.")
@@ -188,14 +196,20 @@ export default class Pipeline extends React.Component {
   }
 
   deleteCard = (cardId, laneId) => {
-    this.updateSpinnerInPipeline(true);
-    fetch(`${API}/main/delete_order/${cardId}`, prepareGETOptions(this.context))
-    .then( () => this.updatePipelineAPICall() )
-    .then( () => {
-      if(this._isMounted) {
-        this.updateSpinnerInPipeline(false)
-      }
-    });
+    if (laneId === 0) {
+      this.forceUpdate();
+      alert("Transacted orders cannot be deleted.");
+    }
+    else {
+      this.updateSpinnerInPipeline(true);
+      fetch(`${API}/main/delete_order/${cardId}`, prepareGETOptions(this.context))
+      .then( () => this.updatePipelineAPICall() )
+      .then( () => {
+        if(this._isMounted) {
+          this.updateSpinnerInPipeline(false)
+        }
+      });
+    }
   }
 
   linkToAccountProfile = (cardId, metadata, laneId) => {

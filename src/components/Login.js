@@ -1,3 +1,9 @@
+/* This software is called SpearCRM and it is a customer relationship management software for stockbrokers.
+Copyright (C) 2020  Amol Rane, Vedant Pimpley.
+This program is free software: you can redistribute it and/or modify it under the terms of the GNU Affero General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU Affero General Public License for more details.
+You should have received a copy of the GNU Affero General Public License along with this program. If not, see <https://www.gnu.org/licenses/>.
+ */
 import React, {useState, useContext} from 'react';
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -128,12 +134,9 @@ export default function Login(props) {
       </div>
       <Box mt={8}>
         <Typography variant="body2" color="textSecondary" align="center">
-          {'Copyright © '}
-          <Link color="inherit" href="https://material-ui.com/">
-            Your Website
+          <Link color="inherit" href="https://github.com/raneamol/SpearCRM">
+            SpearCRM Source Code
           </Link>{' '}
-          {new Date().getFullYear()}
-          {'.'}
         </Typography>
       </Box>
     </Container>
